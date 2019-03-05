@@ -3,7 +3,7 @@ var router = express.Router();
 var db = require('../scripts/db')
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/second', function(req, res, next) {
   db.connect()
   var pool = db.get()
   var sql = 'SELECT * FROM 유저'
