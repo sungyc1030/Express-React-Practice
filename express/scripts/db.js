@@ -1,30 +1,38 @@
 const mysql = require('mysql')
 const async = require('async')
 
-var state = {pool: null, mode: null}
+var state = {pool: null}
 
 exports.connect = function(done){
     state.pool = mysql.createPool({
         connectionLimit : 40,
         host: 'localhost',
-        user: 'sy',
-        password: 'password',
+        user: 'test',
+        password: '12345678',
         database: '테스트'
     })
 
-    state.mode = mode
-    done()
+    //done()
+}
+
+exports.checkConnection = function(){
+    var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'test',
+        password: '12345678',
+        database: 'world'
+    })
+
+    connection.query('SELECT 1', function(error, results, fields){
+        console.log(error)
+    })
 }
 
 exports.get = function(){
     return state.pool
 }
 
-exports.getConnection = function(err, done){
-
-}
-
-exports.testInsert = function(data, done){
+/*exports.testInsert = function(data, done){
     var pool = state.pool
     if (!pool) return done(new Error('Missing database connection.'))
 
@@ -46,5 +54,5 @@ exports.drop = function(tables, done){
     async.each(tables, function(name, cb){
         pool.query('DELETE * FROM ' + name, cb)
     }, done)
-}
+}*/
 
