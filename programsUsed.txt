@@ -1,0 +1,14 @@
+git
+node.js
+mysql
+visual studio code
+yarn
+
+node.js packages and other js framework
+react
+express
+material-ui
+concurrently
+cors
+nodemon
+passport
