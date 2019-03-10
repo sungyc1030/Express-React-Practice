@@ -14,19 +14,20 @@ class TopBar extends Component{
         super(props)
 
         this.state = {
-            
+
         }
     }
 
     render(){
+        const {classes} = this.props;
         return(
-            <div className="root">
+            <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton className="menuButton" color="inherit" aria-label="Menu">
+                        <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" color="inherit" className="grow">
+                        <Typography variant="h6" color="inherit" className={classes.grow}>
                             Title
                         </Typography>
                         <Button color="inherit">Logout</Button>
