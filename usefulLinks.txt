@@ -6,6 +6,7 @@ https://github.com/MarvelousWololo/ssr-react
 
 익스프레스
 http://jasonwatmore.com/post/2018/09/11/react-basic-http-authentication-tutorial-example
+https://github.com/maximgatilin/react-express-auth
 
 매테리얼UI
 https://github.com/alexanmtz/material-sense
