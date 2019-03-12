@@ -4,6 +4,9 @@ https://www.ibm.com/blogs/bluemix/2017/06/react-web-express-api-development-prod
 https://dev.to/nburgess/creating-a-react-app-with-react-router-and-an-express-backend-33l3
 https://github.com/MarvelousWololo/ssr-react
 
+익스프레스
+http://jasonwatmore.com/post/2018/09/11/react-basic-http-authentication-tutorial-example
+
 매테리얼UI
 https://github.com/alexanmtz/material-sense
 https://material-ui.com/premium-themes/
