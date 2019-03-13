@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Paper } from '@material-ui/core';
+import { Grid, Paper, Card, CardContent, CardActions } from '@material-ui/core';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -14,12 +14,10 @@ const styles = theme => ({
         color: theme.palette.text.secondary
     },
     userCard: {
-        height: '150px',
-        verticalAlign: 'middle'
+        height: '150px'
     },
     educationList: {
-        height: '200px',
-        verticalAlign: 'middle'
+        height: '200px'
     },
     printCard: {
         height: '80px'
@@ -44,24 +42,40 @@ class Main extends Component{
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container justify="center" item xs={12} spacing={32}>
                         <Grid item xs={5}>
-                            <Paper className={`${classes.paper} ${classes.userCard}`}>유저정보</Paper>
+                            <Card className={classes.userCard}>
+                                <CardContent>
+                                    유저정보
+                                </CardContent>
+                            </Card>
                         </Grid>
                         <Grid container item xs={5}>
                             <Grid container>
                                 <Grid item xs={12}>
-                                    <Paper className={`${classes.paper} ${classes.passwordCard}`}>패스워드 변경</Paper>
+                                    <Card className={classes.passwordCard}>
+                                        <CardContent>
+                                            패스워드리셋
+                                        </CardContent>
+                                    </Card>
                                 </Grid>
                             </Grid>
                             <Grid container>
                                 <Grid item xs={12}>
-                                    <Paper className={`${classes.paper} ${classes.printCard}`}>증서 인쇄</Paper>
+                                    <Card className={classes.printCard}>
+                                        <CardContent>
+                                            증명서인쇄
+                                        </CardContent>
+                                    </Card>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid container item xs={10} spacing={32}>
                         <Grid item xs={12}>
-                            <Paper className={`${classes.paper} ${classes.educationList}`}>교육 리스트</Paper>
+                            <Card className={classes.educationList}>
+                                <CardContent>
+                                    교육리스트
+                                </CardContent>
+                            </Card>
                         </Grid>
                     </Grid>
                 </Grid>

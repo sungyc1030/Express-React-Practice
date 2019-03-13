@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { IconButton, AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import AdminDrawer from './AdminDrawer'
 
 const styles = {
     root: {flexGrow: 1},
@@ -24,9 +25,10 @@ class TopBar extends Component{
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
+                        {/*<IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
                             <MenuIcon />
-                        </IconButton>
+        </IconButton>*/}
+                        <AdminDrawer></AdminDrawer>
                         <Typography variant="h6" color="inherit" className={classes.grow}>
                             Title
                         </Typography>

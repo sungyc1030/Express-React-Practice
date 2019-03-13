@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import { blue, indigo, red, cyan } from '@material-ui/core/colors';
-import TopBar from './components/TopBar';
-import Main from './components/Main';
+import TopBar from './components/Main/TopBar';
+import Main from './components/Main/Main';
 import { CssBaseline } from '@material-ui/core';
 
 const theme = createMuiTheme({
