@@ -14,7 +14,8 @@ class AdminDrawer extends Component{
         super(props)
 
         this.state = {
-            open: false
+            open: false,
+            selectedIndex: 0
         }
     }
 
@@ -24,14 +25,20 @@ class AdminDrawer extends Component{
         });
     };
 
+    handleDrawerItemClick = (e, index) =>{
+        e.preventDefault();
+
+        this.setState({selectedIndex: index});
+    };
+
     render(){
         const { classes } = this.props;
 
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['유저관리','교육관리','기준관리','이수조건관리'].map((text, index) => (
-                        <ListItem button key={text}>
+                    {['내정보', '유저관리','교육관리','기준관리','이수조건관리'].map((text, index) => (
+                        <ListItem button key={text} selected = {this.state.selectedIndex === index} onClick={e => this.handleDrawerItemClick(e, index)}>
                             <ListItemIcon>
                                 <Face />
                             </ListItemIcon>

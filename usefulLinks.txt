@@ -7,8 +7,17 @@ https://github.com/MarvelousWololo/ssr-react
 익스프레스
 http://jasonwatmore.com/post/2018/09/11/react-basic-http-authentication-tutorial-example
 https://github.com/maximgatilin/react-express-auth
+https://github.com/cornflourblue/react-role-based-authorization-example/tree/master/src
+
+로그인
+https://catalin.me/role-based-authentication-with-angular-express-jwt-mysql-part-1/
 
 매테리얼UI
 https://github.com/alexanmtz/material-sense
 https://material-ui.com/premium-themes/
 https://github.com/wschenk/material-ui-demo
+
+https
+https://medium.freecodecamp.org/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec
+https://contextneutral.com/story/creating-an-https-server-with-nodejs-and-express
+https://stackoverflow.com/questions/7185074/heroku-nodejs-http-to-https-ssl-forced-redirect/23894573#23894573

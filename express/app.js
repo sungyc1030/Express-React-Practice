@@ -7,7 +7,10 @@ const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const testRouter = require('./routes/testapi')
+const testRouter = require('./routes/testapi');
+const loginRouter = require('./routes/login');
+const attendanceRouter = require('./routes/attendance');
+const classRouter = require('./routes/class');
 
 var app = express();
 
@@ -20,8 +23,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/', indexRouter);
-//app.use('/api/users', usersRouter);
+app.use('/api/user', usersRouter);
 app.use('/', testRouter)
+app.use('/api/class', classRouter);
+app.use('/api/attendance', attendanceRouter);
+app.use('/api/login', loginRouter);
 
 //Redirect to index if any other request come in. Or maybe error page
 app.get('*', (req, res, next) => {
