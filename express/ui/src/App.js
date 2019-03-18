@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import { blue, indigo, red, cyan } from '@material-ui/core/colors';
-import TopBar from './components/Main/TopBar';
-import Main from './components/Main/Main';
+import Index from './components/Index';
 import { CssBaseline } from '@material-ui/core';
 
 const theme = createMuiTheme({
@@ -37,8 +36,7 @@ class App extends Component{
             <MuiThemeProvider theme = {theme}>
                 <React.Fragment>
                     <CssBaseline />
-                    <TopBar />
-                    <Main />
+                    <Index />
                 </React.Fragment>
             </MuiThemeProvider>
         )

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { List, ListItem, ListItemIcon, ListItemText, IconButton, Drawer } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Face } from '@material-ui/icons'
+import { Face } from '@material-ui/icons';
+import { Link, withRouter } from 'react-router-dom';
+import Routes from './Route';
 
 const styles = {
     menuButton: {marginLeft:-12, marginRight: 20},
@@ -26,8 +28,6 @@ class AdminDrawer extends Component{
     };
 
     handleDrawerItemClick = (e, index) =>{
-        e.preventDefault();
-
         this.setState({selectedIndex: index});
     };
 
@@ -37,13 +37,15 @@ class AdminDrawer extends Component{
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['내정보', '유저관리','교육관리','기준관리','이수조건관리'].map((text, index) => (
-                        <ListItem button key={text} selected = {this.state.selectedIndex === index} onClick={e => this.handleDrawerItemClick(e, index)}>
-                            <ListItemIcon>
-                                <Face />
-                            </ListItemIcon>
-                             <ListItemText primary={text} />
-                        </ListItem>
+                    {Routes.map((prop, index) => (
+                        <Link to = {prop.path} key={index}>
+                            <ListItem button key={prop.name} selected = {this.state.selectedIndex === index} onClick={e => this.handleDrawerItemClick(e, index)}>
+                                <ListItemIcon>
+                                    <prop.icon />
+                                </ListItemIcon>
+                                <ListItemText primary={prop.name} />
+                            </ListItem>
+                        </Link>
                     ))}
                 </List>
             </div>
@@ -64,4 +66,4 @@ class AdminDrawer extends Component{
     }
 }
 
-export default withStyles(styles)(AdminDrawer);
+export default withRouter(withStyles(styles)(AdminDrawer));

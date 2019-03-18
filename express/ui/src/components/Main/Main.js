@@ -26,7 +26,7 @@ const styles = theme => ({
         height: '60px',
         marginBottom: '10px'
     }
-})
+});
 
 class Main extends Component{
     constructor(props){
