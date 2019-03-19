@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
-import { blue, indigo, red, cyan } from '@material-ui/core/colors';
+import { red, cyan } from '@material-ui/core/colors';
 import Index from './components/Index';
 import { CssBaseline } from '@material-ui/core';
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { IconButton, AppBar, Toolbar, Typography, Button } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+//import MenuIcon from '@material-ui/icons/Menu';
 import AdminDrawer from './AdminDrawer';
 
 const styles = {

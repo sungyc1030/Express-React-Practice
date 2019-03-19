@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import TopBar from './TopBar';
-import Main from './Main/Main';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import Routes from './Route';
 
@@ -19,7 +18,7 @@ class Index extends Component{
                 <div>
                     <TopBar />
                     {Routes.map((prop, index) => (
-                        <Route exact path={prop.path} component={prop.component} />
+                        <Route exact path={prop.path} component={prop.component} key={prop.name}/>
                     ))}
                 </div>
             </Router>

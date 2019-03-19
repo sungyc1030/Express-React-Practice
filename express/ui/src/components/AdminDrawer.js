@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { List, ListItem, ListItemIcon, ListItemText, IconButton, Drawer } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Face } from '@material-ui/icons';
 import { Link, withRouter } from 'react-router-dom';
 import Routes from './Route';
 
@@ -19,6 +18,26 @@ class AdminDrawer extends Component{
             open: false,
             selectedIndex: 0
         }
+
+        switch(this.props.location.pathname){
+            case '/':
+                this.state.selectedIndex = 0;
+                break;
+            case '/user':
+                this.state.selectedIndex = 1;
+                break;
+            case '/class':
+                this.state.selectedIndex = 2;
+                break;
+            case '/standard':
+                this.state.selectedIndex = 3;
+                break;
+            case '/config':
+                this.state.selectedIndex = 4;
+                break;
+            default:
+                this.state.selectedIndex = 0;
+        } 
     }
 
     toggleDrawer = (openState) => () => {
@@ -31,14 +50,37 @@ class AdminDrawer extends Component{
         this.setState({selectedIndex: index});
     };
 
+    componentDidUpdate(prevProps){
+        if (this.props.location.pathname !== prevProps.location.pathname){
+            switch(this.props.location.pathname){
+                case '/':
+                    this.setState({selectedIndex: 0});
+                    break;
+                case '/user':
+                    this.setState({selectedIndex: 1});
+                    break;
+                case '/class':
+                    this.setState({selectedIndex: 2});
+                    break;
+                case '/standard':
+                    this.setState({selectedIndex: 3});
+                    break;
+                case '/config':
+                    this.setState({selectedIndex: 4});
+                    break;
+                default:
+                    this.setState({selectedIndex: 0});
+            } 
+        }
+    }
+
     render(){
         const { classes } = this.props;
-
         const sideList = (
             <div className={classes.list}>
                 <List>
                     {Routes.map((prop, index) => (
-                        <Link to = {prop.path} key={index}>
+                        <Link to={prop.path} key={prop.name}>
                             <ListItem button key={prop.name} selected = {this.state.selectedIndex === index} onClick={e => this.handleDrawerItemClick(e, index)}>
                                 <ListItemIcon>
                                     <prop.icon />

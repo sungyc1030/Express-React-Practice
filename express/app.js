@@ -6,7 +6,7 @@ const cors = require('cors')
 const session = require('express-session');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const userRouter = require('./routes/user');
 const testRouter = require('./routes/testapi');
 const loginRouter = require('./routes/login');
 const attendanceRouter = require('./routes/attendance');
@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/', indexRouter);
-app.use('/api/user', usersRouter);
+app.use('/api/user', userRouter);
 app.use('/', testRouter)
 app.use('/api/class', classRouter);
 app.use('/api/attendance', attendanceRouter);
