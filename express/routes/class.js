@@ -45,6 +45,10 @@ router.get('/', function(req, res, next){
                         }
                         ed.유저.push(user);
                     }
+
+                    if(results.length === 1){
+                      data.push(ed);
+                    }
                 }else if(classID !== results[i].교육ID && i !== results.length - 1){
                     data.push(ed);
 
