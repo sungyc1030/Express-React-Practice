@@ -76,7 +76,7 @@ class ClassData extends Component{
             classDate: this.props.class['교육일'],
             classCAS: this.props.class['CAS'] ? '인정':'불인정',
             classARC: this.props.class['ARC'] ? '인정':'불인정',
-            allUsers: this.props.class['유저'],
+            allUsers: this.props.class['UserClass'],
             classID: this.props.class['교육ID']
         });
     }
@@ -182,23 +182,25 @@ class ClassData extends Component{
             renderHelper = 
                 <Table>
                     <TableHead>
-                        <TableCell className={classes.tableClassesCell} align="center">유저번호</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">유저이름</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">파트</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                        <TableRow>
+                            <TableCell className={classes.tableClassesCell} align="center">유저번호</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">유저이름</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">파트</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                        </TableRow>
                     </TableHead>
                     <TableBody>
                         {this.state.allUsers.map((row, index) => (
-                            <TableRow key={row['유저ID']}>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['유저번호']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['이름']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['파트']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['직종']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['역할']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['참가여부']}</TableCell>
+                            <TableRow key={row.User['유저ID']}>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.User['유저번호']}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.User['이름']}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.User['파트']? row.User['파트']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.User['직종']? row.User['직종']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row['역할']? row['역할']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row['참가여부']? row['참가여부']: ''}</TableCell>
                                 <TableCell className={classes.tableClassesCell} align="center">
                                     <Button disabled>
                                         <Clear />

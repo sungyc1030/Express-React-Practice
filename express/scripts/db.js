@@ -1,9 +1,22 @@
-const mysql = require('mysql')
-const async = require('async')
+const { Model } = require('objection');
+const Knex = require('knex');
 
-var state = {pool: null}
+const knex = Knex({
+    client: 'mysql',
+    useNullAsDefault: true,
+    connection: {
+        host: 'localhost',
+        user: 'test',
+        password: '12345678',
+        database: '테스트'
+    }
+});
 
-exports.connect = function(done){
+Model.knex(knex);
+
+//var state = {pool: null}
+
+/*exports.connect = function(done){
     state.pool = mysql.createPool({
         connectionLimit : 40,
         host: 'localhost',

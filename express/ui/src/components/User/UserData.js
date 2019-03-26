@@ -90,16 +90,16 @@ class UserData extends Component{
     componentDidMount(){
         this.setState({
             userName: this.props.user['이름'],
-            userNo: this.props.user['유저번호'],
+            userNo: Number(this.props.user['유저번호']),
             userAffil: this.props.user['소속'] ? this.props.user['소속']:'',
             userPart: this.props.user['파트'] ? this.props.user['파트']:'',
             userJob: this.props.user['직종'] ? this.props.user['직종']:'',
             userEmail: this.props.user['이메일'] ? this.props.user['이메일']:'',
             userPhone: this.props.user['전화번호'] ? this.props.user['전화번호']:'',
             userLevel: this.props.user['레벨'],
-            userAdmin: this.props.user['권한'],
+            userAdmin: this.props.user['애드민'],
             userID: this.props.user['유저ID'],
-            allClasses: this.props.user['교육']
+            allClasses: this.props.user['UserClass']
         });
     }
 
@@ -209,23 +209,25 @@ class UserData extends Component{
             renderHelper = 
                 <Table>
                     <TableHead>
-                        <TableCell className={classes.tableClassesCell} align="center">교육명</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">CAS인증</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
-                        <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                        <TableRow>
+                            <TableCell className={classes.tableClassesCell} align="center">교육명</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">CAS인증</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
+                            <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                        </TableRow>
                     </TableHead>
                     <TableBody>
                         {this.state.allClasses.map((row, index) => (
                             <TableRow key={row['교육ID']}>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['교육명']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['교육일']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['역할']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['참가여부']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['CAS']? '인정': '불인정'}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['ARC']? '인정': '불인정'}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['교육명']? row.Class['교육명']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['교육일']? row.Class['교육일']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row['역할']? row.Class['역할']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row['참가여부']? row.Class['참가여부']: ''}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['CAS']? '인정': '불인정'}</TableCell>
+                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['ARC']? '인정': '불인정'}</TableCell>
                                 <TableCell className={classes.tableClassesCell} align="center">
                                     <Button disabled>
                                         <Clear />
@@ -264,15 +266,15 @@ class UserData extends Component{
                         <TextField label="유저번호" className = {classes.textField} 
                             value={this.state.userNo} onChange={this.handleTextFieldChange('userNo')} margin="normal" variant="outlined" />
                         <TextField label="소속" className = {classes.textField} 
-                            value={this.state.userAffil} onChange={this.handleTextFieldChange('userAffil')} margin="normal" variant="outlined" />
+                            value={this.state.userAffil? this.state.userAffil: ''} onChange={this.handleTextFieldChange('userAffil')} margin="normal" variant="outlined" />
                         <TextField label="파트" className = {classes.textField} 
-                            value={this.state.userPart} onChange={this.handleTextFieldChange('userPart')} margin="normal" variant="outlined" />
+                            value={this.state.userPart? this.state.userPart: ''} onChange={this.handleTextFieldChange('userPart')} margin="normal" variant="outlined" />
                         <TextField label="직종" className = {classes.textField} 
-                            value={this.state.userJob} onChange={this.handleTextFieldChange('userJob')} margin="normal" variant="outlined" />
+                            value={this.state.userJob? this.state.userJob: ''} onChange={this.handleTextFieldChange('userJob')} margin="normal" variant="outlined" />
                         <TextField label="이메일" className = {classes.textField} type="email" autoComplete="email"
-                            value={this.state.userEmail} onChange={this.handleTextFieldChange('userEmail')} margin="normal" variant="outlined" />
+                            value={this.state.userEmail? this.state.userEmail: ''} onChange={this.handleTextFieldChange('userEmail')} margin="normal" variant="outlined" />
                         <TextField label="전화번호" className = {classes.textField} 
-                            value={this.state.userPhone} onChange={this.handleTextFieldChange('userPhone')} margin="normal" variant="outlined" />
+                            value={this.state.userPhone? this.state.userPhone: ''} onChange={this.handleTextFieldChange('userPhone')} margin="normal" variant="outlined" />
                         <TextField label="레벨" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.userLevel} onChange={this.handleTextFieldChange('userLevel')} margin="normal" variant="outlined">
                             {level.map(option => (
