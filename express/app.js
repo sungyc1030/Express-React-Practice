@@ -3,7 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors')
-const session = require('express-session');
+const passport = require('passport');
 const { Model } = require('objection');
 const Knex = require('knex');
 
@@ -13,6 +13,8 @@ const attendanceRouter = require('./routes/attendance');
 const classRouter = require('./routes/class');
 
 var app = express();
+
+require('./scripts/passportSetup');
 
 const knex = Knex({
     client: 'mysql',

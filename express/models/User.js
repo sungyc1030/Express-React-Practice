@@ -1,4 +1,5 @@
 const { Model } = require('objection');
+const bcrypt = require('bcrypt');
 
 class User extends Model {
     static get tableName(){
@@ -7,6 +8,12 @@ class User extends Model {
     static get idColumn(){
         return '유저ID';
     } 
+    set password (password){
+        this.비밀번호 = bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+    };
+    verifyPassword (password, callback){
+        bcrypt.compare(password, this.비밀번호, callback)
+    };
     static get jsonSchema(){
         return{
             type: 'object',
@@ -23,7 +30,8 @@ class User extends Model {
                 이메일: {type: ['string', 'null']},
                 전화번호: {type: ['string', 'null']},
                 레벨: {type: ['string', 'null']},
-                애드민: {type: ['string', 'null']}
+                애드민: {type: ['string', 'null']},
+                로그인ID: {type: ['string', 'null']}
             }
         }
     };

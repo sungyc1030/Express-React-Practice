@@ -19,6 +19,14 @@ class TopBar extends Component{
         }
     }
 
+    handleLogout = e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        //Directly move into main page for now
+        this.props.logout();
+    }
+
     render(){
         const {classes} = this.props;
         return(
@@ -29,7 +37,7 @@ class TopBar extends Component{
                         <Typography variant="h6" color="inherit" className={classes.grow}>
                             Title
                         </Typography>
-                        <Button color="inherit">Logout</Button>
+                        <Button color="inherit" onClick={this.handleLogout}>Logout</Button>
                     </Toolbar>
                 </AppBar>
             </div>

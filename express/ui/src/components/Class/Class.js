@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardContent, CircularProgress, Typography } from '@material-ui/core';
 import AddClass from './AddClass';
 import ClassData from './ClassData';
+import TopBar from '../TopBar';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -120,6 +121,7 @@ class Class extends Component{
 
         return(
             <div className = {classes.root}>
+                <TopBar logout={this.props.logout}/>
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container item justify="center" xs={10} spacing={32}>
                         <Card className={classes.mainPaper}>

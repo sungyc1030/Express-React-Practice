@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardContent } from '@material-ui/core';
+import TopBar from '../TopBar';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -24,6 +25,7 @@ class PrintConfig extends Component{
         const {classes} = this.props;
         return(
             <div className = {classes.root}>
+                <TopBar logout={this.props.logout}/>
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container item justify="center" xs={10} spacing={32}>
                         <Card className = {classes.mainPaper}>
