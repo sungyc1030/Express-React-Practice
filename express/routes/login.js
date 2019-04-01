@@ -2,12 +2,12 @@ var express = require('express');
 var router = express.Router({mergeParams: true});
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
+//var bcrypt = require('bcryptjs');
 
-const UserModel = require('../models/User');
+//const UserModel = require('../models/User');
 const secret = 'Korea University Anam Hospital';
 
-router.post('/register', async(req, res) => {
+/*router.post('/register', async(req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -24,7 +24,7 @@ router.post('/register', async(req, res) => {
             error: 'req body should take the form {username, password}'
         });
     }
-});
+});*/
 
 router.post('/', function(req, res, next){
     passport.authenticate('local', {session: false},(error, user, info) => {
@@ -43,7 +43,7 @@ router.post('/', function(req, res, next){
             username: user.이름,
             userno: user.유저번호,
             admin: user.애드민,
-            expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS)
+            expires: Date.now() + (60 * 60 * 1000)
         }
 
         req.login(payload, {session: false}, (error) => {

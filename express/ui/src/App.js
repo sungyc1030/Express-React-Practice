@@ -3,6 +3,7 @@ import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import { red, cyan } from '@material-ui/core/colors';
 import Index from './components/Index';
 import { CssBaseline } from '@material-ui/core';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const theme = createMuiTheme({
     palette: {
@@ -36,7 +37,9 @@ class App extends Component{
             <MuiThemeProvider theme = {theme}>
                 <React.Fragment>
                     <CssBaseline />
-                    <Index />
+                    <Router>
+                        <Index />
+                    </Router>
                 </React.Fragment>
             </MuiThemeProvider>
         )

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Card, CardContent, FormControl, InputLabel, Input, FormHelperText, Button } from '@material-ui/core';
+import { Grid, Card, CardContent, FormControl, InputLabel, Input, FormHelperText, Button, Typography } from '@material-ui/core';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -24,7 +24,7 @@ const styles = theme => ({
     },
     loginButton: {
         padding: '16px'
-    },
+    }
 });
 
 class Login extends Component{
@@ -34,7 +34,10 @@ class Login extends Component{
         this.state = {
             error: "",
             username: "",
-            password: ""
+            password: "",
+            usernameErrorText: "",
+            passwordErrorText: "",
+            loginErrorText: ""
         };
     }
 
@@ -50,11 +53,19 @@ class Login extends Component{
 
         //Input Check
         if (this.state.username === ""){
-            
+            this.setState({usernameErrorText: 'ID를 입력해주십시오'});
+        }else{
+            this.setState({usernameErrorText: ''});
         }
 
         if (this.state.password === ""){
+            this.setState({passwordErrorText: '비밀번호를 입력해주십시오'});
+        }else{
+            this.setState({passwordErrorText: ''});
+        }
 
+        if(this.state.username === "" || this.state.password === ""){
+            return;
         }
         
         const response = await fetch('/api/login', {
@@ -70,7 +81,17 @@ class Login extends Component{
             }) 
         });
         const body = await response.json();
-        if (response.status !== 200) throw Error(body.message);
+        if (response.status !== 200){
+            console.log(body.message);
+            this.setState({loginErrorText: '로그인에 실패했습니다. ID와 비밀번호를 확인해주세요.'});
+        }else{
+            //console.log(body);
+            this.setState({loginErrorText: ''});
+            var token = body.token;
+            localStorage.setItem("jwt", token);
+            this.props.login();
+            //this.props.history.push("/");
+        }
 
         //Directly move into main page for now
         //this.props.login();
@@ -86,7 +107,7 @@ class Login extends Component{
                         <Card className={classes.container}>
                             <CardContent>
                                 <h2 className = {classes.loginHeading}>로그인</h2>
-                                {}
+                                <Typography color="error">{this.state.loginErrorText}</Typography>
                                 <div className = {classes.loginField}>
                                     <FormControl>
                                         <InputLabel htmlFor="login-name">ID</InputLabel>
@@ -95,7 +116,7 @@ class Login extends Component{
                                             value={this.state.username}
                                             onChange={this.handleTextFieldChange('username')}
                                         />
-                                        <FormHelperText id="login-user-error"></FormHelperText>
+                                        <FormHelperText id="login-user-error" color="error">{this.state.usernameErrorText}</FormHelperText>
                                     </FormControl>
                                 </div>
                                 <div className = {classes.loginField}>
@@ -106,7 +127,7 @@ class Login extends Component{
                                             value={this.state.password}
                                             onChange={this.handleTextFieldChange('password')}
                                         />
-                                        <FormHelperText id="login-password-error"></FormHelperText>
+                                        <FormHelperText id="login-password-error" color="error">{this.state.passwordErrorText}</FormHelperText>
                                     </FormControl>
                                 </div>
                                 <div className={classes.loginButton}>

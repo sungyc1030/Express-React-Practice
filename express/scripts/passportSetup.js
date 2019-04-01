@@ -33,12 +33,29 @@ passport.use(new LocalStartegy({
 ));
 
 passport.use(new JWTStarategy({
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: secret
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken('Bearer'),
+        secretOrKey: secret,
+        ignoreExpiration: true
     }, function(jwtPayload, done){
-        if(Date.now() > jwtPayload.expries){
+        /*Front end takes care of jwt expiration
+        if(Date.now() > jwtPayload.expires){
             return done('jwt expired');
+        }*/
+        //In case of jwt forgery
+        //console.log(jwtPayload);
+        try{
+            UserModel.query()
+                .where('유저번호', jwtPayload.userno)
+                .then(user => {
+                    if(user){
+                        return done(null, jwtPayload);
+                    }else{
+                        return done(null, false);
+                    }
+                });
+        }catch(err){
+            console.log(err);
+            return done(err);
         }
-        return done(null, jwtPayload);
     }
 ))

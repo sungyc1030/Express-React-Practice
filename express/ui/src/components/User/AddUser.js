@@ -63,25 +63,40 @@ class AddUser extends Component{
     };
 
     postData = async() => {
-        const response = await fetch('/api/user',{
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                post: 'Add user',
-                userName: this.state.userName,
-                userNo: this.state.userNo,
-                userAffil: this.state.userAffil,
-                userPart: this.state.userPart,
-                userJob: this.state.userJob,
-                userEmail: this.state.userEmail,
-                userPhone: this.state.userPhone,
-                userLevel: this.state.userLevel,
-                userAdmin: this.state.userAdmin
-            })
+        var token = localStorage.getItem('jwt');
+        var response;
+        const data = JSON.stringify({
+            post: 'Add user',
+            userName: this.state.userName,
+            userNo: this.state.userNo,
+            userAffil: this.state.userAffil,
+            userPart: this.state.userPart,
+            userJob: this.state.userJob,
+            userEmail: this.state.userEmail,
+            userPhone: this.state.userPhone,
+            userLevel: this.state.userLevel,
+            userAdmin: this.state.userAdmin
         });
+        if(token !== null){
+            response = await fetch('/api/user',{
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: data
+            });
+        }else{
+            response = await fetch('/api/user',{
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            });
+        }
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
     

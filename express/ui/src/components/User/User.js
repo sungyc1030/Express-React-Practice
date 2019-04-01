@@ -37,7 +37,19 @@ class User extends Component{
     }
 
     getData = async() => {
-        const response = await fetch('/api/user');
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/user', {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/user');
+        }
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
         
@@ -121,7 +133,7 @@ class User extends Component{
 
         return(
             <div className = {classes.root}>
-                <TopBar logout={this.props.logout}/>
+                <TopBar logout={this.props.logout} admin={this.props.admin}/>
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container item justify="center" xs={10} spacing={32}>
                         <Card className={classes.mainPaper}>

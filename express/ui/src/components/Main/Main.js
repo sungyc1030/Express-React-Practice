@@ -49,7 +49,7 @@ class Main extends Component{
         const {classes} = this.props;
         return(
             <div className = {classes.root}>
-                <TopBar logout={this.props.logout}/>
+                <TopBar logout={this.props.logout} admin={this.props.admin}/>
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container justify="center" item xs={12} spacing={32} className={classes.gridTop}>
                         <Grid item xs={7} className={classes.gridUser}>

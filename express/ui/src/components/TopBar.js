@@ -33,7 +33,7 @@ class TopBar extends Component{
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                        <AdminDrawer></AdminDrawer>
+                        {this.props.admin === "관리자" && <AdminDrawer />}
                         <Typography variant="h6" color="inherit" className={classes.grow}>
                             Title
                         </Typography>

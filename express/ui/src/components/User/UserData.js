@@ -133,10 +133,23 @@ class UserData extends Component{
     }
 
     queryDeleteSelectedUser = async() => {
+        var token = localStorage.getItem('jwt');
+        var response;
         var id = this.state.userID;
-        const response = await fetch('/api/user/' + id, {
-            method: 'DELETE'
-        });
+        if(token !== null){
+            response = await fetch('/api/user/' + id,{
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/user/' + id, {
+                method: 'DELETE'
+            });
+        }
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
     
@@ -169,25 +182,40 @@ class UserData extends Component{
 
     queryUpdateSelectedUser = async() => {
         var id = this.state.userID;
-        const response = await fetch('/api/user/' + id, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                post: 'Update user',
-                userName: this.state.userName,
-                userNo: this.state.userNo,
-                userAffil: this.state.userAffil,
-                userPart: this.state.userPart,
-                userJob: this.state.userJob,
-                userEmail: this.state.userEmail,
-                userPhone: this.state.userPhone,
-                userLevel: this.state.userLevel,
-                userAdmin: this.state.userAdmin
-            }) 
-        });
+        var data = JSON.stringify({
+            post: 'Update user',
+            userName: this.state.userName,
+            userNo: this.state.userNo,
+            userAffil: this.state.userAffil,
+            userPart: this.state.userPart,
+            userJob: this.state.userJob,
+            userEmail: this.state.userEmail,
+            userPhone: this.state.userPhone,
+            userLevel: this.state.userLevel,
+            userAdmin: this.state.userAdmin
+        }); 
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/user/' + id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: data
+            });
+        }else{
+            response = await fetch('/api/user/' + id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            });
+        }
         
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);

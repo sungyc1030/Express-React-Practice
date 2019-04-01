@@ -25,7 +25,7 @@ class Config extends Component{
         const {classes} = this.props;
         return(
             <div className = {classes.root}>
-                <TopBar  logout={this.props.logout}/>
+                <TopBar logout={this.props.logout} admin={this.props.admin}/>
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container item justify="center" xs={10} spacing={32}>
                         <Card className = {classes.mainPaper}>
