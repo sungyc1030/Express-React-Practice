@@ -112,9 +112,26 @@ class ClassData extends Component{
 
     querydeleteSelectedClass = async() => {
         var id = this.state.classID;
-        const response = await fetch('/api/class/' + id, {
-            method: 'DELETE'
-        });
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/class/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/class/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
     
@@ -147,21 +164,35 @@ class ClassData extends Component{
 
     queryUpdateSelectedClass = async() => {
         var id = this.state.classID;
-        const response = await fetch('/api/class/' + id, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                post: 'Update class',
-                className: this.state.className,
-                classDate: this.state.classDate,
-                classCAS: (this.state.classCAS === '인정')? 1:0,
-                classARC: (this.state.classARC === '인정')? 1:0
-            }) 
+        var token = localStorage.getItem('jwt');
+        var response;
+        var data = JSON.stringify({
+            post: 'Update class',
+            className: this.state.className,
+            classDate: this.state.classDate,
+            classCAS: (this.state.classCAS === '인정')? 1:0,
+            classARC: (this.state.classARC === '인정')? 1:0
         });
-
+        if(token !== null){
+            response = await fetch('/api/class/' + id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: data
+            });
+        }else{
+            response = await fetch('/api/class/' + id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            });
+        }
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
     

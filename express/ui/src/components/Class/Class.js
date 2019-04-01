@@ -37,7 +37,19 @@ class Class extends Component{
     }
 
     getData = async() => {
-        const response = await fetch('/api/class');
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/class', {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/class');
+        }
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
         
