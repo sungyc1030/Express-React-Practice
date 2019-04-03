@@ -32,11 +32,14 @@ class User extends Component{
         this.state = {
             users: [],
             loaded: false,
-            empty: false
+            empty: false,
+            userClass: []
         }
     }
 
     getData = async() => {
+        //Force change 
+        this.setState({loaded: false});
         var token = localStorage.getItem('jwt');
         var response;
         if(token !== null){
@@ -56,6 +59,26 @@ class User extends Component{
         return body;
     }
 
+    getClassData = async() => {
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/class/pure', {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/class/pure');
+        }
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        
+        return body;
+    }
+
     componentDidMount(){
         this.setState({loaded: false});
         this.getData()
@@ -66,36 +89,22 @@ class User extends Component{
                     this.setState({users: res, loaded: true});
                 }
             }).catch(err => console.log(err));
-    }
-
-    addUser = () => {
-        this.getData()
+        this.getClassData()
             .then(res => {
-                if(res.length === 0){
-                    this.setState({loaded:true, empty:true});
-                }else{
-                    this.setState({users: res, loaded: true});
+                if(res.length !== 0){
+                    this.setState({userClass: res, loaded: true});
                 }
             }).catch(err => console.log(err));
     }
 
-    deleteUser = () => {
+    changeUser = () => {
         this.getData()
             .then(res => {
                 if(res.length === 0){
                     this.setState({loaded:true, empty:true});
                 }else{
-                    this.setState({users: res, loaded: true});
-                }
-            }).catch(err => console.log(err));
-    }
-
-    updateUser = () => {
-        this.getData()
-            .then(res => {
-                if(res.length === 0){
-                    this.setState({loaded:true, empty:true});
-                }else{
+                    //Force change
+                    //this.setState({loaded: false});
                     this.setState({users: res, loaded: true});
                 }
             }).catch(err => console.log(err));
@@ -110,7 +119,7 @@ class User extends Component{
             if(this.state.empty){
                 renderHelper = 
                     <CardContent>
-                        <AddUser addUser={this.addUser} />
+                        <AddUser addUser={this.changeUser} />
                         <Typography>
                             존재하는 유저 데이터가 없습니다. 새로 추가해주시기 바랍니다.
                         </Typography>
@@ -118,9 +127,9 @@ class User extends Component{
             }else{
                 renderHelper = 
                     <CardContent>
-                        <AddUser addUser={this.addUser}/>
+                        <AddUser addUser={this.changeUser}/>
                         {this.state.users.map((data, index) => (
-                            <UserData user={data} key={data['유저번호']} deleteUser={this.deleteUser} updateUser={this.updateUser}/>
+                            <UserData user={data} key={data['유저ID']} deleteUser={this.changeUser} updateUser={this.changeUser} userClass={this.state.userClass}/>
                         ))}
                     </CardContent>
             }

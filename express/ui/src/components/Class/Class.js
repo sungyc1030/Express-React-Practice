@@ -32,7 +32,8 @@ class Class extends Component{
         this.state = {
             classes: [],
             loaded: false,
-            empty: false
+            empty: false,
+            classUser: []
         }
     }
 
@@ -56,6 +57,26 @@ class Class extends Component{
         return body;
     }
 
+    getUserData = async() => {
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/user/pure', {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/user/pure');
+        }
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        
+        return body;
+    }
+
     componentDidMount(){
         this.setState({loaded: false});
         this.getData()
@@ -66,31 +87,15 @@ class Class extends Component{
                     this.setState({classes: res, loaded: true});
                 }
             }).catch(err => console.log(err));
-    }
-
-    addClass = () => {
-        this.getData()
+        this.getUserData()
             .then(res => {
-                if(res.length === 0){
-                    this.setState({loaded:true, empty:true});
-                }else{
-                    this.setState({classes: res, loaded: true});
+                if(res.length !== 0){
+                    this.setState({classUser: res, loaded: true});
                 }
             }).catch(err => console.log(err));
     }
 
-    deleteClass = () => {
-        this.getData()
-            .then(res => {
-                if(res.length === 0){
-                    this.setState({loaded:true, empty:true});
-                }else{
-                    this.setState({classes: res, loaded: true});
-                }
-            }).catch(err => console.log(err));
-    }
-
-    updateClass = () => {
+    changeClass = () => {
         this.getData()
             .then(res => {
                 if(res.length === 0){
@@ -110,7 +115,7 @@ class Class extends Component{
             if(this.state.empty){
                 renderHelper = 
                     <CardContent>
-                        <AddClass addClass = {this.addClass}/>
+                        <AddClass addClass = {this.changeClass}/>
                         <Typography>
                             존재하는 교육 데이터가 없습니다. 새로 추가해주시기 바랍니다.
                         </Typography>
@@ -118,9 +123,9 @@ class Class extends Component{
             }else{
                 renderHelper = 
                     <CardContent>
-                    <AddClass addClass = {this.addClass}/>
+                    <AddClass addClass = {this.changeClass}/>
                         {this.state.classes.map((data, index) => (
-                            <ClassData class={data} key={data['교육ID']} deleteClass={this.deleteClass} updateClass={this.updateClass}/>
+                            <ClassData class={data} key={data['교육ID']} deleteClass={this.changeClass} updateClass={this.changeClass} classUser={this.state.classUser}/>
                         ))}
                     </CardContent>
             }

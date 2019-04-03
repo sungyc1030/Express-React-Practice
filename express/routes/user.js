@@ -18,6 +18,15 @@ router.get('/', passport.authenticate("jwt", {session: false}), async (req, res,
     res.send(users);
 });
 
+router.get('/pure', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
+  const users = await User.query()
+    .skipUndefined()
+    .catch((err) => {
+      ErrorHandler(err, res);
+    }); 
+    res.send(users);
+});
+
 router.post('/', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
     //Check admin status
     var bearer = req.headers.authorization;
@@ -32,6 +41,7 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
 
       return;
     }
+    
     var dataIn = req.body;
     var dataOut = {
       mes: "Success"
@@ -60,16 +70,13 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
 
 router.get('/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){
   var id = req.params.userid;
-  var dataOut = {
-    mes: "Success"
-  }
   const user = await User.query()
     .where('유저ID', id)
     .eager('UserClass.Class')
     .catch((err) => {
       ErrorHandler(err, res);
     });
-    res.send(dataOut);
+    res.send(user);
 });
 
 router.post('/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){

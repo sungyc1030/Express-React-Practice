@@ -4,7 +4,9 @@ import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Expansion
 import { TextField, Typography, MenuItem, Button, Divider, Tooltip } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { DeleteForever, Clear } from '@material-ui/icons';
+import { DeleteForever } from '@material-ui/icons';
+import UserDataRow from './UserDataRow';
+import AddUserClass from './AddUserClass';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -46,7 +48,15 @@ const styles = theme => ({
         flexBasis: '100%',
         marginTop: '4px',
         marginBottom: '4px'
-    }
+    },
+    buttonMargin:{
+        marginLeft: '4px',
+        marginRight: '4px'
+    },
+    scrollTable:{
+        maxHeight: '300px',
+        overflow: 'auto'
+    },
 });
 
 const level = [
@@ -235,36 +245,25 @@ class UserData extends Component{
                 </Typography>
         }else{
             renderHelper = 
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className={classes.tableClassesCell} align="center">교육명</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">CAS인증</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.allClasses.map((row, index) => (
-                            <TableRow key={row['교육ID']}>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['교육명']? row.Class['교육명']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['교육일']? row.Class['교육일']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['역할']? row.Class['역할']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['참가여부']? row.Class['참가여부']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['CAS']? '인정': '불인정'}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.Class['ARC']? '인정': '불인정'}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">
-                                    <Button disabled>
-                                        <Clear />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className={classes.tableClassesCell} align="center">교육명</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">CAS인증</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">수정</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {this.state.allClasses.map((row, index) => (
+                                    <UserDataRow data={row} key={row['교육ID']} changeUser={this.props.updateUser} userID={this.state.userID}/>
+                                ))}
+                            </TableBody>
+                        </Table>
         }
 
         return(
@@ -325,9 +324,9 @@ class UserData extends Component{
                     <ExpansionPanelActions>
                         <Tooltip open={this.state.tooltipOpenUpdate} disableFocusListener disableHoverListener disableTouchListener
                             title="수정에 실패하였습니다." placement="left">
-                            <Button size="small" variant="outlined" onClick={this.updateSelectedUser}>유저정보수정</Button>
+                            <Button className={classes.buttonMargin} size="small" variant="outlined" onClick={this.updateSelectedUser}>유저정보수정</Button>
                         </Tooltip>
-                        <Button size="small" variant="outlined" disabled>교육추가</Button>
+                        <AddUserClass data={this.props.user} userClass={this.props.userClass} updateUser={this.props.updateUser}/>
                     </ExpansionPanelActions>
                 </ExpansionPanel>
             </div>

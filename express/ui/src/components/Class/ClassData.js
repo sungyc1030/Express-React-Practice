@@ -4,7 +4,9 @@ import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Expansion
 import { TextField, Typography, MenuItem, Button, Divider, Tooltip } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { DeleteForever, Clear } from '@material-ui/icons';
+import { DeleteForever } from '@material-ui/icons';
+import ClassDataRow from './ClassDataRow';
+import AddClassUser from './AddClassUser';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -40,7 +42,21 @@ const styles = theme => ({
         flexBasis: '100%',
         marginTop: '4px',
         marginBottom: '4px'
-    }
+    },
+    buttonMargin:{
+        marginLeft: '4px',
+        marginRight: '4px'
+    },
+    scrollTableHead:{
+        backgroundColor: "#fff",
+        position: "sticky",
+        top: 0,
+        padding: `${theme.spacing.unit}px`
+    },
+    scrollTable:{
+        maxHeight: '300px',
+        overflow: 'auto'
+    },
 });
 
 const yesno = [
@@ -211,36 +227,26 @@ class ClassData extends Component{
                 </Typography>
         }else{
             renderHelper = 
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className={classes.tableClassesCell} align="center">유저번호</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">유저이름</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">파트</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
-                            <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.allUsers.map((row, index) => (
-                            <TableRow key={row.User['유저ID']}>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.User['유저번호']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.User['이름']}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.User['파트']? row.User['파트']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row.User['직종']? row.User['직종']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['역할']? row['역할']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">{row['참가여부']? row['참가여부']: ''}</TableCell>
-                                <TableCell className={classes.tableClassesCell} align="center">
-                                    <Button disabled>
-                                        <Clear />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className={classes.tableClassesCell} align="center">유저번호</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">유저이름</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">파트</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">수정</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {this.state.allUsers.map((row, index) => (
+                                    <ClassDataRow data={row} key={row.User['유저ID']} changeClass={this.props.updateClass} classID={this.state.classID}/>
+                                ))}
+                            </TableBody>
+                        </Table>
+
         }
 
         return(
@@ -289,7 +295,7 @@ class ClassData extends Component{
                             title="수정에 실패하였습니다." placement="left">
                             <Button size="small" variant="outlined" onClick={this.updateSelectedClass}>교육정보수정</Button>
                         </Tooltip>
-                        <Button size="small" variant="outlined" disabled>유저추가</Button>
+                        <AddClassUser data={this.props.class} classUser={this.props.classUser} updateClass={this.props.updateClass}/>
                     </ExpansionPanelActions>
                 </ExpansionPanel>
             </div>

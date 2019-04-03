@@ -43,6 +43,7 @@ router.post('/', function(req, res, next){
             username: user.이름,
             userno: user.유저번호,
             admin: user.애드민,
+            userid: user.유저ID,
             expires: Date.now() + (60 * 60 * 1000)
         }
 

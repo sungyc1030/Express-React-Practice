@@ -112,8 +112,8 @@ class AddUser extends Component{
             this.postData()
                 .then(res => {
                     if(res.mes === 'Success'){
-                        this.props.addUser();
                         this.handleFormClose();
+                        this.props.addUser();    
                     }else{
                         this.setState({tooltipOpen: true, tooltipMes: '서버와의 연결 문제로 유저등록에 실패했습니다.'});
                     }
@@ -156,9 +156,9 @@ class AddUser extends Component{
         return(
             <div>
                 <div className={classes.userListTop}>
-                <Fab color="primary" aria-label="Add" className={classes.fab} size="small" onClick={this.handleFormOpen}>
-                    <Add />
-                </Fab>
+                    <Fab color="primary" aria-label="Add" className={classes.fab} size="small" onClick={this.handleFormOpen}>
+                        <Add />
+                    </Fab>
                 </div>
                 <Dialog open={this.state.open} onClose={this.handleFormClose} onEnter={this.dialogEnter} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">신규유저생성</DialogTitle>

@@ -51,16 +51,19 @@ class Index extends Component{
         //Check if there is jwt
         var token = localStorage.getItem('jwt');
         if(token !== null){
-            if(token !== this.tokenHolder){
-                try{
-                    var decoded = jwt_decode(token);
+            try{
+                var decoded = jwt_decode(token);
+                if(Date.now() > decoded.expires){
+                    this.setState({isAuth: false, isAdmin: "사용자"});
+                    localStorage.removeItem('jwt');
+                }else if(token !== this.tokenHolder){
                     this.setState({isAuth: true, isAdmin: decoded.admin});
                     this.tokenHolder = token;
-                }catch(err){
-                    //JWT corrupted
-                    localStorage.removeItem('jwt');
                 }
-            }      
+            }catch(err){
+                //JWT corrupted
+                localStorage.removeItem('jwt');
+            }
         }
     }
 

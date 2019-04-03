@@ -9,8 +9,20 @@ var jwt_decode = require('jwt-decode');
 router.get('/', passport.authenticate("jwt", {session: false}), async (req, res, next) =>{
     const classes = await Class.query()
       .skipUndefined()
-      .eager('UserClass.User');
+      .eager('UserClass.User')
+      .catch((err) => {
+        ErrorHandler(err, res);
+      });
     res.send(classes);
+});
+
+router.get('/pure', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
+  const classes = await Class.query()
+    .skipUndefined()
+    .catch((err) => {
+      ErrorHandler(err, res);
+    });
+  res.send(classes);
 });
 
 router.post('/', passport.authenticate("jwt", {session: false}), async function(req, res, next){
