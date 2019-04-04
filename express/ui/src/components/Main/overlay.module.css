@@ -1,0 +1,56 @@
+.overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    overflow: auto;
+}
+
+.printHorizontal {
+    border: 1px solid black;
+    width: 297mm;
+    height: 210mm;
+}
+
+.printSubHorizontal {
+    border: 1px solid black;
+    margin: 3mm;
+    padding: 2mm;
+    height: 204mm;
+}
+
+.printVertical {
+    border: 1px solid black;
+    width: 210mm;
+    height: 297mm;
+}
+
+.printSubVertical {
+    border: 1px solid black;
+    margin: 3mm;
+    padding: 2mm;
+    height: 291mm;
+}
+
+.btnDiv{
+    background-color: white;
+}
+
+
+@media print {
+    .overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .btnDiv{
+        display:none;
+    }
+}

@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Card, CardContent, CardHeader, Button, Avatar, Divider, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, CardHeader, Avatar, Divider, Typography } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import TopBar from '../TopBar';
-import { Autorenew, Print, Description, Person, Build, LibraryBooks } from '@material-ui/icons';
+import { Person, Build, LibraryBooks } from '@material-ui/icons';
 import jwt_decode from 'jwt-decode';
 import { blueGrey, indigo, amber } from '@material-ui/core/colors'
+import PrintClasses from  './PrintClasses';
+import PrintCertificate from './PrintCertificate';
+import PasswordChange from './PasswordChange'
+import PrintPage from './PrintPage'
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -71,7 +75,9 @@ class Main extends Component{
 
         this.state = {
             user: {},
-            userClass: []
+            userClass: [],
+            printShow: false,
+            printOrientation: 'Horizontal'
         }
     }
 
@@ -101,6 +107,14 @@ class Main extends Component{
             .then(res => {
                 this.setState({user: res[0], userClass: res[0].UserClass});
             }).catch(err => console.log(err));
+    }
+
+    showPrintForm = (ori) => {
+        this.setState({printShow: true, printOrientation: ori});
+    }
+
+    hidePrintForm = () => {
+        this.setState({printShow: false});
     }
 
     render(){
@@ -169,18 +183,9 @@ class Main extends Component{
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent className={classes.cardBtn}>
-                                    <Button disabled variant="contained" color="primary" className = {classes.button}>
-                                        <Autorenew className={classes.icon} />
-                                        패스워드 변경
-                                    </Button>
-                                    <Button disabled variant="contained" color="primary" className = {classes.button}>
-                                        <Description className={classes.icon} />
-                                        교육 이수 현황 출력
-                                    </Button>
-                                    <Button disabled variant="contained" color="primary" className = {classes.button}>
-                                        <Print className={classes.icon} />
-                                        인증서 출력
-                                    </Button>
+                                    <PasswordChange />
+                                    <PrintClasses show={this.showPrintForm} />
+                                    <PrintCertificate show={this.showPrintForm} />
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -229,6 +234,7 @@ class Main extends Component{
                         </Grid>
                     </Grid>
                 </Grid>
+                <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation} />
             </div>
         );
     }
