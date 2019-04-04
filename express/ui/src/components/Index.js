@@ -22,7 +22,6 @@ class Index extends Component{
         var token = localStorage.getItem('jwt');
 
         var decoded = jwt_decode(token);
-        console.log(decoded);
 
         this.setState({isAuth: true, isAdmin: decoded.admin});
         this.props.history.push("/");
