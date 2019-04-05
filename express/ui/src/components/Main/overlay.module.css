@@ -38,6 +38,18 @@
     background-color: white;
 }
 
+.gold{
+    background-image: '../../../public/img/goldLevel.JPG'
+}
+
+.silver{
+    background-image: '../../../public/img/silverLevel.JPG'
+}
+
+.educationList{
+    background-image: '../../../public/img/education.JPG'
+}
+
 
 @media print {
     .overlay {

@@ -119,6 +119,12 @@ class Main extends Component{
 
     render(){
         const {classes} = this.props;
+
+        var disableCertificate = {}
+        if(this.state.user.레벨 === 'Normal'){
+            disableCertificate.disableBtn = true;
+        }
+
         return(
             <div className = {classes.root}>
                 <TopBar logout={this.props.logout} admin={this.props.admin}/>
@@ -185,7 +191,7 @@ class Main extends Component{
                                 <CardContent className={classes.cardBtn}>
                                     <PasswordChange />
                                     <PrintClasses show={this.showPrintForm} />
-                                    <PrintCertificate show={this.showPrintForm} />
+                                    <PrintCertificate show={this.showPrintForm} {...disableCertificate}/>
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -234,7 +240,8 @@ class Main extends Component{
                         </Grid>
                     </Grid>
                 </Grid>
-                <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation} />
+                <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation}
+                    level={this.state.user.레벨} userClass={this.state.userClass}/>
             </div>
         );
     }

@@ -33,13 +33,16 @@ class PrintPage extends Component{
 
         var printOriMain;
         var printOriSub;
-
-        console.log(overlay);
-        console.log(this.props.orientation);
+        var levelClass;
 
         if(this.props.orientation === 'Horizontal'){
+            if(this.props.level === 'Silver'){
+                levelClass = overlay.silver
+            }else if(this.props.level === 'Gold'){
+                levelClass = overlay.gold
+            }
             printOriMain = overlay.printHorizontal;
-            printOriSub = overlay.printSubHorizontal;
+            printOriSub = [overlay.printSubHorizontal, levelClass].join(" ");
         }else if(this.props.orientation === 'Vertical'){
             printOriMain = overlay.printVertical;
             printOriSub = overlay.printSubVertical;

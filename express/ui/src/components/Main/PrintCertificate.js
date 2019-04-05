@@ -29,9 +29,14 @@ class PrintCertificate extends Component{
 
     render(){
         const { classes } = this.props;
+
+        var disableBtn = {}
+        if(this.props.disableBtn){
+            disableBtn.disabled = true;
+        }
         
         return(
-            <Button variant="contained" color="primary" className = {classes.button} onClick={this.handleClick}>
+            <Button variant="contained" color="primary" className = {classes.button} onClick={this.handleClick} {...disableBtn}>
                 <Print className={classes.icon} />
                 인증서 출력
             </Button>
