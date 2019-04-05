@@ -23,14 +23,14 @@ class PasswordChange extends Component{
     }
 
     handleClick = () => {
-        console.log("change password");
+        
     }
 
     render(){
         const { classes } = this.props;
         
         return(
-            <Button variant="contained" color="primary" className = {classes.button} onClick={this.handleClick}>
+            <Button disabled variant="contained" color="primary" className = {classes.button} onClick={this.handleClick}>
                 <Autorenew className={classes.icon} />
                 패스워드 변경
             </Button>

@@ -17,7 +17,6 @@
 .printSubHorizontal {
     border: 1px solid black;
     margin: 3mm;
-    padding: 2mm;
     height: 204mm;
 }
 
@@ -30,26 +29,34 @@
 .printSubVertical {
     border: 1px solid black;
     margin: 3mm;
-    padding: 2mm;
     height: 291mm;
 }
 
 .btnDiv{
     background-color: white;
+    z-index: 1040;
 }
 
 .gold{
-    background-image: '../../../public/img/goldLevel.JPG'
+    background-image: url(./img/goldLevel.JPG);
+    background-size: contain;
 }
 
 .silver{
-    background-image: '../../../public/img/silverLevel.JPG'
+    background-image: url(./img/silverLevel.JPG);
+    background-size: contain;
 }
 
 .educationList{
-    background-image: '../../../public/img/education.JPG'
+    background-image: url(./img/education.JPG);
+    background-size: contain;
 }
 
+.img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
 
 @media print {
     .overlay {
@@ -64,5 +71,15 @@
 
     .btnDiv{
         display:none;
+    }
+
+    .printHorizontal
+    .printSubHorizontal{
+        border: none;
+    }
+
+    .printVertical
+    .printSubVertical{
+        border: none;
     }
 }

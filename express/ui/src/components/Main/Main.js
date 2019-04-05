@@ -115,6 +115,13 @@ class Main extends Component{
 
     hidePrintForm = () => {
         this.setState({printShow: false});
+
+        //Little bit of a hack....
+        //Remove @page style
+        var prevStyle = document.getElementById('pageStyle');
+        if(prevStyle){
+            prevStyle.parentNode.removeChild(prevStyle);
+        }
     }
 
     render(){
@@ -241,7 +248,8 @@ class Main extends Component{
                     </Grid>
                 </Grid>
                 <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation}
-                    level={this.state.user.레벨} userClass={this.state.userClass}/>
+                    level={this.state.user.레벨} userClass={this.state.userClass} name={this.state.user.이름} job={this.state.user.직종} userNo={this.state.유저번호}
+                    affil={this.state.user.소속}/>
             </div>
         );
     }

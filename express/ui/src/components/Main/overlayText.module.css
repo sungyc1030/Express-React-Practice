@@ -1,0 +1,86 @@
+.variableText {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.cCertifiedDate{
+    left: 202px;
+    top: 194px;
+    position: absolute;
+}
+
+.cDocumentNo{
+    left: 250px;
+    top: 217px;
+    position: absolute;
+}
+
+.cName{
+    left: 448px;
+    top: 300px;
+    position: absolute;
+}
+
+.cIssuedDate{
+    left: 970px;
+    top: 754px;
+    position: absolute;
+}
+
+.cSignature1{
+    left: 260px;
+    top: 570px;
+    position: absolute;
+}
+
+.cSignature2{
+    left: 720px;
+    top: 570px;
+    position: absolute;
+}
+
+.eIssuedDate{
+    left: 600px;
+    top: 102px;
+    position: absolute;
+}
+
+.eJobNo{
+    left: 478px;
+    top: 216px;
+    position: absolute;
+}
+
+.eYear{
+    left: 478px;
+    top: 248px;
+    position: absolute;
+}
+
+.eAffil{
+    left: 478px;
+    top: 280px;
+    position: absolute;
+}
+
+.eName{
+    left: 478px;
+    top: 308px;
+    position: absolute;
+}
+
+.eTable{
+    left: 90px;
+    top: 434px;
+    position: absolute;
+}
+
+.eSignature{
+    left: 374px;
+    top: 926px;
+    position: absolute;
+}

@@ -23,7 +23,6 @@ class PrintClasses extends Component{
     }
 
     handleClick = () => {
-        console.log("classes");
         this.props.show('Vertical');
     }
 

@@ -23,7 +23,6 @@ class PrintCertificate extends Component{
     }
 
     handleClick = () => {
-        console.log("certificate");
         this.props.show('Horizontal');
     }
 
