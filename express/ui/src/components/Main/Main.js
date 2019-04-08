@@ -77,7 +77,8 @@ class Main extends Component{
             user: {},
             userClass: [],
             printShow: false,
-            printOrientation: 'Horizontal'
+            printOrientation: 'Horizontal',
+            classYear: 0
         }
     }
 
@@ -109,8 +110,12 @@ class Main extends Component{
             }).catch(err => console.log(err));
     }
 
-    showPrintForm = (ori) => {
-        this.setState({printShow: true, printOrientation: ori});
+    showPrintForm = (ori, year = 0) => {
+        if(year === 0){
+            this.setState({printShow: true, printOrientation: ori});
+        }else{
+            this.setState({printShow: true, printOrientation: ori, classYear: year});
+        }
     }
 
     hidePrintForm = () => {
@@ -130,6 +135,11 @@ class Main extends Component{
         var disableCertificate = {}
         if(this.state.user.레벨 === 'Normal'){
             disableCertificate.disableBtn = true;
+        }
+
+        var disableEducation = {}
+        if(this.state.userClass.length === 0){
+            disableEducation.disableBtn = true;
         }
 
         return(
@@ -197,7 +207,7 @@ class Main extends Component{
                                 <Divider className={classes.divider}/>
                                 <CardContent className={classes.cardBtn}>
                                     <PasswordChange />
-                                    <PrintClasses show={this.showPrintForm} />
+                                    <PrintClasses show={this.showPrintForm} userClass={this.state.userClass} {...disableEducation}/>
                                     <PrintCertificate show={this.showPrintForm} {...disableCertificate}/>
                                 </CardContent>
                             </Card>
@@ -248,8 +258,8 @@ class Main extends Component{
                     </Grid>
                 </Grid>
                 <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation}
-                    level={this.state.user.레벨} userClass={this.state.userClass} name={this.state.user.이름} job={this.state.user.직종} userNo={this.state.유저번호}
-                    affil={this.state.user.소속}/>
+                    level={this.state.user.레벨} userClass={this.state.userClass} name={this.state.user.이름} job={this.state.user.직종} userNo={this.state.user.유저번호}
+                    affil={this.state.user.소속} classYear={this.state.classYear} />
             </div>
         );
     }

@@ -11,40 +11,51 @@
     left: 202px;
     top: 194px;
     position: absolute;
+    font-style: italic;
 }
 
 .cDocumentNo{
     left: 250px;
     top: 217px;
     position: absolute;
+    font-style: italic;
 }
 
 .cName{
-    left: 448px;
+    /*left: 448px;*/
+    /*left: 480px;*/
+    width: 297mm;
+    justify-content: center;
+    display: flex;
     top: 300px;
     position: absolute;
+    font-size: 54px;
+    font-style: italic;
 }
 
 .cIssuedDate{
-    left: 970px;
+    left: 960px;
     top: 754px;
     position: absolute;
+    font-style: italic;
 }
 
 .cSignature1{
-    left: 260px;
+    left: 264px;
     top: 570px;
     position: absolute;
+    font-size: 60px;
 }
 
 .cSignature2{
-    left: 720px;
+    left: 710px;
     top: 570px;
     position: absolute;
+    font-size: 60px;
 }
 
 .eIssuedDate{
-    left: 600px;
+    left: 570px;
     top: 102px;
     position: absolute;
 }
@@ -69,7 +80,7 @@
 
 .eName{
     left: 478px;
-    top: 308px;
+    top: 310px;
     position: absolute;
 }
 
@@ -77,10 +88,12 @@
     left: 90px;
     top: 434px;
     position: absolute;
+    width: 162mm;
 }
 
 .eSignature{
     left: 374px;
-    top: 926px;
+    top: 924px;
     position: absolute;
+    font-size: 32px;
 }

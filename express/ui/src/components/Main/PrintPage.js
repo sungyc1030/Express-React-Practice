@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import overlay from './overlay.module.css';
 import overlayText from './overlayText.module.css';
 import posed from 'react-pose';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import silver from './img/silverLevel.JPG';
 import gold from './img/goldLevel.JPG';
-import ed from './img/education.JPG'
+import ed from './img/education.JPG';
+import { grey } from '@material-ui/core/colors'
+
+const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
 const styles = theme => ({
-    
+    tablePrint:{
+        tableLayout: 'fixed'
+    }
 });
 
 const Page = posed.div({
@@ -21,7 +29,22 @@ const Page = posed.div({
         applyAtEnd: { display: 'none'},
         opacity: 0
     }
-})
+});
+
+const CustomTableCell = withStyles(theme => ({
+    head: {
+      backgroundColor: grey[300],
+      color: theme.palette.common.black,
+      padding: `${theme.spacing.unit}px`,
+      fontSize: 14,
+      border: '1px solid black'
+    },
+    body: {
+      fontSize: 14,
+      padding: `${theme.spacing.unit}px`,
+      border: '1px solid black'
+    },
+  }))(TableCell);
 
 class PrintPage extends Component{
     constructor(props){
@@ -58,7 +81,7 @@ class PrintPage extends Component{
     }
 
     render(){
-        //const { classes } = this.props;
+        const { classes } = this.props;
 
         var printOriMain;
         var printOriSub;
@@ -76,11 +99,14 @@ class PrintPage extends Component{
         var eYear = '';
         var eAffil = '';
         var eName = '';
-        var eTable = '';
         var eSignature = '';
 
+        var renderHelper = '';
+
         var today = new Date();
-        var todayStr = today.getFullYear() + " - " + today.getMonth().toLocaleString(undefined, {minimumIntegerDigits: 2}) + " - " + today.getDay();
+        var todayStr = today.getFullYear() + "-" + (today.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}) + "-" + 
+            today.getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
+        var todayStrEng = monthNames[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
 
         if(this.props.orientation === 'Horizontal'){
             printOriMain = overlay.printHorizontal;
@@ -94,7 +120,7 @@ class PrintPage extends Component{
                 imgSrc = gold;
                 alt = "Gold";
             }
-            cCertifiedDate = todayStr;
+            cCertifiedDate = todayStrEng;
             cDocumentNo = today.getFullYear() + '001';
             cName = this.props.name;
             cIssuedDate = '발급일 : ' + todayStr;
@@ -110,8 +136,38 @@ class PrintPage extends Component{
             eYear = today.getFullYear();
             eAffil = this.props.affil;
             eName = this.props.name;
-            eTable = '테이블';
             eSignature = '이름';
+
+            renderHelper = 
+                (this.props.userClass.length === 0 ?
+                    <Typography>
+                        존재하는 교육이 없습니다. 애초에 이 전에 버튼등등 막아놓은게 많은데 당신은 어떻게 여기까지 들어온거죠?
+                    </Typography>
+                    :
+                    <Table className={classes.tablePrint}>
+                        <TableHead>
+                            <TableRow>
+                                <CustomTableCell align="center">교 육 명</CustomTableCell>
+                                <CustomTableCell align="center">교 육 일</CustomTableCell>
+                                <CustomTableCell align="center">역 할</CustomTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {this.props.userClass.map((row, index) => {
+                                var educationDate = new Date(row.Class.교육일);
+                                var educationDateStr = educationDate.getFullYear() + '년 ' + (educationDate.getMonth() + 1) + '월 ' + educationDate.getDate() + '일';
+
+                                return(
+                                    <TableRow key={index}>
+                                        <CustomTableCell align="center">{row.Class.교육명}</CustomTableCell>
+                                        <CustomTableCell align="center">{educationDateStr}</CustomTableCell>
+                                        <CustomTableCell align="center">{row.역할}</CustomTableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                )
         }
 
         return(
@@ -156,7 +212,7 @@ class PrintPage extends Component{
                         {eName}
                     </div>
                     <div className={overlayText.eTable}>
-                        {eTable}
+                        {renderHelper}
                     </div>
                     <div className={overlayText.eSignature}>
                         {eSignature}
