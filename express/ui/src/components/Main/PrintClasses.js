@@ -18,6 +18,15 @@ const styles = theme => ({
         marginRight: theme.spacing.unit,
         width: '200px',
         color: theme.color
+    },
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: '200px',
+        color: theme.color
+    },
+    timeRange: {
+        display: 'flex'
     }
 });
 
@@ -26,11 +35,15 @@ class PrintClasses extends Component{
         super(props);
 
         this.yearRange = [];
+        this.start = ""
+        this.end = ""
 
         this.state = {
             open: false,
             year: [],
-            selectedYear: 0
+            selectedYear: 0,
+            startDate: "",
+            endDate: "" 
         };
     }
 
@@ -43,10 +56,24 @@ class PrintClasses extends Component{
             var yset = new Set();
             for(var i = 0; i < classArr.length; i++){
                 var single = classArr[i].Class;
-                var date = new Date(single.교육일);
-                var year = date.getFullYear();
-                if(!isNaN(year)){
-                    yset.add(year);
+                try{
+                    var date = new Date(single.교육일);
+                    var year = date.getFullYear();
+                    if(!isNaN(year)){
+                        yset.add(year);
+                    }
+                    if(this.start === ""){
+                        this.start = date;
+                    }else if(this.start > date){
+                        this.start = date;
+                    }
+                    if(this.end === ""){
+                        this.end = date;
+                    }else if(this.end < date){
+                        this.end = date;
+                    }
+                }catch(err){
+
                 }
             }
             for(let y of yset){
@@ -56,11 +83,17 @@ class PrintClasses extends Component{
         }
     }
 
+    numberFormat(n){
+        return n > 9 ? "" + n: "0" + n
+    }
+
     handleFormOpen = () => {
         if(this.yearRange.length === 0){
             this.setState({ open: true })
         }else{
-            this.setState({ open: true, year: this.yearRange, selectedYear: this.yearRange[0] });
+            var start = this.start.getFullYear() + '-' + this.numberFormat(this.start.getMonth() + 1) + '-' + this.numberFormat(this.start.getDate());
+            var end = this.end.getFullYear() + '-' + this.numberFormat(this.end.getMonth() + 1) + '-' + this.numberFormat(this.end.getDate());
+            this.setState({ open: true, year: this.yearRange, selectedYear: this.yearRange[0], startDate: start, endDate: end });
         }
     };
 
@@ -83,6 +116,11 @@ class PrintClasses extends Component{
         this.handleFormClose();
     }
 
+    handleTimeSelect = () => {
+        this.props.show('Vertical', 0, this.state.startDate, this.state.endDate);
+        this.handleFormClose();
+    }
+
     render(){
         const { classes } = this.props;
 
@@ -98,24 +136,35 @@ class PrintClasses extends Component{
                     교육 이수 현황 출력
                 </Button>
                 <Dialog open={this.state.open} onClose={this.handleFormClose} onEnter={this.dialogEnter}>
-                    <DialogTitle>년도선택</DialogTitle>
+                    <DialogTitle>기간선택</DialogTitle>
                     <DialogContent>
                         {this.state.year.length === 0 ? 
                             <Typography color={red[500]}>수강한 교육이 존재하지 않습니다.</Typography>
-                            :null
+                            :
+                            <div>
+                                <TextField label="년도" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                                    value={this.state.selectedYear} onChange={this.handleTextFieldChange('selectedYear')} margin="normal" variant="outlined">
+                                    {this.state.year.map(option => (
+                                        <MenuItem key={option} value={option}>
+                                            {option}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                <div className={classes.timeRange}>
+                                    <TextField label="시작" className = {classes.textFieldSelect} value={this.state.startDate} onChange={this.handleTextFieldChange('startDate')}>
+                                    </TextField>
+                                    <TextField label="끝" className = {classes.textFieldSelect} value={this.state.endDate} onChange={this.handleTextFieldChange('endDate')}>
+                                    </TextField>
+                                </div>
+                            </div>
                         }
-                        <TextField label="년도" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
-                            value={this.state.selectedYear} onChange={this.handleTextFieldChange('selectedYear')} margin="normal" variant="outlined">
-                            {this.state.year.map(option => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
                     </DialogContent>
                     <DialogActions>
+                        <Button variant="contained" color="primary" onClick={this.handleTimeSelect}>
+                            기간으로뽑기
+                        </Button>
                         <Button variant="contained" color="primary" onClick={this.handleYearSelect}>
-                            확인
+                            년도로뽑기
                         </Button>
                         <Button variant="contained" color="secondary" onClick={this.handleFormClose}>
                             취소

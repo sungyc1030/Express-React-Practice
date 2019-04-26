@@ -156,13 +156,34 @@ class PrintPage extends Component{
                             {this.props.userClass.map((row, index) => {
                                 var educationDate = new Date(row.Class.교육일);
                                 var educationDateStr = educationDate.getFullYear() + '년 ' + (educationDate.getMonth() + 1) + '월 ' + educationDate.getDate() + '일';
+                                var printStatus = false;
 
-                                return(
+                                if(this.props.which === 2){
+                                    if(this.props.startDate !== ""){
+                                        var start = new Date(this.props.startDate);
+                                        var end = new Date(this.props.endDate);
+                                        if(educationDate >= start && educationDate <= end){
+                                            printStatus = true;
+                                        }
+                                    }
+                                }else if(this.props.which === 1){
+                                    if(this.props.classYear !== 0){
+                                        if(educationDate.getFullYear() === this.props.classYear){
+                                            printStatus = true;
+                                        }
+                                    }
+                                }
+
+                                var comp = printStatus?
                                     <TableRow key={index}>
                                         <CustomTableCell align="center">{row.Class.교육명}</CustomTableCell>
                                         <CustomTableCell align="center">{educationDateStr}</CustomTableCell>
                                         <CustomTableCell align="center">{row.역할}</CustomTableCell>
                                     </TableRow>
+                                    :
+                                    null
+                                return(
+                                    comp
                                 )
                             })}
                         </TableBody>

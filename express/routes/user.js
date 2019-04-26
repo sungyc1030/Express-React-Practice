@@ -130,4 +130,70 @@ router.delete('/:userid', passport.authenticate("jwt", {session: false}), async 
     res.send(dataOut);
 });
 
+router.post('/preset/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){
+    //Check admin status
+    var bearer = req.headers.authorization;
+    var token = bearer.replace('Bearer ', '');
+    var decoded = jwt_decode(token);
+    if(decoded.admin !== '관리자'){
+      res.status(401).json(
+        {
+            message: '관리자 권한이 없습니다.'
+        }
+      );
+    
+      return;
+    }
+    console.log("here");
+    var id = req.params.userid;
+    var dataIn = req.body;
+    var dataOut = {
+      mes: "Success"
+    }
+    const hashCost = 10;
+    const passwordHash = await bcrypt.hash(dataIn.userNo.toString(), hashCost);
+    console.log("there");
+    const user = await User.query()
+      .update({
+        비밀번호: passwordHash
+      })
+      .where('유저ID', id)
+      .catch((err) => {
+        ErrorHandler(err, res);
+      });
+      res.send(dataOut);
+});
+
+router.post('/pchange/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){
+  //Check admin status
+  var bearer = req.headers.authorization;
+  var token = bearer.replace('Bearer ', '');
+  var decoded = jwt_decode(token);
+  if(decoded.admin !== '관리자'){
+    res.status(401).json(
+      {
+          message: '관리자 권한이 없습니다.'
+      }
+    );
+  
+    return;
+  }
+  var id = req.params.userid;
+  var dataIn = req.body;
+  var dataOut = {
+    mes: "Success"
+  }
+  const hashCost = 10;
+  const passwordHash = await bcrypt.hash(dataIn.userNo, hashCost);
+  const user = await User.query()
+    .update({
+      비밀번호: passwordHash
+    })
+    .where('유저ID', id)
+    .catch((err) => {
+      ErrorHandler(err, res);
+    });
+    res.send(dataOut);
+});
+
 module.exports = router;

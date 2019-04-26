@@ -78,7 +78,10 @@ class Main extends Component{
             userClass: [],
             printShow: false,
             printOrientation: 'Horizontal',
-            classYear: 0
+            classYear: 0,
+            startDate: "",
+            endDate: "",
+            printWhich: 1 //1 is year, 2 is time range
         }
     }
 
@@ -110,11 +113,15 @@ class Main extends Component{
             }).catch(err => console.log(err));
     }
 
-    showPrintForm = (ori, year = 0) => {
+    showPrintForm = (ori, year = 0, startDate = "", endDate = "") => {
         if(year === 0){
-            this.setState({printShow: true, printOrientation: ori});
+            if(startDate === "" || endDate === ""){
+                this.setState({printShow: true, printOrientation: ori});
+            }else{
+                this.setState({printShow: true, printOrientation: ori, startDate: startDate, endDate: endDate, printWhich: 2});
+            }
         }else{
-            this.setState({printShow: true, printOrientation: ori, classYear: year});
+            this.setState({printShow: true, printOrientation: ori, classYear: year, printWhich: 1});
         }
     }
 
@@ -259,7 +266,7 @@ class Main extends Component{
                 </Grid>
                 <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation}
                     level={this.state.user.레벨} userClass={this.state.userClass} name={this.state.user.이름} job={this.state.user.직종} userNo={this.state.user.유저번호}
-                    affil={this.state.user.소속} classYear={this.state.classYear} />
+                    affil={this.state.user.소속} classYear={this.state.classYear} startDate={this.state.startDate} endDate={this.state.endDate} which={this.state.printWhich}/>
             </div>
         );
     }

@@ -4,7 +4,7 @@ import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Expansion
 import { TextField, Typography, MenuItem, Button, Divider, Tooltip } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { DeleteForever } from '@material-ui/icons';
+import { DeleteForever, SettingsBackupRestore } from '@material-ui/icons';
 import UserDataRow from './UserDataRow';
 import AddUserClass from './AddUserClass';
 
@@ -31,9 +31,12 @@ const styles = theme => ({
         flexBasis: '30%'
     },
     panelSub:{
-        flexBasis: '55%'
+        flexBasis: '43%'
     },
     deleteUser:{
+        justifyContent: 'center'
+    },
+    passwordReset:{
         justifyContent: 'center'
     },
     tableClasses:{
@@ -88,6 +91,8 @@ class UserData extends Component{
             allClasses: [],
             tooltipOpen: false,
             tooltipOpenUpdate: false,
+            tooltipPassOpen: false,
+            passwordResetMessage: '패스워드 리셋에 실패하였습니다.'
         }
     } 
 
@@ -233,6 +238,68 @@ class UserData extends Component{
         return body;
     }
 
+    passwordReset = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState({tooltipPassOpen: false});
+
+        this.queryResetPasswordForUser()
+            .then(res => {
+                if(res.mes === 'Success'){
+                    this.setState({tooltipOpenUpdate: true, passwordResetMessage: '성공'});
+                    setTimeout(() => {
+                        this.setState({tooltipOpenUpdate: false})
+                    }, 1500);
+                }else{
+                    this.setState({tooltipOpenUpdate: true, passwordResetMessage: '패스워드 리셋에 실패하였습니다.'});
+                    setTimeout(() => {
+                        this.setState({tooltipOpenUpdate: false})
+                    }, 1500);
+                }
+            }).catch(err => {
+                this.setState({tooltipPassOpen: true, passwordResetMessage: '패스워드 리셋에 실패하였습니다.'});
+                setTimeout(() => {
+                    this.setState({tooltipPassOpen: false})
+                }, 1500);
+            });
+    }
+
+    queryResetPasswordForUser = async() => {
+        var id = this.state.userID;
+        var token = localStorage.getItem('jwt');
+        var response;
+        var data = JSON.stringify({
+            userNo: this.state.userNo,
+            post: 'Reset Password',
+            userName: this.state.userName
+        });
+        if(token !== null){
+            response = await fetch('/api/user/preset/' + id, {
+               method: 'POST',
+               headers: {
+                   'Accept': 'application/json',
+                   'Content-Type': 'application/json',
+                   'Authorization': 'Bearer ' + token
+               },
+               body: data
+            });
+        }else{
+            response = await fetch('/api/user/preset/' + id, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: data
+             });
+        }
+
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+    
+        return body;
+    }
+
     render(){
         const {classes} = this.props;
 
@@ -277,8 +344,17 @@ class UserData extends Component{
                             {'소속:   ' + this.state.userAffil + ',   파트:   ' 
                                 + this.state.userPart + ',   직종:   ' + this.state.userJob}
                         </Typography>
+                        <Tooltip open={this.state.tooltipPassOpen} disableFocusListener disableHoverListener disableTouchListener
+                            title={this.state.passwordResetMessage} placement="top">
+                            <Button className={classes.passwordReset} onClick={this.passwordReset}>
+                                <SettingsBackupRestore/>
+                                <Typography>
+                                    비밀번호 초기화
+                                </Typography>
+                            </Button>
+                        </Tooltip>
                         <Tooltip open={this.state.tooltipOpen} disableFocusListener disableHoverListener disableTouchListener
-                            title="삭제에 실패하였습니다." placement="left">
+                            title="삭제에 실패하였습니다." placement="top">
                             <Button className={classes.deleteUser} onClick={this.deleteSelectedUser}>
                                 <DeleteForever/>
                                 <Typography>
