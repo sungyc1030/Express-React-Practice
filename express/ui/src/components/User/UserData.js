@@ -246,14 +246,14 @@ class UserData extends Component{
         this.queryResetPasswordForUser()
             .then(res => {
                 if(res.mes === 'Success'){
-                    this.setState({tooltipOpenUpdate: true, passwordResetMessage: '성공'});
+                    this.setState({tooltipPassOpen: true, passwordResetMessage: '성공'});
                     setTimeout(() => {
-                        this.setState({tooltipOpenUpdate: false})
+                        this.setState({tooltipPassOpen: false})
                     }, 1500);
                 }else{
-                    this.setState({tooltipOpenUpdate: true, passwordResetMessage: '패스워드 리셋에 실패하였습니다.'});
+                    this.setState({tooltipPassOpen: true, passwordResetMessage: '패스워드 리셋에 실패하였습니다.'});
                     setTimeout(() => {
-                        this.setState({tooltipOpenUpdate: false})
+                        this.setState({tooltipPassOpen: false})
                     }, 1500);
                 }
             }).catch(err => {

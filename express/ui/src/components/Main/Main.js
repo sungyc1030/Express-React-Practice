@@ -213,7 +213,7 @@ class Main extends Component{
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent className={classes.cardBtn}>
-                                    <PasswordChange />
+                                    <PasswordChange user={this.state.user}/>
                                     <PrintClasses show={this.showPrintForm} userClass={this.state.userClass} {...disableEducation}/>
                                     <PrintCertificate show={this.showPrintForm} {...disableCertificate}/>
                                 </CardContent>

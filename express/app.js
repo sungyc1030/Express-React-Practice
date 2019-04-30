@@ -9,6 +9,7 @@ const Knex = require('knex');
 
 const userRouter = require('./routes/user');
 const loginRouter = require('./routes/login');
+const configRouter = require('./routes/config');
 const attendanceRouter = require('./routes/attendance');
 const classRouter = require('./routes/class');
 
@@ -41,6 +42,7 @@ app.use('/api/user', userRouter);
 app.use('/api/class', classRouter);
 app.use('/api/attendance', attendanceRouter);
 app.use('/api/login', loginRouter);
+app.use('/api/config', configRouter);
 
 //Redirect to index if any other request come in. Or maybe error page
 app.get('*', (req, res, next) => {

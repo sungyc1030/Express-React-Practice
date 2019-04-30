@@ -86,7 +86,7 @@ router.post('/:userid', passport.authenticate("jwt", {session: false}), async fu
     mes: "Success"
   }
   const user = await User.query()
-    .update({
+    .patch({
       유저번호: dataIn.userNo,
       이름: dataIn.userName,
       소속: dataIn.userAffil,
@@ -144,7 +144,6 @@ router.post('/preset/:userid', passport.authenticate("jwt", {session: false}), a
     
       return;
     }
-    console.log("here");
     var id = req.params.userid;
     var dataIn = req.body;
     var dataOut = {
@@ -152,16 +151,16 @@ router.post('/preset/:userid', passport.authenticate("jwt", {session: false}), a
     }
     const hashCost = 10;
     const passwordHash = await bcrypt.hash(dataIn.userNo.toString(), hashCost);
-    console.log("there");
     const user = await User.query()
-      .update({
+      .patch({
         비밀번호: passwordHash
       })
       .where('유저ID', id)
       .catch((err) => {
+        console.log("error");
         ErrorHandler(err, res);
       });
-      res.send(dataOut);
+    res.send(dataOut);
 });
 
 router.post('/pchange/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){
@@ -182,18 +181,51 @@ router.post('/pchange/:userid', passport.authenticate("jwt", {session: false}), 
   var dataIn = req.body;
   var dataOut = {
     mes: "Success"
-  }
+  };
+  var dataErrOut = {
+    mes: "Wrong Initial Password"
+  };
+  var dataErrWhat = {
+    mes: "Something went wrong, I don't know what"
+  };
+  //Old password check
   const hashCost = 10;
-  const passwordHash = await bcrypt.hash(dataIn.userNo, hashCost);
-  const user = await User.query()
-    .update({
-      비밀번호: passwordHash
-    })
+  var user = await User.query()
     .where('유저ID', id)
+    .first()
+    .then((user) => {
+      user.verifyPassword(dataIn.oldPass, async function(err, passwordCorrect){
+        if (err){
+          ErrorHandler(err, res);
+        }
+        if (!passwordCorrect){
+          res.send(dataErrOut);
+        }else{
+          //New password update
+          const newHash = await bcrypt.hash(dataIn.newPass, hashCost);
+          user = await User.query()
+            .where('유저ID', id)
+            .first()
+            .patch({
+              비밀번호: newHash
+            })
+            .then((result) => {
+              if(!result){
+                res.send(dataErrWhat);
+              }else{
+                res.send(dataOut);
+              }
+            })
+            .catch((err) => {
+              ErrorHandler(err, res);
+              return;
+            });
+        }
+      });
+    })
     .catch((err) => {
       ErrorHandler(err, res);
     });
-    res.send(dataOut);
 });
 
 module.exports = router;
