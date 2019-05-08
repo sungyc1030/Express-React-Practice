@@ -41,15 +41,15 @@
 }
 
 .cSignature1{
-    left: 264px;
-    top: 570px;
+    left: 150px;
+    top: 500px;
     position: absolute;
     font-size: 60px;
 }
 
 .cSignature2{
-    left: 710px;
-    top: 570px;
+    left: 610px;
+    top: 500px;
     position: absolute;
     font-size: 60px;
 }

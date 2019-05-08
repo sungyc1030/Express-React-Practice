@@ -9,6 +9,8 @@ import silver from './img/silverLevel.JPG';
 import gold from './img/goldLevel.JPG';
 import ed from './img/education.JPG';
 import { grey } from '@material-ui/core/colors'
+import 기술인회서명 from './img/기술인회회장.png'
+import 학회회장서명 from './img/학회회장.png'
 
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -17,6 +19,14 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 const styles = theme => ({
     tablePrint:{
         tableLayout: 'fixed'
+    },
+    signature:{
+        width: '400px',
+        height: '200px'
+    },
+    signatureImg:{
+        maxWidth: '100%',
+        maxHeight: '100%'
     }
 });
 
@@ -51,7 +61,8 @@ class PrintPage extends Component{
         super(props);
 
         this.state = {
-
+            학회: '',
+            기술인회: ''
         }
     }
 
@@ -78,6 +89,37 @@ class PrintPage extends Component{
         document.head.appendChild(newStyle);
 
         window.print();
+    }
+
+    componentDidMount = () => {
+        this.loadConfig()
+    }
+
+    loadConfig = () => {
+        this.queryConfig()
+            .then((res) => {
+                this.setState({기술인회: res.기술인회, 학회: res.학회});
+            }).catch(err => console.log(err));
+    }
+
+    queryConfig = async() => {
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/config', {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/config');
+        }
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        
+        return body;
     }
 
     render(){
@@ -111,7 +153,7 @@ class PrintPage extends Component{
         if(this.props.orientation === 'Horizontal'){
             printOriMain = overlay.printHorizontal;
             printOriSub = overlay.printSubHorizontal;
-            if(this.props.level === 'Silver'){
+            if(this.props.level === 'Silver' || this.props.level === 'Gold시험'){
                 //levelClass = overlay.silver
                 imgSrc = silver;
                 alt = "Silver"
@@ -124,8 +166,14 @@ class PrintPage extends Component{
             cDocumentNo = today.getFullYear() + '001';
             cName = this.props.name;
             cIssuedDate = '발급일 : ' + todayStr;
-            cSignature1 = '서명1';
-            cSignature2 = '서명2';
+            cSignature1 = <div className = {classes.signature}>
+                    <img src={기술인회서명} className={classes.signatureImg}/>
+                </div>
+            cSignature2 = <div className = {classes.signature}>
+                    <img src={학회회장서명} className={classes.signatureImg}/>
+                </div>
+            //cSignature1 = '서명1';
+            //cSignature2 = '서명2';
         }else if(this.props.orientation === 'Vertical'){
             printOriMain = overlay.printVertical;
             printOriSub = overlay.printSubVertical;
@@ -136,7 +184,7 @@ class PrintPage extends Component{
             eYear = today.getFullYear();
             eAffil = this.props.affil;
             eName = this.props.name;
-            eSignature = '이름';
+            eSignature = this.state.기술인회;
 
             renderHelper = 
                 (this.props.userClass.length === 0 ?

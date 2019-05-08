@@ -22,6 +22,12 @@ const styles = theme => ({
         width: '100px',
         color: theme.color
     },
+    textFieldSelectLevel: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: '150px',
+        color: theme.color
+    },
     panelBody:{
         flexGrow: 1,
         flexWrap: 'wrap',
@@ -65,6 +71,7 @@ const styles = theme => ({
 const level = [
     'Normal',
     'Silver',
+    'Gold시험',
     'Gold'
 ]
 
@@ -378,7 +385,7 @@ class UserData extends Component{
                             value={this.state.userEmail? this.state.userEmail: ''} onChange={this.handleTextFieldChange('userEmail')} margin="normal" variant="outlined" />
                         <TextField label="전화번호" className = {classes.textField} 
                             value={this.state.userPhone? this.state.userPhone: ''} onChange={this.handleTextFieldChange('userPhone')} margin="normal" variant="outlined" />
-                        <TextField label="레벨" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                        <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.userLevel} onChange={this.handleTextFieldChange('userLevel')} margin="normal" variant="outlined">
                             {level.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
