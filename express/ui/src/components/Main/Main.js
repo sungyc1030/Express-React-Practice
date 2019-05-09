@@ -250,8 +250,8 @@ class Main extends Component{
                                                     <TableRow key={index}>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.Class.교육명}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.Class.교육일}</TableCell>
-                                                        <TableCell className={classes.tableClassesCell} align="center">{row.Class.CAS? '인정':'불인정'}</TableCell>
-                                                        <TableCell className={classes.tableClassesCell} align="center">{row.Class.ARC? '인정':'불인정'}</TableCell>
+                                                        <TableCell className={classes.tableClassesCell} align="center">{row.CAS}</TableCell>
+                                                        <TableCell className={classes.tableClassesCell} align="center">{row.ARC}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.역할}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.참가여부}</TableCell>
                                                     </TableRow>

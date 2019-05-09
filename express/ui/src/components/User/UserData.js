@@ -71,7 +71,7 @@ const styles = theme => ({
 const level = [
     'Normal',
     'Silver',
-    'Gold시험',
+    'Gold대상',
     'Gold'
 ]
 

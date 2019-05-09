@@ -167,10 +167,10 @@ class PrintPage extends Component{
             cName = this.props.name;
             cIssuedDate = '발급일 : ' + todayStr;
             cSignature1 = <div className = {classes.signature}>
-                    <img src={기술인회서명} className={classes.signatureImg}/>
+                    <img src={기술인회서명} alt='기술인회서명' className={classes.signatureImg}/>
                 </div>
             cSignature2 = <div className = {classes.signature}>
-                    <img src={학회회장서명} className={classes.signatureImg}/>
+                    <img src={학회회장서명} alt='학회서명' className={classes.signatureImg}/>
                 </div>
             //cSignature1 = '서명1';
             //cSignature2 = '서명2';

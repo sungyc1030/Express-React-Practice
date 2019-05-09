@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Input } from '@material-ui/core';
-import { TableCell, TableRow } from '@material-ui/core';
+import { TableCell, TableRow, MenuItem, TextField } from '@material-ui/core';
 import { Clear, Edit } from '@material-ui/icons';
 
 const styles = theme => ({
@@ -19,8 +19,22 @@ const styles = theme => ({
     },
     tableClassesCell:{
         padding: `${theme.spacing.unit}px`
-    }
+    },
+    textFieldSelect: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: '100px',
+        color: theme.color
+    },
+    classInput: {
+        width: '100px'
+    },
 });
+
+const yesno = [
+    '인정',
+    '불인정'
+];
 
 class UserDataRow extends Component{
     constructor(props){
@@ -29,7 +43,9 @@ class UserDataRow extends Component{
         this.state = {
             role: '',
             attendance: '',
-            id: 0
+            id: 0,
+            CAS: '불인정',
+            ARC: '불인정'
         }
     } 
 
@@ -37,7 +53,9 @@ class UserDataRow extends Component{
         this.setState({
             role: this.props.data['역할']? this.props.data['역할']: '', 
             attendance: this.props.data['참가여부']? this.props.data['참가여부']: '',
-            id: this.props.data['출결ID']
+            id: this.props.data['출결ID'],
+            CAS: this.props.data['CAS'],
+            ARC: this.props.data['ARC']
         });
     }
 
@@ -116,7 +134,9 @@ class UserDataRow extends Component{
             userID: this.props.userID,
             classID: this.props.data['교육ID'],
             role: this.state.role,
-            attendance: this.state.attendance
+            attendance: this.state.attendance,
+            CAS: this.state.CAS,
+            ARC: this.state.ARC
         });
         if(token !== null){
             response = await fetch('/api/attendance/' + id,{
@@ -155,16 +175,38 @@ class UserDataRow extends Component{
                     <Input
                         value={this.state.role}
                         onChange={this.handleTextFieldChange('role')}
+                        className={classes.classInput}
                     />
                 </TableCell>
                 <TableCell className={classes.tableClassesCellInput} align="center">
                     <Input
                         value={this.state.attendance}
                         onChange={this.handleTextFieldChange('attendance')}
+                        className={classes.classInput}
                     />
                 </TableCell>
-                <TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['CAS']? '인정': '불인정'}</TableCell>
-                <TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['ARC']? '인정': '불인정'}</TableCell>
+                {/*<TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['CAS']? '인정': '불인정'}</TableCell>
+                <TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['ARC']? '인정': '불인정'}</TableCell>*/}
+                <TableCell className={classes.tableClassesCell} align="center">
+                    <TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.CAS} onChange={this.handleTextFieldChange('CAS')} margin="normal" variant="outlined">
+                            {yesno.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                    </TextField>
+                </TableCell>
+                <TableCell className={classes.tableClassesCell} align="center">
+                    <TextField label="ARC인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.ARC} onChange={this.handleTextFieldChange('ARC')} margin="normal" variant="outlined">
+                            {yesno.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                    </TextField>
+                </TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">
                     <Button onClick = {this.updateUserClass}>
                         <Edit />

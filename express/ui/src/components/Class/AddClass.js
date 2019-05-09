@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Fab, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@material-ui/core';
+import { Button, Fab, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 
@@ -31,10 +31,10 @@ const styles = theme => ({
     }
 });
 
-const yesno = [
+/*const yesno = [
     '인정',
     '불인정'
-];
+];*/
 
 class AddClass extends Component{
     constructor(props){
@@ -44,8 +44,8 @@ class AddClass extends Component{
             open: false,
             className: '',
             classDate: '',
-            classCAS: '불인정',
-            classARC: '불인정',
+            //classCAS: '불인정',
+            //classARC: '불인정',
             tooltipOpen: false,
             tooltipMes: '교육명은 필수사항입니다.'
         };
@@ -58,8 +58,8 @@ class AddClass extends Component{
             post: 'Add class',
             className: this.state.className,
             classDate: this.state.classDate,
-            classCAS: (this.state.classCAS === '인정')? 1:0,
-            classARC: (this.state.classARC === '인정')? 1:0
+            //classCAS: (this.state.classCAS === '인정')? 1:0,
+            //classARC: (this.state.classARC === '인정')? 1:0
         });
         if(token !== null){
             response = await fetch('/api/class',{
@@ -123,8 +123,8 @@ class AddClass extends Component{
         this.setState({
             className: '',
             classDate: '',
-            classCAS: '불인정',
-            classARC: '불인정',
+            //classCAS: '불인정',
+            //classARC: '불인정',
             tooltipOpen: false,
             tooltipMes: '교육명은 필수사항입니다.'
         });
@@ -146,7 +146,7 @@ class AddClass extends Component{
                             value={this.state.className} onChange={this.handleTextFieldChange('className')} margin="normal" variant="outlined" />
                         <TextField label="수업일" className = {classes.textField} 
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
-                        <TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                        {/*<TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.classCAS} onChange={this.handleTextFieldChange('classCAS')} margin="normal" variant="outlined">
                             {yesno.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
@@ -161,7 +161,7 @@ class AddClass extends Component{
                                     {option}
                                 </MenuItem>
                             ))}
-                        </TextField>
+                            </TextField>*/}
                     </DialogContent>
                     <DialogActions>
                         <Tooltip open={this.state.tooltipOpen} disableFocusListener disableHoverListener disableTouchListener

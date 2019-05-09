@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Card, CardContent, CircularProgress, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, CircularProgress, Typography, CardHeader, Avatar, Divider } from '@material-ui/core';
+import { Face } from '@material-ui/icons';
+import { lime } from '@material-ui/core/colors'
 import UserData from './UserData';
 import AddUser from './AddUser'
 import TopBar from '../TopBar';
@@ -146,6 +148,15 @@ class User extends Component{
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container item justify="center" xs={10} spacing={32}>
                         <Card className={classes.mainPaper}>
+                            <CardHeader
+                                avatar = {
+                                    <Avatar style={{backgroundColor: lime[500]}}>
+                                        <Face />
+                                    </Avatar>
+                                }
+                                title="사용자 및 출결 관리"
+                            />
+                            <Divider/>
                             {renderHelper}
                         </Card> 
                     </Grid>

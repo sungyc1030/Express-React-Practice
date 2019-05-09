@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Card, CardContent, CircularProgress, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, CircularProgress, Typography, CardHeader, Avatar, Divider } from '@material-ui/core';
+import { Book } from '@material-ui/icons';
+import { indigo } from '@material-ui/core/colors'
 import AddClass from './AddClass';
 import ClassData from './ClassData';
 import TopBar from '../TopBar';
@@ -101,6 +103,8 @@ class Class extends Component{
                 if(res.length === 0){
                     this.setState({loaded:true, empty:true});
                 }else{
+                    //Force change
+                    this.setState({loaded: false});
                     this.setState({classes: res, loaded: true});
                 }
             }).catch(err => console.log(err));
@@ -142,6 +146,15 @@ class Class extends Component{
                 <Grid container justify="center" spacing={32} className={classes.grid}>
                     <Grid container item justify="center" xs={10} spacing={32}>
                         <Card className={classes.mainPaper}>
+                            <CardHeader
+                                avatar = {
+                                    <Avatar style={{backgroundColor: indigo[500]}}>
+                                        <Book />
+                                    </Avatar>
+                                }
+                                title="교육 및 출결 관리"
+                            />
+                            <Divider/>
                             {renderHelper}
                         </Card> 
                     </Grid>

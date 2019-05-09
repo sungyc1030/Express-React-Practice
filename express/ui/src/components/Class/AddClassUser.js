@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography } from '@material-ui/core';
-import { Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Radio } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Radio, MenuItem } from '@material-ui/core';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -27,7 +27,18 @@ const styles = theme => ({
     tableClassesCell:{
         padding: `${theme.spacing.unit}px`
     },
+    textFieldSelect: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: '100px',
+        color: theme.color
+    },
 });
+
+const yesno = [
+    '인정',
+    '불인정'
+];
 
 class AddClassUser extends Component{
     constructor(props){
@@ -38,6 +49,8 @@ class AddClassUser extends Component{
             tooltipOpen: false,
             role: '',
             attendance: '',
+            CAS: '불인정',
+            ARC: '불인정',
             tooltipMes: '유저를 선택해주세요.',
             radioChecked: 0
         }
@@ -51,7 +64,9 @@ class AddClassUser extends Component{
             userID: this.state.radioChecked,
             classID: this.props.data['교육ID'],
             role: this.state.role,
-            attendance: this.state.attendance 
+            attendance: this.state.attendance,
+            CAS: this.state.CAS,
+            ARC: this.state.ARC
         });
         if(token !== null){
             response = await fetch('/api/attendance',{
@@ -120,6 +135,8 @@ class AddClassUser extends Component{
             this.setState({
                 role: '',
                 attendance: '',
+                CAS: '불인정',
+                ARC: '불인정',
                 tooltipMes: '유저를 선택해주세요.',
                 radioChecked: Number(this.props.classUser[0]['유저ID'])
             });
@@ -127,6 +144,8 @@ class AddClassUser extends Component{
             this.setState({
                 role: '',
                 attendance: '',
+                CAS: '불인정',
+                ARC: '불인정',
                 tooltipMes: '유저를 선택해주세요.',
                 radioChecked: 0
             });
@@ -196,6 +215,22 @@ class AddClassUser extends Component{
                             value={this.state.role} onChange={this.handleTextFieldChange('role')} margin="normal" variant="outlined" />
                         <TextField label="참가여부" className = {classes.textField} 
                             value={this.state.attendance} onChange={this.handleTextFieldChange('attendance')} margin="normal" variant="outlined" />
+                        <TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.CAS} onChange={this.handleTextFieldChange('CAS')} margin="normal" variant="outlined">
+                            {yesno.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField label="ARC인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.ARC} onChange={this.handleTextFieldChange('ARC')} margin="normal" variant="outlined">
+                            {yesno.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </DialogContent>
                     <DialogActions>
                         <Tooltip open={this.state.tooltipOpen} disableFocusListener disableHoverListener disableTouchListener

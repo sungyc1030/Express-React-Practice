@@ -34,7 +34,9 @@ router.post('/', passport.authenticate("jwt", {session: false}), async function(
         유저ID: dataIn.userID,
         교육ID: dataIn.classID,
         역할: dataIn.role,
-        참가여부: dataIn.attendance
+        참가여부: dataIn.attendance,
+        CAS: dataIn.CAS,
+        ARC: dataIn.ARC
       })
       .catch((err) => {
         ErrorHandler(err, res);
@@ -66,11 +68,13 @@ router.post('/:id', passport.authenticate("jwt", {session: false}), async functi
         mes: "Success"
     }
     const user_class = await UserClass.query()
-        .update({
+        .patch({
             유저ID: dataIn.userID,
             교육ID: dataIn.classID,
             역할: dataIn.role,
-            참가여부: dataIn.attendance
+            참가여부: dataIn.attendance,
+            CAS: dataIn.CAS,
+            ARC: dataIn.ARC
         })
         .where('출결ID', id)
         .catch((err) => {

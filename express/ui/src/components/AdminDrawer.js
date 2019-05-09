@@ -32,7 +32,7 @@ class AdminDrawer extends Component{
             case '/standard':
                 this.state.selectedIndex = 3;
                 break;
-            case '/config':
+            case '/csv':
                 this.state.selectedIndex = 4;
                 break;
             default:
@@ -65,7 +65,7 @@ class AdminDrawer extends Component{
                 case '/standard':
                     this.setState({selectedIndex: 3});
                     break;
-                case '/config':
+                case '/csv':
                     this.setState({selectedIndex: 4});
                     break;
                 default:

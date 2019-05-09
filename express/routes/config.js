@@ -61,4 +61,26 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
     res.send(dataOut);
 });
 
+router.post('/csv', passport.authenticate("jwt", {session: false}), async(req, res, next) => {
+    //Check admin status
+    var bearer = req.headers.authorization;
+    var token = bearer.replace('Bearer ', '');
+    var decoded = jwt_decode(token);
+    if(decoded.admin !== '관리자'){
+      res.status(401).json(
+        {
+            message: '관리자 권한이 없습니다.'
+        }
+      );
+
+      return;
+    }
+
+    var dataIn = req.body;
+    var dataOut = {
+      mes: "Success"
+    }
+    res.send(dataOut);
+});
+
 module.exports = router;

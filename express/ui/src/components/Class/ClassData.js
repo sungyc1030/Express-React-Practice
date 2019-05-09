@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanelActions } from '@material-ui/core';
-import { TextField, Typography, MenuItem, Button, Divider, Tooltip } from '@material-ui/core';
+import { TextField, Typography, Button, Divider, Tooltip } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { DeleteForever } from '@material-ui/icons';
@@ -59,11 +59,6 @@ const styles = theme => ({
     },
 });
 
-const yesno = [
-    '인정',
-    '불인정'
-];
-
 class ClassData extends Component{
     constructor(props){
         super(props)
@@ -71,8 +66,8 @@ class ClassData extends Component{
         this.state = {
             className: '',
             classDate: '',
-            classCAS: '불인정',
-            classARC: '불인정',
+            //classCAS: '불인정',
+            //classARC: '불인정',
             tooltipOpen: false,
             allUsers: [],
             classID: 0,
@@ -90,8 +85,8 @@ class ClassData extends Component{
         this.setState({
             className: this.props.class['교육명'],
             classDate: this.props.class['교육일'],
-            classCAS: this.props.class['CAS'] ? '인정':'불인정',
-            classARC: this.props.class['ARC'] ? '인정':'불인정',
+            //classCAS: this.props.class['CAS'] ? '인정':'불인정',
+            //classARC: this.props.class['ARC'] ? '인정':'불인정',
             allUsers: this.props.class['UserClass'],
             classID: this.props.class['교육ID']
         });
@@ -186,8 +181,8 @@ class ClassData extends Component{
             post: 'Update class',
             className: this.state.className,
             classDate: this.state.classDate,
-            classCAS: (this.state.classCAS === '인정')? 1:0,
-            classARC: (this.state.classARC === '인정')? 1:0
+            //classCAS: (this.state.classCAS === '인정')? 1:0,
+            //classARC: (this.state.classARC === '인정')? 1:0
         });
         if(token !== null){
             response = await fetch('/api/class/' + id, {
@@ -236,6 +231,8 @@ class ClassData extends Component{
                                     <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">CAS</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">ARC</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">수정</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
                                 </TableRow>
@@ -271,7 +268,7 @@ class ClassData extends Component{
                             value={this.state.className} onChange={this.handleTextFieldChange('className')} margin="normal" variant="outlined" />
                         <TextField label="수업일" className = {classes.textField} 
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
-                        <TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                        {/*<TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.classCAS} onChange={this.handleTextFieldChange('classCAS')} margin="normal" variant="outlined">
                             {yesno.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
@@ -286,7 +283,7 @@ class ClassData extends Component{
                                     {option}
                                 </MenuItem>
                             ))}
-                        </TextField>
+                            </TextField>*/}
                         <Divider className = {classes.divider} />
                         {renderHelper}
                     </ExpansionPanelDetails>

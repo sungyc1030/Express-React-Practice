@@ -47,8 +47,8 @@ router.post('/', passport.authenticate("jwt", {session: false}), async function(
       .insert({
         교육명: dataIn.className,
         교육일: dataIn.classDate,
-        CAS: dataIn.classCAS,
-        ARC: dataIn.classARC
+        //CAS: dataIn.classCAS,
+        //ARC: dataIn.classARC
       })
       .catch((err) => {
         ErrorHandler(err, res);
@@ -80,11 +80,11 @@ router.post('/:classid', passport.authenticate("jwt", {session: false}), async f
       mes: "Success"
     }
     const user = await Class.query()
-      .update({
+      .patch({
         교육명: dataIn.className,
         교육일: dataIn.classDate,
-        CAS: dataIn.classCAS,
-        ARC: dataIn.classARC
+        //CAS: dataIn.classCAS,
+        //ARC: dataIn.classARC
       })
       .where('교육ID', id)
       .catch((err) => {

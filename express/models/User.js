@@ -14,27 +14,6 @@ class User extends Model {
     verifyPassword (password, callback){
         bcrypt.compare(password, this.비밀번호, callback)
     };
-    static get jsonSchema(){
-        return{
-            type: 'object',
-            required: ['유저번호', '이름'],
-
-            properties:{
-                유저ID: {type: 'integer'},
-                유저번호: {type: 'long'},
-                이름: {type: 'string'},
-                비밀번호: {type: ['string', 'null']},
-                소속: {type: ['string', 'null']},
-                파트: {type: ['string', 'null']},
-                직종: {type: ['string', 'null']},
-                이메일: {type: ['string', 'null']},
-                전화번호: {type: ['string', 'null']},
-                레벨: {type: ['string', 'null']},
-                애드민: {type: ['string', 'null']},
-                로그인ID: {type: ['string', 'null']}
-            }
-        }
-    };
     static get relationMappings() {
         const UserClass = require('./UserClass');
         const Class = require('./Class');
