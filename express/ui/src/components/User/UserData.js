@@ -307,6 +307,13 @@ class UserData extends Component{
         return body;
     }
 
+    createUserRow = () => {
+        var list = this.state.allClasses.map((row, index) => (
+            <UserDataRow data={row} key={row['교육ID']} changeUser={this.props.updateUser} userID={this.state.userID}/>
+        ));
+        return list;
+    }
+
     render(){
         const {classes} = this.props;
 
@@ -333,9 +340,7 @@ class UserData extends Component{
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {this.state.allClasses.map((row, index) => (
-                                    <UserDataRow data={row} key={row['교육ID']} changeUser={this.props.updateUser} userID={this.state.userID}/>
-                                ))}
+                                {this.createUserRow()}
                             </TableBody>
                         </Table>
         }

@@ -37,8 +37,12 @@ class Config extends Component{
 
         this.state = {
             loaded: true,
-            status: '.csv 파일을 업로드해주세요. 다른 형식의 파일은 읽을 수 없습니다.',
+            status: '.csv 파일을 업로드해주세요. 다른 형식의 파일은 읽을 수 없습니다.'
         }
+    }
+
+    componentDidMount(){
+        this.setState({loaded:true, status: '.csv 파일을 업로드해주세요. 다른 형식의 파일은 읽을 수 없습니다.'})
     }
 
     queryCSV = async(csv) => {
@@ -86,9 +90,11 @@ class Config extends Component{
                     this.queryCSV(results)
                         .then(res => {
                             if(res.mes === 'Success'){
-                                this.setState({loaded: true, status: 'CSV갔다'});
+                                let resultObj = res.result;
+                                let resultStr = '업데이트에 성공했습니다.' + resultObj.newuser + '명의 사용자, ' + resultObj.newclass + '개의 교육, ' + resultObj.newuserclass + '개의 출결정보를 추가 했습니다.'
+                                this.setState({loaded: true, status: resultStr});
                             }else{
-                                this.setState({loaded: true, status: 'CSV못갔다'});
+                                this.setState({loaded: true, status: '오류가 발생했습니다. 오류정보' + res.type + ":" + res.message });
                             }
                         }).catch(err => {
                             console.log(err);

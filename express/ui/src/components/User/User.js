@@ -37,6 +37,9 @@ class User extends Component{
             empty: false,
             userClass: []
         }
+
+        this.start = 0
+        this.end = 0
     }
 
     getData = async() => {
@@ -83,18 +86,23 @@ class User extends Component{
 
     componentDidMount(){
         this.setState({loaded: false});
+        let user;
+        let userclass;
         this.getData()
-            .then(res => {
-                if(res.length === 0){
-                    this.setState({loaded:true, empty:true});
+            .then(res1 => {
+                if(res1.length === 0){
+                    this.setState({empty:true, loaded: true});
                 }else{
-                    this.setState({users: res, loaded: true});
-                }
-            }).catch(err => console.log(err));
-        this.getClassData()
-            .then(res => {
-                if(res.length !== 0){
-                    this.setState({userClass: res, loaded: true});
+                    //this.setState({users: res});
+                    user = res1;
+                    this.getClassData()
+                        .then(res2 => {
+                            if(res2.length !== 0){
+                                //this.setState({userClass: res});
+                                userclass = res2;
+                                this.setState({users: user, userClass: userclass, loaded: true})
+                            }
+                        }).catch(err => console.log(err));
                 }
             }).catch(err => console.log(err));
     }
@@ -110,6 +118,13 @@ class User extends Component{
                     this.setState({users: res, loaded: true});
                 }
             }).catch(err => console.log(err));
+    }
+
+    createList = () => {
+        var list = this.state.users.map((data, index) => (
+            <UserData user={data} key={data['유저ID']} deleteUser={this.changeUser} updateUser={this.changeUser} userClass={this.state.userClass}/>
+        ));
+        return list;
     }
 
     render(){
@@ -130,9 +145,7 @@ class User extends Component{
                 renderHelper = 
                     <CardContent>
                         <AddUser addUser={this.changeUser}/>
-                        {this.state.users.map((data, index) => (
-                            <UserData user={data} key={data['유저ID']} deleteUser={this.changeUser} updateUser={this.changeUser} userClass={this.state.userClass}/>
-                        ))}
+                        {this.createList()}
                     </CardContent>
             }
         }else{

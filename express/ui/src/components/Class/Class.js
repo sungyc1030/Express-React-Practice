@@ -81,18 +81,22 @@ class Class extends Component{
 
     componentDidMount(){
         this.setState({loaded: false});
+        let data;
+        let user;
         this.getData()
-            .then(res => {
-                if(res.length === 0){
+            .then(res1 => {
+                if(res1.length === 0){
                     this.setState({loaded:true, empty:true});
                 }else{
-                    this.setState({classes: res, loaded: true});
-                }
-            }).catch(err => console.log(err));
-        this.getUserData()
-            .then(res => {
-                if(res.length !== 0){
-                    this.setState({classUser: res, loaded: true});
+                    //this.setState({classes: res, loaded: true});
+                    data = res1;
+                    this.getUserData()
+                    .then(res2 => {
+                        if(res2.length !== 0){
+                            user = res2;
+                            this.setState({classUser: user, loaded: true, classes: data});
+                        }
+                    }).catch(err => console.log(err));
                 }
             }).catch(err => console.log(err));
     }
