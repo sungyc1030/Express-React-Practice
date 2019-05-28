@@ -35,12 +35,12 @@ class App extends Component{
     render(){
         return(
             <MuiThemeProvider theme = {theme}>
-                <React.Fragment>
-                    <CssBaseline />
-                    <Router>
-                        <Index />
-                    </Router>
-                </React.Fragment>
+                    <React.Fragment>
+                        <CssBaseline />
+                        <Router>
+                            <Index />
+                        </Router>
+                    </React.Fragment>
             </MuiThemeProvider>
         )
     }

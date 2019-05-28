@@ -8,15 +8,15 @@ import TopBar from '../TopBar';
 const styles = theme => ({
     root: {flexGrow: 1},
     grid: { 
-        width: `calc(100% - ${theme.spacing.unit * 4}px)`,
-        margin: `4% ${theme.spacing.unit * 2}px`
+        width: `calc(100% - ${theme.spacing(4)}px)`,
+        margin: `4% ${theme.spacing(2)}px`
     },
     mainPaper: {
         width : '100%'
     },
     button: {
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit
+        margin: theme.spacing(1),
+        padding: theme.spacing(1)
     },
     printConfigAction:{
         flexDirection: 'row-reverse'
@@ -143,8 +143,8 @@ class PrintConfig extends Component{
         return(
             <div className = {classes.root}>
                 <TopBar logout={this.props.logout} admin={this.props.admin}/>
-                <Grid container justify="center" spacing={32} className={classes.grid}>
-                    <Grid container item justify="center" xs={10} spacing={32}>
+                <Grid container justify="center" spacing={4} className={classes.grid}>
+                    <Grid container item justify="center" xs={10} spacing={4}>
                         <Card className = {classes.mainPaper}>
                             <CardHeader
                                 avatar = {

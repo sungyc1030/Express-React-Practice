@@ -5,8 +5,8 @@ import { Grid, Card, CardContent, FormControl, InputLabel, Input, FormHelperText
 const styles = theme => ({
     root: {flexGrow: 1},
     grid: { 
-        width: `calc(100% - ${theme.spacing.unit * 4}px)`,
-        margin: `4% ${theme.spacing.unit * 2}px`
+        width: `calc(100% - ${theme.spacing(4)}px)`,
+        margin: `4% ${theme.spacing(2)}px`
     },
     mainPaper: {
         width : '100%'
@@ -102,8 +102,8 @@ class Login extends Component{
         const {classes} = this.props;
         return(
             <div className = {classes.root}>
-                <Grid container justify="center" spacing={32} className={classes.grid}>
-                    <Grid container item justify="center" xs={10} spacing={32}>
+                <Grid container justify="center" spacing={4} className={classes.grid}>
+                    <Grid container item justify="center" xs={10} spacing={4}>
                         <Card className={classes.container}>
                             <CardContent>
                                 <h2 className = {classes.loginHeading}>로그인</h2>

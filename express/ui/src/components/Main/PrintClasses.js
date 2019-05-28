@@ -9,19 +9,19 @@ const styles = theme => ({
         marginRight: '2px'
     },
     button: {
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit,
+        margin: theme.spacing(1),
+        padding: theme.spacing(1),
         width: '100%'
     },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '200px',
         color: theme.color
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '200px',
         color: theme.color
     },
@@ -161,10 +161,10 @@ class PrintClasses extends Component{
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained" color="primary" onClick={this.handleTimeSelect}>
-                            기간으로뽑기
+                            기간으로 출력
                         </Button>
                         <Button variant="contained" color="primary" onClick={this.handleYearSelect}>
-                            년도로뽑기
+                            년도로 출력
                         </Button>
                         <Button variant="contained" color="secondary" onClick={this.handleFormClose}>
                             취소

@@ -7,21 +7,29 @@ import { Clear, Edit } from '@material-ui/icons';
 const styles = theme => ({
     root: {flexGrow: 1},
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color
     },
     tableClassesCellInput: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color,
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     tableClassesCell:{
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
+    },
+    tableClassesCellSmall:{
+        paddingLeft: '0px',
+        paddingRight: '0px',
+        width: '20px',
     },
     classInput: {
         width: '100px'
+    },
+    buttonNoPadding:{
+        padding: '0px'
     }
 });
 
@@ -164,13 +172,16 @@ class ClassDataRow extends Component{
             <TableRow key={this.props.data.User['유저ID']}>
                 <TableCell className={classes.tableClassesCell} align="center">{this.props.data.User['유저번호']}</TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">{this.props.data.User['이름']}</TableCell>
-                <TableCell className={classes.tableClassesCell} align="center">{this.props.data.User['파트']? this.props.data.User['파트']: ''}</TableCell>
+                <TableCell className={classes.tableClassesCell} align="center">{this.props.data.User['소속']? this.props.data.User['소속']: ''}</TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">{this.props.data.User['직종']? this.props.data.User['직종']: ''}</TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">
                     <Input
                         value={this.state.role}
                         onChange={this.handleTextFieldChange('role')}
                         className={classes.classInput}
+                        inputProps={{
+                            style: { textAlign: "center" }
+                        }}
                     />
                 </TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">
@@ -178,6 +189,9 @@ class ClassDataRow extends Component{
                         value={this.state.attendance}
                         onChange={this.handleTextFieldChange('attendance')}
                         className={classes.classInput}
+                        inputProps={{
+                            style: { textAlign: "center" }
+                        }}
                     />
                 </TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">
@@ -200,13 +214,13 @@ class ClassDataRow extends Component{
                             ))}
                     </TextField>
                 </TableCell>
-                <TableCell className={classes.tableClassesCell} align="center">
-                    <Button onClick = {this.updateClassUser}>
+                <TableCell className={classes.tableClassesCellSmall} align="center">
+                    <Button className={classes.buttonNoPadding} onClick = {this.updateClassUser}>
                         <Edit />
                     </Button>
                 </TableCell>
-                <TableCell className={classes.tableClassesCell} align="center">
-                    <Button onClick = {this.deleteClassUser}>
+                <TableCell className={classes.tableClassesCellSmall} align="center">
+                    <Button className={classes.buttonNoPadding} onClick = {this.deleteClassUser}>
                         <Clear />
                     </Button>
                 </TableCell>

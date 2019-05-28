@@ -45,13 +45,13 @@ const CustomTableCell = withStyles(theme => ({
     head: {
       backgroundColor: grey[300],
       color: theme.palette.common.black,
-      padding: `${theme.spacing.unit}px`,
+      padding: `${theme.spacing(1)}px`,
       fontSize: 14,
       border: '1px solid black'
     },
     body: {
       fontSize: 14,
-      padding: `${theme.spacing.unit}px`,
+      padding: `${theme.spacing(1)}px`,
       border: '1px solid black'
     },
   }))(TableCell);
@@ -153,7 +153,7 @@ class PrintPage extends Component{
         if(this.props.orientation === 'Horizontal'){
             printOriMain = overlay.printHorizontal;
             printOriSub = overlay.printSubHorizontal;
-            if(this.props.level === 'Silver' || this.props.level === 'Gold시험'){
+            if(this.props.level === 'Silver' || this.props.level === 'Silver+1' || this.props.level === 'Silver+2'){
                 //levelClass = overlay.silver
                 imgSrc = silver;
                 alt = "Silver"
@@ -164,8 +164,8 @@ class PrintPage extends Component{
             }
             cCertifiedDate = todayStrEng;
             cDocumentNo = today.getFullYear() + '001';
-            cName = this.props.name;
-            cIssuedDate = '발급일 : ' + todayStr;
+            cName = this.props.engName;
+            cIssuedDate = '출력일 : ' + todayStr;
             cSignature1 = <div className = {classes.signature}>
                     <img src={기술인회서명} alt='기술인회서명' className={classes.signatureImg}/>
                 </div>
@@ -179,7 +179,7 @@ class PrintPage extends Component{
             printOriSub = overlay.printSubVertical;
             imgSrc = ed;
             alt = "Ed";
-            eIssuedDate = '발급일 : ' + todayStr;
+            eIssuedDate = '출력일 : ' + todayStr;
             eJobNo = this.props.job + "  " + this.props.userNo;
             eYear = today.getFullYear();
             eAffil = this.props.affil;
@@ -268,17 +268,19 @@ class PrintPage extends Component{
                     <div className={overlayText.eIssuedDate}>
                         {eIssuedDate}
                     </div>
-                    <div className={overlayText.eJobNo}>
-                        {eJobNo}
-                    </div>
-                    <div className={overlayText.eYear}>
-                        {eYear}
-                    </div>
-                    <div className={overlayText.eAffil}>
-                        {eAffil}
-                    </div>
-                    <div className={overlayText.eName}>
-                        {eName}
+                    <div className={overlayText.eInfos}>
+                        <div>
+                            {eJobNo}
+                        </div>
+                        <div>
+                            {eYear}
+                        </div>
+                        <div>
+                            {eAffil}
+                        </div>
+                        <div>
+                            {eName}
+                        </div>
                     </div>
                     <div className={overlayText.eTable}>
                         {renderHelper}

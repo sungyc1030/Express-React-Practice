@@ -7,22 +7,22 @@ import { Clear, Edit } from '@material-ui/icons';
 const styles = theme => ({
     root: {flexGrow: 1},
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color
     },
     tableClassesCellInput: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color,
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     tableClassesCell:{
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100px',
         color: theme.color
     },
@@ -116,8 +116,8 @@ class UserDataRow extends Component{
         this.queryUpdateUserClass()
             .then(res => {
                 if(res.mes === 'Success'){
-                    this.props.changeUser();
-                    //window.alert('수정완료!');
+                    //this.props.changeUser();
+                    window.alert('수정완료!');
                 }
             }).catch(err => {
                 console.log(err);
@@ -176,6 +176,9 @@ class UserDataRow extends Component{
                         value={this.state.role}
                         onChange={this.handleTextFieldChange('role')}
                         className={classes.classInput}
+                        inputProps={{
+                            style: { textAlign: "center" }
+                        }}
                     />
                 </TableCell>
                 <TableCell className={classes.tableClassesCellInput} align="center">
@@ -183,6 +186,9 @@ class UserDataRow extends Component{
                         value={this.state.attendance}
                         onChange={this.handleTextFieldChange('attendance')}
                         className={classes.classInput}
+                        inputProps={{
+                            style: { textAlign: "center" }
+                        }}
                     />
                 </TableCell>
                 {/*<TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['CAS']? '인정': '불인정'}</TableCell>

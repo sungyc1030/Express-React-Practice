@@ -10,26 +10,26 @@ const styles = theme => ({
         marginRight: '4px'
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color
     },
     scrollTableHead:{
         backgroundColor: "#fff",
         position: "sticky",
         top: 0,
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     scrollTable:{
         maxHeight: '300px',
         overflow: 'auto'
     },
     tableClassesCell:{
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100px',
         color: theme.color
     },

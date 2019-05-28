@@ -11,14 +11,14 @@ import AddClassUser from './AddClassUser';
 const styles = theme => ({
     root: {flexGrow: 1},
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color,
         flexBasis: '18%'
     },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100px',
         color: theme.color
     },
@@ -36,7 +36,12 @@ const styles = theme => ({
         fontSize: '10px'
     },
     tableClassesCell:{
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
+    },
+    tableClassesCellSmall:{
+        paddingLeft: '0px',
+        paddingRight: '0px',
+        width: '20px',
     },
     divider:{
         flexBasis: '100%',
@@ -51,7 +56,7 @@ const styles = theme => ({
         backgroundColor: "#fff",
         position: "sticky",
         top: 0,
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     scrollTable:{
         maxHeight: '300px',
@@ -71,7 +76,7 @@ class ClassData extends Component{
             tooltipOpen: false,
             allUsers: [],
             classID: 0,
-            tooltipOpenUpdate: false,
+            tooltipOpenUpdate: false
         }
     } 
 
@@ -227,14 +232,14 @@ class ClassData extends Component{
                                 <TableRow>
                                     <TableCell className={classes.tableClassesCell} align="center">유저번호</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">유저이름</TableCell>
-                                    <TableCell className={classes.tableClassesCell} align="center">파트</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">소속</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">CAS</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">ARC</TableCell>
-                                    <TableCell className={classes.tableClassesCell} align="center">수정</TableCell>
-                                    <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
+                                    <TableCell className={classes.tableClassesCellSmall} align="center">수정</TableCell>
+                                    <TableCell className={classes.tableClassesCellSmall} align="center">삭제</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -266,7 +271,7 @@ class ClassData extends Component{
                     <ExpansionPanelDetails className={classes.panelBody}>
                         <TextField label="이름" className = {classes.textField} 
                             value={this.state.className} onChange={this.handleTextFieldChange('className')} margin="normal" variant="outlined" />
-                        <TextField label="수업일" className = {classes.textField} 
+                        <TextField label="교육일" className = {classes.textField} type="date"
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
                         {/*<TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.classCAS} onChange={this.handleTextFieldChange('classCAS')} margin="normal" variant="outlined">

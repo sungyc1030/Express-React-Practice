@@ -11,20 +11,26 @@ import AddUserClass from './AddUserClass';
 const styles = theme => ({
     root: {flexGrow: 1},
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color,
         flexBasis: '18%'
     },
+    textFieldEmail: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color,
+        flexBasis: '30%'
+    },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100px',
         color: theme.color
     },
     textFieldSelectLevel: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '150px',
         color: theme.color
     },
@@ -34,10 +40,13 @@ const styles = theme => ({
         justifyContent: 'center'
     },
     panelHeader:{
-        flexBasis: '30%'
+        flexBasis: '27%'
     },
-    panelSub:{
-        flexBasis: '43%'
+    panelSub1:{
+        flexBasis: '25%'
+    },
+    panelSub2:{
+        flexBasis: '21%'
     },
     deleteUser:{
         justifyContent: 'center'
@@ -51,7 +60,7 @@ const styles = theme => ({
         fontSize: '10px'
     },
     tableClassesCell:{
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
     },
     divider:{
         flexBasis: '100%',
@@ -71,7 +80,8 @@ const styles = theme => ({
 const level = [
     'Normal',
     'Silver',
-    'Gold대상',
+    'Silver+1',
+    'Silver+2',
     'Gold'
 ]
 
@@ -95,6 +105,7 @@ class UserData extends Component{
             userLevel: 'Normal',
             userAdmin: '사용자',
             userID: 0,
+            userEngName: '',
             allClasses: [],
             tooltipOpen: false,
             tooltipOpenUpdate: false,
@@ -112,16 +123,17 @@ class UserData extends Component{
     componentDidMount(){
         this.setState({
             userName: this.props.user['이름'],
+            userEngName: this.props.user['영문이름']? this.props.user['영문이름']:'',
             userNo: Number(this.props.user['유저번호']),
             userAffil: this.props.user['소속'] ? this.props.user['소속']:'',
-            userPart: this.props.user['파트'] ? this.props.user['파트']:'',
+            userPart: this.props.user['부서'] ? this.props.user['부서']:'',
             userJob: this.props.user['직종'] ? this.props.user['직종']:'',
             userEmail: this.props.user['이메일'] ? this.props.user['이메일']:'',
             userPhone: this.props.user['전화번호'] ? this.props.user['전화번호']:'',
             userLevel: this.props.user['레벨'],
             userAdmin: this.props.user['애드민'],
             userID: this.props.user['유저ID'],
-            allClasses: this.props.user['UserClass']
+            allClasses: this.props.user['UserClass'],
         });
     }
 
@@ -186,7 +198,7 @@ class UserData extends Component{
         this.queryUpdateSelectedUser()
             .then(res => {
                 if(res.mes === 'Success'){
-                    this.props.updateUser();
+                    //this.props.updateUser();
                     window.alert('수정완료!');
                 }else{
                     this.setState({tooltipOpenUpdate: true});
@@ -214,7 +226,8 @@ class UserData extends Component{
             userEmail: this.state.userEmail,
             userPhone: this.state.userPhone,
             userLevel: this.state.userLevel,
-            userAdmin: this.state.userAdmin
+            userAdmin: this.state.userAdmin,
+            userEngName: this.state.userEngName
         }); 
         var token = localStorage.getItem('jwt');
         var response;
@@ -352,9 +365,11 @@ class UserData extends Component{
                         <Typography className={classes.panelHeader}>
                             {this.state.userNo + ' : ' + this.state.userName}
                         </Typography>
-                        <Typography className={classes.panelSub}>
-                            {'소속:   ' + this.state.userAffil + ',   파트:   ' 
-                                + this.state.userPart + ',   직종:   ' + this.state.userJob}
+                        <Typography className={classes.panelSub1}>
+                            {'소속:   ' + this.state.userAffil}
+                        </Typography>
+                        <Typography className={classes.panelSub2}>
+                            {'직종:   ' + this.state.userJob}
                         </Typography>
                         <Tooltip open={this.state.tooltipPassOpen} disableFocusListener disableHoverListener disableTouchListener
                             title={this.state.passwordResetMessage} placement="top">
@@ -378,15 +393,17 @@ class UserData extends Component{
                     <ExpansionPanelDetails className={classes.panelBody}>
                         <TextField label="이름" className = {classes.textField} 
                             value={this.state.userName} onChange={this.handleTextFieldChange('userName')} margin="normal" variant="outlined" />
-                        <TextField label="유저번호" className = {classes.textField} 
+                        <TextField label="영문이름" className = {classes.textField} 
+                            value={this.state.userEngName? this.state.userEngName: ''} onChange={this.handleTextFieldChange('userEngName')} margin="normal" variant="outlined" />
+                        <TextField label="면허번호" className = {classes.textField} 
                             value={this.state.userNo} onChange={this.handleTextFieldChange('userNo')} margin="normal" variant="outlined" />
                         <TextField label="소속" className = {classes.textField} 
                             value={this.state.userAffil? this.state.userAffil: ''} onChange={this.handleTextFieldChange('userAffil')} margin="normal" variant="outlined" />
-                        <TextField label="파트" className = {classes.textField} 
+                        <TextField label="부서" className = {classes.textField} 
                             value={this.state.userPart? this.state.userPart: ''} onChange={this.handleTextFieldChange('userPart')} margin="normal" variant="outlined" />
                         <TextField label="직종" className = {classes.textField} 
                             value={this.state.userJob? this.state.userJob: ''} onChange={this.handleTextFieldChange('userJob')} margin="normal" variant="outlined" />
-                        <TextField label="이메일" className = {classes.textField} type="email" autoComplete="email"
+                        <TextField label="이메일" className = {classes.textFieldEmail} type="email" autoComplete="email"
                             value={this.state.userEmail? this.state.userEmail: ''} onChange={this.handleTextFieldChange('userEmail')} margin="normal" variant="outlined" />
                         <TextField label="전화번호" className = {classes.textField} 
                             value={this.state.userPhone? this.state.userPhone: ''} onChange={this.handleTextFieldChange('userPhone')} margin="normal" variant="outlined" />

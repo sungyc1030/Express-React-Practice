@@ -11,8 +11,8 @@ const styles = theme => ({
         display: 'flex'
     },
     button: {
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit,
+        margin: theme.spacing(1),
+        padding: theme.spacing(1),
         width: '100%'
     },
     passwordField: {

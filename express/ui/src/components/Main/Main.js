@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, Card, CardContent, CardHeader, Avatar, Divider, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, CardHeader, Avatar, Divider, Typography, Popover } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import TopBar from '../TopBar';
-import { Person, Build, LibraryBooks } from '@material-ui/icons';
+import { Person, Build, LibraryBooks, HelpOutline } from '@material-ui/icons';
 import jwt_decode from 'jwt-decode';
 import { blueGrey, indigo, amber } from '@material-ui/core/colors'
 import PrintClasses from  './PrintClasses';
 import PrintCertificate from './PrintCertificate';
-import PasswordChange from './PasswordChange'
+import PersonalInfoChange from './PersonalInfoChange'
 import PrintPage from './PrintPage'
+import 인증서발급기준 from './img/인증서발급기준.JPG'
 
 const styles = theme => ({
     root: {flexGrow: 1},
     grid: { 
-        width: `calc(100% - ${theme.spacing.unit * 4}px)`,
-        margin: `4% ${theme.spacing.unit * 2}px`
+        width: `calc(100% - ${theme.spacing(4)}px)`,
+        margin: `4% ${theme.spacing(2)}px`
     },
     paper: {
-        padding: theme.spacing.unit,
+        padding: theme.spacing(1),
         textAlign: 'center',
         color: theme.palette.text.secondary
     },
@@ -39,8 +40,8 @@ const styles = theme => ({
         marginRight: '2px'
     },
     button: {
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit
+        margin: theme.spacing(1),
+        padding: theme.spacing(1)
     },
     cardBtn: {
         display: 'flex',
@@ -61,11 +62,19 @@ const styles = theme => ({
         alignContent: 'center',
         alignItem: 'center'
     },
+    gridItemLevel:{
+        alignContent: 'center',
+        alignItem: 'center',
+        justifyContent: 'space-between'
+    },
     userTypo: {
         paddingLeft: '5px'
     },
     tableClassesCell:{
-        padding: `${theme.spacing.unit}px`
+        padding: `${theme.spacing(1)}px`
+    },
+    popover: {
+        pointerEvents: 'none',
     },
 });
 
@@ -81,7 +90,8 @@ class Main extends Component{
             classYear: 0,
             startDate: "",
             endDate: "",
-            printWhich: 1 //1 is year, 2 is time range
+            printWhich: 1, //1 is year, 2 is time range,
+            anchorEl: null
         }
     }
 
@@ -113,6 +123,13 @@ class Main extends Component{
             }).catch(err => console.log(err));
     }
 
+    userUpdate = () => {
+        this.getData()
+            .then(res => {
+                this.setState({user: res[0], userClass: res[0].UserClass});
+            }).catch(err => console.log(err));
+    }
+
     showPrintForm = (ori, year = 0, startDate = "", endDate = "") => {
         if(year === 0){
             if(startDate === "" || endDate === ""){
@@ -136,8 +153,17 @@ class Main extends Component{
         }
     }
 
+    handlePopoverOpen = event => {
+        this.setState({ anchorEl: event.currentTarget });
+    };
+    
+    handlePopoverClose = () => {
+        this.setState({ anchorEl: null });
+    };
+
     render(){
         const {classes} = this.props;
+        const open = Boolean(this.state.anchorEl);
 
         var disableCertificate = {}
         if(this.state.user.레벨 === 'Normal'){
@@ -149,11 +175,18 @@ class Main extends Component{
             disableEducation.disableBtn = true;
         }
 
+        var levelDateEnd;
+        if(this.state.user.LevelChangeDateEnd == null){
+            levelDateEnd = "N/A"
+        }else{
+            levelDateEnd = this.state.user.LevelChangeDateEnd 
+        }
+
         return(
             <div className = {classes.root}>
                 <TopBar logout={this.props.logout} admin={this.props.admin}/>
-                <Grid container justify="center" spacing={32} className={classes.grid}>
-                    <Grid container justify="center" item xs={12} spacing={32} className={classes.gridTop}>
+                <Grid container justify="center" spacing={4} className={classes.grid}>
+                    <Grid container justify="center" item xs={12} spacing={4} className={classes.gridTop}>
                         <Grid item xs={7}>
                             <Card className={classes.card}>
                                 <CardHeader
@@ -162,7 +195,7 @@ class Main extends Component{
                                             <Person />
                                         </Avatar>
                                     }
-                                    title={this.state.user.유저번호 + " " + this.state.user.이름}
+                                    title={this.state.user.유저번호 + " " + this.state.user.이름 + " " + this.state.user.영문이름}
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent style = {{height: '70%'}}>
@@ -171,10 +204,38 @@ class Main extends Component{
                                             <Typography className={classes.userTypo}>{"소속 : " + this.state.user.소속}</Typography>
                                         </Grid>
                                         <Grid item container xs={4} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
-                                            <Typography className={classes.userTypo}>{"파트 : " + this.state.user.파트}</Typography>
+                                            <Typography className={classes.userTypo}>{"부서 : " + this.state.user.부서}</Typography>
                                         </Grid>
                                         <Grid item container xs={4} className={classes.gridItem}>
                                             <Typography className={classes.userTypo}>{"직종 : " + this.state.user.직종}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Divider className={classes.divider}/>
+                                    <Grid container className={classes.gridRow}>
+                                        <Grid item container xs={4} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
+                                            <Typography className={classes.userTypo}>{"로그인ID : " + this.state.user.로그인ID}</Typography>
+                                        </Grid>
+                                        <Grid item container xs={4} className={classes.gridItemLevel} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
+                                            <Typography className={classes.userTypo}>{"레벨 : " + this.state.user.레벨}</Typography>
+                                            <HelpOutline onMouseEnter={this.handlePopoverOpen} onMouseLeave={this.handlePopoverClose} aria-haspopup="true" aria-owns={open ? 
+                                                    'levelInfoPopover': undefined} />
+                                            <Popover
+                                                id= "levelInfoPopover"
+                                                className={classes.popover}
+                                                open={open}
+                                                anchorEl = {this.state.anchorEl}
+                                                anchorOrigin = {{vertical: 'center', horizontal: 'right'}}
+                                                transformOrigin={{vertical: 'top', horizontal: 'left'}}
+                                                onClose={this.handlePopoverClose}
+                                                disableRestoreFocus    
+                                            >
+                                                <div>
+                                                    <img src={인증서발급기준} alt={"인증서발급기준"} />
+                                                </div>
+                                            </Popover>
+                                        </Grid>
+                                        <Grid item container xs={4} className={classes.gridItem}>
+                                            <Typography className={classes.userTypo}>{"자격 만료 : " + levelDateEnd}</Typography>
                                         </Grid>
                                     </Grid>
                                     <Divider className={classes.divider}/>
@@ -184,18 +245,6 @@ class Main extends Component{
                                         </Grid>
                                         <Grid item container xs={6} className={classes.gridItem}>
                                             <Typography className={classes.userTypo}>{"Email : " + this.state.user.이메일}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Divider className={classes.divider}/>
-                                    <Grid container className={classes.gridRow}>
-                                        <Grid item container xs={4} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
-                                            <Typography className={classes.userTypo}>{"로그인ID : " + this.state.user.로그인ID}</Typography>
-                                        </Grid>
-                                        <Grid item container xs={4} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
-                                            <Typography className={classes.userTypo}>{"레벨 : " + this.state.user.레벨}</Typography>
-                                        </Grid>
-                                        <Grid item container xs={4} className={classes.gridItem}>
-                                            <Typography className={classes.userTypo}>{"권한 : " + this.state.user.애드민}</Typography>
                                         </Grid>
                                     </Grid>
                                 </CardContent>
@@ -213,14 +262,14 @@ class Main extends Component{
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent className={classes.cardBtn}>
-                                    <PasswordChange user={this.state.user}/>
+                                    <PersonalInfoChange user={this.state.user} key={this.state.user.유저번호} updated={this.userUpdate}/>
                                     <PrintClasses show={this.showPrintForm} userClass={this.state.userClass} {...disableEducation}/>
                                     <PrintCertificate show={this.showPrintForm} {...disableCertificate}/>
                                 </CardContent>
                             </Card>
                         </Grid>
                     </Grid>
-                    <Grid container item xs={10} spacing={32}>
+                    <Grid container item xs={10} spacing={4}>
                         <Grid item xs={12} className={classes.gridClass}>
                             <Card className={classes.card}>
                                 <CardHeader
@@ -264,7 +313,7 @@ class Main extends Component{
                         </Grid>
                     </Grid>
                 </Grid>
-                <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation}
+                <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation} engName={this.state.user.영문이름}
                     level={this.state.user.레벨} userClass={this.state.userClass} name={this.state.user.이름} job={this.state.user.직종} userNo={this.state.user.유저번호}
                     affil={this.state.user.소속} classYear={this.state.classYear} startDate={this.state.startDate} endDate={this.state.endDate} which={this.state.printWhich}/>
             </div>

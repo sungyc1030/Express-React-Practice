@@ -7,25 +7,25 @@ import { Add } from '@material-ui/icons';
 const styles = theme => ({
     root: {flexGrow: 1},
     grid: { 
-        width: `calc(100% - ${theme.spacing.unit * 4}px)`,
-        margin: `4% ${theme.spacing.unit * 2}px`
+        width: `calc(100% - ${theme.spacing(4)}px)`,
+        margin: `4% ${theme.spacing(2)}px`
     },
     fab:{
-        margin: `${theme.spacing.unit}`
+        margin: `${theme.spacing(1)}`
     },
     classListTop: {
         display: 'flex',
         flexDirection: 'row-reverse',
-        marginBottom: `${theme.spacing.unit * 2}px`
+        marginBottom: `${theme.spacing(2)}px`
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color
     },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100px',
         color: theme.color
     }

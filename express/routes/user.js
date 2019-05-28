@@ -54,7 +54,7 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
         이름: dataIn.userName,
         비밀번호: passwordHash,
         소속: dataIn.userAffil,
-        파트: dataIn.userPart,
+        부서: dataIn.userPart,
         직종: dataIn.userJob,
         이메일: dataIn.userEmail,
         전화번호: dataIn.userPhone,
@@ -90,16 +90,18 @@ router.post('/:userid', passport.authenticate("jwt", {session: false}), async fu
       유저번호: dataIn.userNo,
       이름: dataIn.userName,
       소속: dataIn.userAffil,
-      파트: dataIn.userPart,
+      부서: dataIn.userPart,
       직종: dataIn.userJob,
       이메일: dataIn.userEmail,
       전화번호: dataIn.userPhone,
       레벨: dataIn.userLevel,
-      애드민: dataIn.userAdmin
+      애드민: dataIn.userAdmin,
+      영문이름: dataIn.userEngName
     })
     .where('유저ID', id)
     .catch((err) => {
       ErrorHandler(err, res);
+      console.log(err);
     });
     res.send(dataOut);
 });

@@ -3,7 +3,7 @@ import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import Routes from './Route';
 import Login from './Login/Login';
 import PrivateRoute from './PrivateRoute';
-import Error404 from './Error404';
+//import Error404 from './Error404';
 import jwt_decode from 'jwt-decode';
 
 class Index extends Component{
@@ -81,7 +81,8 @@ class Index extends Component{
                     :
                     <Login {...props} login={this.loggedIn}/>)}
                 />
-                <Route component={Error404} />      
+                {//<Route component={Error404} />
+                }      
             </Switch>
         )
     }

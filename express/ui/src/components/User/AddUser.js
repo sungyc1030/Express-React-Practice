@@ -7,31 +7,31 @@ import { Add } from '@material-ui/icons';
 const styles = theme => ({
     root: {flexGrow: 1},
     grid: { 
-        width: `calc(100% - ${theme.spacing.unit * 4}px)`,
-        margin: `4% ${theme.spacing.unit * 2}px`
+        width: `calc(100% - ${theme.spacing(4)}px)`,
+        margin: `4% ${theme.spacing(2)}px`
     },
     fab:{
-        margin: `${theme.spacing.unit}`
+        margin: `${theme.spacing(1)}`
     },
     userListTop: {
         display: 'flex',
         flexDirection: 'row-reverse',
-        marginBottom: `${theme.spacing.unit * 2}px`
+        marginBottom: `${theme.spacing(2)}px`
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         color: theme.color
     },
     textFieldSelect: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100px',
         color: theme.color
     },
     textFieldSelectLevel: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '150px',
         color: theme.color
     },
@@ -40,7 +40,8 @@ const styles = theme => ({
 const level = [
     'Normal',
     'Silver',
-    'Gold대상',
+    'Silver+1',
+    'Silver+2',
     'Gold'
 ]
 
@@ -176,7 +177,7 @@ class AddUser extends Component{
                             value={this.state.userNo} onChange={this.handleTextFieldChange('userNo')} margin="normal" variant="outlined" />
                         <TextField label="소속" className = {classes.textField} 
                             value={this.state.userAffil} onChange={this.handleTextFieldChange('userAffil')} margin="normal" variant="outlined" />
-                        <TextField label="파트" className = {classes.textField} 
+                        <TextField label="부서" className = {classes.textField} 
                             value={this.state.userPart} onChange={this.handleTextFieldChange('userPart')} margin="normal" variant="outlined" />
                         <TextField label="직종" className = {classes.textField} 
                             value={this.state.userJob} onChange={this.handleTextFieldChange('userJob')} margin="normal" variant="outlined" />

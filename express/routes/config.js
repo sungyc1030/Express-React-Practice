@@ -126,7 +126,7 @@ router.processCSV = async(dataArr, res) => {
         이름: rowdata.이름,
         비밀번호: passwordHash,
         소속: rowdata.소속,
-        파트: rowdata.직종,
+        부서: rowdata.직종,
         직종: rowdata.직종,
         이메일: rowdata.이메일,
         전화번호: rowdata.핸드폰번호,
