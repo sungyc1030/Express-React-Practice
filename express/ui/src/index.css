@@ -1,3 +1,18 @@
+@font-face {
+  font-family: 'CursivCustom';
+  src:url('./fonts/Cursiv.ttf.woff') format('woff'),
+      url('./fonts/Cursiv.ttf.svg#Cursiv') format('svg'),
+      url('./fonts/Cursiv.ttf.eot'),
+      url('./fonts/Cursiv.ttf.eot?#iefix') format('embedded-opentype'); 
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Monotype Corsiva Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Monotype Corsiva Regular'), url('./fonts/MTCORSVA.woff') format('woff');
+}
 body {
   margin: 0;
   padding: 0;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanelActions } from '@material-ui/core';
-import { TextField, Typography, Button, Divider, Tooltip } from '@material-ui/core';
+import { TextField, Typography, Button, Divider, Tooltip, Checkbox } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { DeleteForever } from '@material-ui/icons';
@@ -62,6 +62,12 @@ const styles = theme => ({
         maxHeight: '300px',
         overflow: 'auto'
     },
+    headerCheckbox:{
+        flexBasis: '8%'
+    },
+    header: {
+        alignItems: 'center'
+    }
 });
 
 class ClassData extends Component{
@@ -71,12 +77,13 @@ class ClassData extends Component{
         this.state = {
             className: '',
             classDate: '',
-            //classCAS: '불인정',
+            //classKAPA: '불인정',
             //classARC: '불인정',
             tooltipOpen: false,
             allUsers: [],
             classID: 0,
-            tooltipOpenUpdate: false
+            tooltipOpenUpdate: false,
+            checked: false
         }
     } 
 
@@ -90,7 +97,7 @@ class ClassData extends Component{
         this.setState({
             className: this.props.class['교육명'],
             classDate: this.props.class['교육일'],
-            //classCAS: this.props.class['CAS'] ? '인정':'불인정',
+            //classKAPA: this.props.class['KAPA'] ? '인정':'불인정',
             //classARC: this.props.class['ARC'] ? '인정':'불인정',
             allUsers: this.props.class['UserClass'],
             classID: this.props.class['교육ID']
@@ -186,7 +193,7 @@ class ClassData extends Component{
             post: 'Update class',
             className: this.state.className,
             classDate: this.state.classDate,
-            //classCAS: (this.state.classCAS === '인정')? 1:0,
+            //classKAPA: (this.state.classKAPA === '인정')? 1:0,
             //classARC: (this.state.classARC === '인정')? 1:0
         });
         if(token !== null){
@@ -215,6 +222,12 @@ class ClassData extends Component{
         return body;
     }
 
+    handleCheckboxClick = () => event => {
+        event.stopPropagation();
+        this.setState({checked: !this.state.checked});
+        this.props.deleteChecks(this.state.classID);
+    }
+
     render(){
         const {classes} = this.props;
 
@@ -230,13 +243,13 @@ class ClassData extends Component{
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className={classes.tableClassesCell} align="center">유저번호</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">면허번호</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">유저이름</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">소속</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">직종</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
-                                    <TableCell className={classes.tableClassesCell} align="center">CAS</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">KAPA</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">ARC</TableCell>
                                     <TableCell className={classes.tableClassesCellSmall} align="center">수정</TableCell>
                                     <TableCell className={classes.tableClassesCellSmall} align="center">삭제</TableCell>
@@ -253,8 +266,18 @@ class ClassData extends Component{
 
         return(
             <div className = {classes.root}>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <ExpansionPanel TransitionProps={{ unmountOnExit: true }} >
+                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} classes={{ content: classes.header }}>
+                        <div className={classes.headerCheckbox}>
+                            <Checkbox 
+                                checked={this.state.checked}
+                                onClick={this.handleCheckboxClick()}
+                                value="Checked"
+                                inputProps={{
+                                    'aria-label': 'primary checkbox',
+                                }}
+                            />
+                        </div>
                         <Typography className={classes.panelHeader}>
                             {this.state.className}
                         </Typography>
@@ -273,8 +296,8 @@ class ClassData extends Component{
                             value={this.state.className} onChange={this.handleTextFieldChange('className')} margin="normal" variant="outlined" />
                         <TextField label="교육일" className = {classes.textField} type="date"
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
-                        {/*<TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
-                            value={this.state.classCAS} onChange={this.handleTextFieldChange('classCAS')} margin="normal" variant="outlined">
+                        {/*<TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.classKAPA} onChange={this.handleTextFieldChange('classKAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
                                     {option}

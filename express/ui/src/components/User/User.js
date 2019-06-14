@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardContent, CircularProgress, Typography, CardHeader, Avatar, Divider } from '@material-ui/core';
+import { TextField, MenuItem, Button } from '@material-ui/core';
 import { Face } from '@material-ui/icons';
 import { lime } from '@material-ui/core/colors'
 import UserData from './UserData';
@@ -24,12 +25,64 @@ const styles = theme => ({
     progressWrapper: {
         display: 'flex',
         justifyContent: 'center'
+    },
+    searchFields: {
+        display: 'flex',
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        flexWrap: 'wrap'
+    },
+    textFieldSelect: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color
+    },
+    textFieldSelectLevel: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color
+    },
+    textField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color,
+    },
+    userButtons: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        marginTop: `${theme.spacing(1)}px`,
+        marginBottom: `${theme.spacing(1)}px`
+    },
+    progressDiv: {
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center'
+    },
+    searchButton:{
+        margin: `${theme.spacing(1)}px`
     }
 });
+
+const level = [
+    'Normal',
+    'Silver',
+    'Silver+1',
+    'Silver+2',
+    'Gold'
+]
 
 class User extends Component{
     constructor(props){
         super(props)
+
+        var d = new Date(Date.now());
+        var month = '' + (d.getMonth() + 1);
+        var day = '' + (d.getDate());
+        var year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
 
         this.state = {
             users: [],
@@ -37,10 +90,20 @@ class User extends Component{
             empty: false,
             userClass: [],
             page: 0,
+            searchName: '',
+            searchAffil: '',
+            searchJob: '',
+            searchDate1: '2000-01-01',
+            searchDate2: year + '-' + month + '-' + day,
+            searchLevel1: 'Normal',
+            searchLevel2: 'Gold',
+            search: false
         }
 
         this.start = 0
         this.end = 0
+        this.searchUpdate = false
+        this.toBeDeleted = new Set();
     }
 
     getData = async() => {
@@ -113,27 +176,213 @@ class User extends Component{
             .then(res => {
                 if(res.length === 0){
                     this.setState({loaded:true, empty:true});
+                    this.searchUser();
                 }else{
                     //Force change
                     //this.setState({loaded: false});
                     this.setState({users: res, loaded: true});
+                    this.searchUser();
                 }
             }).catch(err => console.log(err));
     }
 
     createList = () => {
-        var list = this.state.users.map((data, index) => {
-            return (
-                <UserData user={data} key={data['유저ID']} deleteUser={this.changeUser} updateUser={this.changeUser} userClass={this.state.userClass}/>
-            )
-        });
+        const {classes} = this.props;
+
+        var list;
+        if(this.state.search && this.searchUpdate){
+            list = this.state.users.map((data, index) => {
+                var status = <UserData user={data} key={data['유저ID']} deleteUser={this.changeUser} updateUser={this.changeUser} userClass={this.state.userClass}
+                                deleteChecks={this.handleChecksForDelete} />;
+                var name = data.이름;
+                if(name.indexOf(this.state.searchName) === -1){
+                    status = null;
+                }
+                if(data.소속.indexOf(this.state.searchAffil) === -1){
+                    status = null;
+                }
+                if(data.직종.indexOf(this.state.searchJob) === -1){
+                    status = null;
+                }
+                var dateTarget = new Date(data.IssuedDate);
+                var startDate = new Date(this.state.searchDate1);
+                var endDate = new Date(this.state.searchDate2);
+                if(data.IssuedDate == null){
+                    //should be null when the time comes
+                }else if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
+                    status = null;
+                }
+                var startLevelPos, endLevelPos, targetLevelPos
+                for(var i = 0; i < level.length; i++){
+                    if(level[i] === data.레벨){
+                        targetLevelPos = i
+                    }
+                    if(level[i] === this.state.searchLevel1){
+                        startLevelPos = i
+                    }
+                    if(level[i] === this.state.searchLevel2){
+                        endLevelPos = i
+                    }
+                }
+                if(targetLevelPos < startLevelPos || targetLevelPos > endLevelPos){
+                    status = null;
+                }
+                return status;
+            });
+            this.searchUpdate = false;
+        }else if(this.state.search){
+            list = <div className = {classes.progressDiv}>
+                    <CircularProgress className = {classes.progress}/>
+                </div>
+        }
+        if(Array.isArray(list)){
+            var arrayStatus = false;
+            for(var j = 0; j < list.length; j++){
+                if(list[j] != null){
+                    arrayStatus = true;
+                    break;
+                }
+            }
+            if(!arrayStatus){
+                list = <Typography>
+                    조회된 유저 데이터가 없습니다.
+                </Typography>
+            }
+        }else if(!this.state.search){
+            list = <Typography>
+                조회된 유저 데이터가 없습니다.
+            </Typography>
+        }
         return list;
     }
+
+    handleTextFieldChange = name => event => {
+        this.setState({
+            [name]: event.target.value
+        });
+    };
+
+    searchUser = () => {
+        this.searchUpdate = true;
+        this.setState({search: true});
+    }
+
+    handleMassDelete = () => {
+        this.setState({loaded: false});
+        this.deleteMassUser()
+            .then(res => {
+                this.changeUser();
+            }).catch(error => {
+                this.setState({loaded:true});
+                console.log(error);
+                alert("삭제에 실패하였습니다.");
+            });
+    }
+
+    deleteMassUser = async() => {
+        //Force change 
+        var token = localStorage.getItem('jwt');
+        var response;
+        var data = JSON.stringify({
+                ids: Array.from(this.toBeDeleted)
+            });
+        if(token !== null){
+            response = await fetch('/api/user', {
+                method: 'DELETE',
+                headers:{
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: data
+            });
+        }else{
+            response = await fetch('/api/user/', {
+                method: 'DELETE'
+            });
+        }
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        
+        return body;
+    }
+
+    handleChecksForDelete = (id) => {
+        if(this.toBeDeleted.has(id)){
+            this.toBeDeleted.delete(id);
+        }else{
+            this.toBeDeleted.add(id);
+        }   
+    }
+
+    componentDidUpdate = () => {
+        
+    }
+
 
     render(){
         const {classes} = this.props;
 
         var renderHelper;
+        var renderSearch = 
+            <div>
+            <div className={classes.searchFields}>
+                <TextField label="이름" className = {classes.textField} 
+                    value={this.state.searchName} onChange={this.handleTextFieldChange('searchName')} margin="normal" variant="outlined" />
+                <TextField label="소속" className = {classes.textField} 
+                    value={this.state.searchAffil} onChange={this.handleTextFieldChange('searchAffil')} margin="normal" variant="outlined" />
+                <TextField label="직종" className = {classes.textField}
+                    value={this.state.searchJob} onChange={this.handleTextFieldChange('searchJob')} margin="normal" variant="outlined" />
+            </div>
+            <div className={classes.searchFields}>
+                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                    value={this.state.searchDate1} onChange={this.handleTextFieldChange('searchDate1')} margin="normal" variant="outlined" />
+                <Typography>
+                    ~
+                </Typography>
+                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                    value={this.state.searchDate2} onChange={this.handleTextFieldChange('searchDate2')} margin="normal" variant="outlined" />
+                <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                    value={this.state.searchLevel1} onChange={this.handleTextFieldChange('searchLevel1')} margin="normal" variant="outlined">
+                    {level.map(option => (
+                        <MenuItem key={option} value={option} className={classes.selectItem}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <Typography>
+                    ~
+                </Typography>
+                <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                    value={this.state.searchLevel2} onChange={this.handleTextFieldChange('searchLevel2')} margin="normal" variant="outlined">
+                    {level.map(option => (
+                        <MenuItem key={option} value={option} className={classes.selectItem}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            </div>  
+            <Divider/>
+            <div className={classes.userButtons}>  
+                <Button className={classes.searchButton} color="primary" variant="contained" disabled>
+                    <Typography variant="button">
+                        출력
+                    </Typography>
+                </Button>   
+                <Button className={classes.searchButton} color="primary" variant="contained" onClick={this.handleMassDelete}>
+                    <Typography variant="button">
+                        선택삭제
+                    </Typography>
+                </Button>
+                <Button onClick={this.searchUser} className={classes.searchButton} color="primary" variant="contained">
+                    <Typography variant="button">
+                        조회
+                    </Typography>
+                </Button>     
+                <AddUser addUser={this.changeUser} />
+            </div>
+            
+            </div>
 
         if(this.state.loaded){
             if(this.state.empty){
@@ -146,10 +395,14 @@ class User extends Component{
                     </CardContent>
             }else{
                 renderHelper = 
-                    <CardContent>
-                        <AddUser addUser={this.changeUser}/>
-                        {this.createList()}
-                    </CardContent>
+                        <React.Fragment>
+                            {renderSearch}
+                            <CardContent>    
+                                    {/*<AddUser addUser={this.changeUser}/>*/}
+                                    {this.createList()}
+                                    {/*<CircularProgress className = {classes.progress}/>*/}
+                            </CardContent>
+                        </React.Fragment>
             }
         }else{
             renderHelper = 

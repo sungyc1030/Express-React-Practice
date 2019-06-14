@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Typography } from '@material-ui/core';
 import { Description } from '@material-ui/icons';
-import { red } from '@material-ui/core/colors'
+//import { red } from '@material-ui/core/colors'
 
 const styles = theme => ({
     icon: {
@@ -139,7 +139,7 @@ class PrintClasses extends Component{
                     <DialogTitle>기간선택</DialogTitle>
                     <DialogContent>
                         {this.state.year.length === 0 ? 
-                            <Typography color={red[500]}>수강한 교육이 존재하지 않습니다.</Typography>
+                            <Typography color="error">수강한 교육이 존재하지 않습니다.</Typography>
                             :
                             <div>
                                 <TextField label="년도" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}

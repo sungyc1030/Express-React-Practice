@@ -84,9 +84,10 @@ class PasswordChange extends Component{
             this.queryPasswordChange()
                 .then(res => {
                     if(res.mes === 'Success'){
-                        this.setState({tooltipOpen: true, tooltipMes: '패스워드 변경에 성공하였습니다.'});
+                        this.setState({tooltipOpen: true, tooltipMes: '패스워드 변경에 성공하였습니다. 이 창은 곧 닫힙니다.'});
                         setTimeout(() => {
-                            this.setState({tooltipOpen: false})
+                            //this.setState({tooltipOpen: false});
+                            this.handleFormClose();
                         }, 1500);
                     }else if(res.mes === 'Wrong Initial Password'){
                         this.setState({tooltipOpen: true, tooltipMes: '이전 패스워드가 맞지 않습니다.'});

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanelActions } from '@material-ui/core';
-import { TextField, Typography, MenuItem, Button, Divider, Tooltip } from '@material-ui/core';
+import { TextField, Typography, MenuItem, Button, Divider, Tooltip, Checkbox } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { DeleteForever, SettingsBackupRestore } from '@material-ui/icons';
@@ -40,13 +40,13 @@ const styles = theme => ({
         justifyContent: 'center'
     },
     panelHeader:{
-        flexBasis: '27%'
+        flexBasis: '24%'
     },
     panelSub1:{
-        flexBasis: '25%'
+        flexBasis: '22%'
     },
     panelSub2:{
-        flexBasis: '21%'
+        flexBasis: '19%'
     },
     deleteUser:{
         justifyContent: 'center'
@@ -75,6 +75,12 @@ const styles = theme => ({
         maxHeight: '300px',
         overflow: 'auto'
     },
+    headerCheckbox:{
+        flexBasis: '8%'
+    },
+    header: {
+        alignItems: 'center'
+    }
 });
 
 const level = [
@@ -110,7 +116,8 @@ class UserData extends Component{
             tooltipOpen: false,
             tooltipOpenUpdate: false,
             tooltipPassOpen: false,
-            passwordResetMessage: '패스워드 리셋에 실패하였습니다.'
+            passwordResetMessage: '패스워드 리셋에 실패하였습니다.',
+            checked: false
         }
     } 
 
@@ -327,6 +334,12 @@ class UserData extends Component{
         return list;
     }
 
+    handleCheckboxClick = () => event => {
+        event.stopPropagation();
+        this.setState({checked: !this.state.checked});
+        this.props.deleteChecks(this.state.userID);
+    }
+
     render(){
         const {classes} = this.props;
 
@@ -346,7 +359,7 @@ class UserData extends Component{
                                     <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
-                                    <TableCell className={classes.tableClassesCell} align="center">CAS인증</TableCell>
+                                    <TableCell className={classes.tableClassesCell} align="center">KAPA인증</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">수정</TableCell>
                                     <TableCell className={classes.tableClassesCell} align="center">삭제</TableCell>
@@ -360,8 +373,18 @@ class UserData extends Component{
 
         return(
             <div className = {classes.root}>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <ExpansionPanel TransitionProps={{ unmountOnExit: true }} >
+                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} classes={{ content: classes.header }}>
+                        <div className={classes.headerCheckbox}>
+                            <Checkbox 
+                                checked={this.state.checked}
+                                onClick={this.handleCheckboxClick()}
+                                value="Checked"
+                                inputProps={{
+                                    'aria-label': 'primary checkbox',
+                                }}
+                            />
+                        </div>
                         <Typography className={classes.panelHeader}>
                             {this.state.userNo + ' : ' + this.state.userName}
                         </Typography>
@@ -375,8 +398,8 @@ class UserData extends Component{
                             title={this.state.passwordResetMessage} placement="top">
                             <Button className={classes.passwordReset} onClick={this.passwordReset}>
                                 <SettingsBackupRestore/>
-                                <Typography>
-                                    비밀번호 초기화
+                                <Typography variant="button">
+                                    비밀번호초기화
                                 </Typography>
                             </Button>
                         </Tooltip>
@@ -384,7 +407,7 @@ class UserData extends Component{
                             title="삭제에 실패하였습니다." placement="top">
                             <Button className={classes.deleteUser} onClick={this.deleteSelectedUser}>
                                 <DeleteForever/>
-                                <Typography>
+                                <Typography variant="button">
                                     삭제
                                 </Typography>
                             </Button>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardContent, CircularProgress, Typography, CardHeader, Avatar, Divider } from '@material-ui/core';
+import { TextField, Button } from '@material-ui/core';
 import { Book } from '@material-ui/icons';
 import { indigo } from '@material-ui/core/colors'
 import AddClass from './AddClass';
@@ -24,6 +25,42 @@ const styles = theme => ({
     progressWrapper: {
         display: 'flex',
         justifyContent: 'center'
+    },
+    progressDiv: {
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center'
+    },
+    searchFields: {
+        display: 'flex',
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        flexWrap: 'wrap'
+    },
+    textFieldSelect: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color
+    },
+    textFieldSelectLevel: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color
+    },
+    textField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color,
+    },
+    userButtons: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        marginTop: `${theme.spacing(1)}px`,
+        marginBottom: `${theme.spacing(1)}px`
+    },
+    searchButton:{
+        margin: `${theme.spacing(1)}px`
     }
 });
 
@@ -31,12 +68,27 @@ class Class extends Component{
     constructor(props){
         super(props)
 
+        var d = new Date(Date.now());
+        var month = '' + (d.getMonth() + 1);
+        var day = '' + (d.getDate());
+        var year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
         this.state = {
             classes: [],
             loaded: false,
             empty: false,
-            classUser: []
+            classUser: [],
+            search: false,
+            searchName: '',
+            searchDate1: '2000-01-01',
+            searchDate2: year + '-' + month + '-' + day
         }
+
+        this.searchUpdate = false
+        this.toBeDeleted = new Set();
     }
 
     getData = async() => {
@@ -101,23 +153,165 @@ class Class extends Component{
             }).catch(err => console.log(err));
     }
 
+    createList = () => {
+        const {classes} = this.props;
+
+        var list;
+        if(this.state.search && this.searchUpdate){
+            list = this.state.classes.map((data, index) => {
+                var status = <ClassData class={data} key={data['교육ID']} deleteClass={this.changeClass} updateClass={this.changeClass} 
+                    classUser={this.state.classUser} deleteChecks={this.handleChecksForDelete}/>
+                var name = data.교육명;
+                if(name.indexOf(this.state.searchName) === -1){
+                    status = null;
+                }
+                var dateTarget = new Date(data.교육일);
+                var startDate = new Date(this.state.searchDate1);
+                var endDate = new Date(this.state.searchDate2);
+                if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
+                    status = null;
+                }
+                return status;
+            });
+            this.searchUpdate = false;
+        }else if(this.state.search){
+            list = <div className = {classes.progressDiv}>
+                    <CircularProgress className = {classes.progress}/>
+                </div>
+        }
+        if(Array.isArray(list)){
+            var arrayStatus = false;
+            for(var j = 0; j < list.length; j++){
+                if(list[j] != null){
+                    arrayStatus = true;
+                    break;
+                }
+            }
+            if(!arrayStatus){
+                list = <Typography>
+                    조회된 교육 데이터가 없습니다.
+                </Typography>
+            }
+        }else if(!this.state.search){
+            list = <Typography>
+                조회된 교육 데이터가 없습니다.
+            </Typography>
+        }
+        return list;
+    }
+
     changeClass = () => {
         this.getData()
             .then(res => {
                 if(res.length === 0){
                     this.setState({loaded:true, empty:true});
+                    this.searchClass();
                 }else{
                     //Force change
                     this.setState({loaded: false});
                     this.setState({classes: res, loaded: true});
+                    this.searchClass();
                 }
             }).catch(err => console.log(err));
+    }
+
+    handleTextFieldChange = name => event => {
+        this.setState({
+            [name]: event.target.value
+        });
+    };
+
+    searchClass = () => {
+        this.searchUpdate = true;
+        this.setState({search: true});
+    };
+
+    handleMassDelete = () => {
+        this.setState({loaded: false});
+        this.deleteMassClass()
+            .then(res => {
+                this.changeClass();
+            }).catch(error => {
+                this.setState({loaded:true});
+                console.log(error);
+                alert("삭제에 실패하였습니다.");
+            });
+    };
+
+    deleteMassClass = async() => {
+        //Force change 
+        var token = localStorage.getItem('jwt');
+        var response;
+        var data = JSON.stringify({
+                ids: Array.from(this.toBeDeleted)
+            });
+        if(token !== null){
+            response = await fetch('/api/class', {
+                method: 'DELETE',
+                headers:{
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: data
+            });
+        }else{
+            response = await fetch('/api/class/', {
+                method: 'DELETE'
+            });
+        }
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        
+        return body;
+    }
+
+    handleChecksForDelete = (id) => {
+        if(this.toBeDeleted.has(id)){
+            this.toBeDeleted.delete(id);
+        }else{
+            this.toBeDeleted.add(id);
+        }   
     }
 
     render(){
         const {classes} = this.props;
 
         var renderHelper;
+        var renderSearch = 
+            <div>
+            <div className={classes.searchFields}>
+                <TextField label="이름" className = {classes.textField} 
+                    value={this.state.searchName} onChange={this.handleTextFieldChange('searchName')} margin="normal" variant="outlined" />
+                                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                    value={this.state.searchDate1} onChange={this.handleTextFieldChange('searchDate1')} margin="normal" variant="outlined" />
+                <Typography>
+                    ~
+                </Typography>
+                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                    value={this.state.searchDate2} onChange={this.handleTextFieldChange('searchDate2')} margin="normal" variant="outlined" />
+            </div> 
+            <Divider/>
+            <div className={classes.userButtons}>  
+                <Button className={classes.searchButton} color="primary" variant="contained" disabled>
+                    <Typography variant="button">
+                        출력
+                    </Typography>
+                </Button>   
+                <Button className={classes.searchButton} color="primary" variant="contained" onClick={this.handleMassDelete}>
+                    <Typography variant="button">
+                        선택삭제
+                    </Typography>
+                </Button>
+                <Button onClick={this.searchClass} className={classes.searchButton} color="primary" variant="contained">
+                    <Typography variant="button">
+                        조회
+                    </Typography>
+                </Button>     
+                <AddClass addClass={this.changeClass} />
+            </div>
+            
+            </div>
 
         if(this.state.loaded){
             if(this.state.empty){
@@ -130,12 +324,12 @@ class Class extends Component{
                     </CardContent>
             }else{
                 renderHelper = 
-                    <CardContent>
-                    <AddClass addClass = {this.changeClass}/>
-                        {this.state.classes.map((data, index) => (
-                            <ClassData class={data} key={data['교육ID']} deleteClass={this.changeClass} updateClass={this.changeClass} classUser={this.state.classUser}/>
-                        ))}
-                    </CardContent>
+                    <React.Fragment>
+                        {renderSearch}
+                        <CardContent>
+                            {this.createList()}
+                        </CardContent>
+                    </React.Fragment>
             }
         }else{
             renderHelper = 

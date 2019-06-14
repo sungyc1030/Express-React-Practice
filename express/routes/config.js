@@ -180,7 +180,7 @@ router.processCSV = async(dataArr, res) => {
         교육ID: edId,
         역할: rowdata.역할,
         참가여부: rowdata.교육참석,
-        CAS: (rowdata.CAS인증 === '참석' ? '인정':'불인정'),
+        KAPA: (rowdata.KAPA === '참석' ? '인정':'불인정'),
         ARC: (rowdata.ARC인증 === '참석' ? '인정':'불인정')
       })
       .catch((err) => {

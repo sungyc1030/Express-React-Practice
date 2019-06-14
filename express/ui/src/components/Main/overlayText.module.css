@@ -31,6 +31,8 @@
     position: absolute;
     font-size: 54px;
     font-style: italic;
+    /*font-family: CursivCustom;*/
+    font-family: Monotype Corsiva Regular
 }
 
 .cIssuedDate{

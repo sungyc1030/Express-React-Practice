@@ -49,7 +49,7 @@ class AddClassUser extends Component{
             tooltipOpen: false,
             role: '',
             attendance: '',
-            CAS: '불인정',
+            KAPA: '불인정',
             ARC: '불인정',
             tooltipMes: '유저를 선택해주세요.',
             radioChecked: 0
@@ -65,7 +65,7 @@ class AddClassUser extends Component{
             classID: this.props.data['교육ID'],
             role: this.state.role,
             attendance: this.state.attendance,
-            CAS: this.state.CAS,
+            KAPA: this.state.KAPA,
             ARC: this.state.ARC
         });
         if(token !== null){
@@ -135,7 +135,7 @@ class AddClassUser extends Component{
             this.setState({
                 role: '',
                 attendance: '',
-                CAS: '불인정',
+                KAPA: '불인정',
                 ARC: '불인정',
                 tooltipMes: '유저를 선택해주세요.',
                 radioChecked: Number(this.props.classUser[0]['유저ID'])
@@ -144,7 +144,7 @@ class AddClassUser extends Component{
             this.setState({
                 role: '',
                 attendance: '',
-                CAS: '불인정',
+                KAPA: '불인정',
                 ARC: '불인정',
                 tooltipMes: '유저를 선택해주세요.',
                 radioChecked: 0
@@ -170,7 +170,7 @@ class AddClassUser extends Component{
                             <TableHead>
                                 <TableRow>
                                     <TableCell className={classes.scrollTableHead} align="center">선택</TableCell>
-                                    <TableCell className={classes.scrollTableHead} align="center">유저번호</TableCell>
+                                    <TableCell className={classes.scrollTableHead} align="center">면허번호</TableCell>
                                     <TableCell className={classes.scrollTableHead} align="center">이름</TableCell>
                                     <TableCell className={classes.scrollTableHead} align="center">소속</TableCell>
                                 </TableRow>
@@ -215,8 +215,8 @@ class AddClassUser extends Component{
                             value={this.state.role} onChange={this.handleTextFieldChange('role')} margin="normal" variant="outlined" />
                         <TextField label="참가여부" className = {classes.textField} 
                             value={this.state.attendance} onChange={this.handleTextFieldChange('attendance')} margin="normal" variant="outlined" />
-                        <TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
-                            value={this.state.CAS} onChange={this.handleTextFieldChange('CAS')} margin="normal" variant="outlined">
+                        <TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.KAPA} onChange={this.handleTextFieldChange('KAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
                                     {option}

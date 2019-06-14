@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Fab, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import { Button, /*Fab,*/ Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
+//import { Add } from '@material-ui/icons';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -11,7 +11,7 @@ const styles = theme => ({
         margin: `4% ${theme.spacing(2)}px`
     },
     fab:{
-        margin: `${theme.spacing(1)}`
+        margin: `${theme.spacing(1)}px`
     },
     userListTop: {
         display: 'flex',
@@ -66,7 +66,7 @@ class AddUser extends Component{
             userLevel: 'Normal',
             userAdmin: '사용자',
             tooltipOpen: false,
-            tooltipMes: '유저번호와 이름은 필수사항입니다.'
+            tooltipMes: '면허번호와 이름은 필수사항입니다.'
         };
     };
 
@@ -155,7 +155,7 @@ class AddUser extends Component{
             userLevel: 'Normal',
             userAdmin: '사용자',
             tooltipOpen: false,
-            tooltipMes: '유저번호와 이름은 필수사항입니다.'
+            tooltipMes: '면허번호와 이름은 필수사항입니다.'
         });
     }
 
@@ -163,17 +163,22 @@ class AddUser extends Component{
         const {classes} = this.props;
         return(
             <div>
-                <div className={classes.userListTop}>
+                {/*<div className={classes.userListTop}>
                     <Fab color="primary" aria-label="Add" className={classes.fab} size="small" onClick={this.handleFormOpen}>
                         <Add />
                     </Fab>
-                </div>
+                </div>*/}
+                <Button className={classes.fab} onClick={this.handleFormOpen} color="primary" variant="contained">
+                    <Typography variant="button">
+                        새로운유저
+                    </Typography>
+                </Button>
                 <Dialog open={this.state.open} onClose={this.handleFormClose} onEnter={this.dialogEnter} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">신규유저생성</DialogTitle>
                     <DialogContent>
                         <TextField label="이름" className = {classes.textField} 
                             value={this.state.userName} onChange={this.handleTextFieldChange('userName')} margin="normal" variant="outlined" />
-                        <TextField label="유저번호" className = {classes.textField} 
+                        <TextField label="면허번호" className = {classes.textField} 
                             value={this.state.userNo} onChange={this.handleTextFieldChange('userNo')} margin="normal" variant="outlined" />
                         <TextField label="소속" className = {classes.textField} 
                             value={this.state.userAffil} onChange={this.handleTextFieldChange('userAffil')} margin="normal" variant="outlined" />

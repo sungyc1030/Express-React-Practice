@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
   /*************Legacy****************/
   /*db.connect()
   var pool = db.get()
-  var sql = 'SELECT 유저.유저ID, 유저번호, 이름, 소속, 파트, 직종, 이메일, 전화번호, 레벨, 애드민, 교육.교육ID, 출결.역할, 출결.참가여부, 교육.교육명, 교육.교육일, 교육.CAS, 교육.ARC ' +  
+  var sql = 'SELECT 유저.유저ID, 유저번호, 이름, 소속, 파트, 직종, 이메일, 전화번호, 레벨, 애드민, 교육.교육ID, 출결.역할, 출결.참가여부, 교육.교육명, 교육.교육일, 교육.KAPA, 교육.ARC ' +  
     'FROM 유저 LEFT JOIN (출결 INNER JOIN 교육 ON 출결.교육ID = 교육.교육ID) ON 유저.유저ID = 출결.유저ID ORDER BY 유저.유저ID'
   pool.query(sql, function(err,results,fields){
     var data = [];
@@ -51,7 +51,7 @@ router.get('/', async (req, res, next) => {
               '참가여부': results[i].참가여부,
               '교육명': results[i].교육명,
               '교육일': results[i].교육일,
-              'CAS': results[i].CAS,
+              'KAPA': results[i].KAPA,
               'ARC': results[i].ARC
             }
             user.교육.push(ed);
@@ -85,7 +85,7 @@ router.get('/', async (req, res, next) => {
               '참가여부': results[i].참가여부,
               '교육명': results[i].교육명,
               '교육일': results[i].교육일,
-              'CAS': results[i].CAS,
+              'KAPA': results[i].KAPA,
               'ARC': results[i].ARC
             }
             user.교육.push(ed);
@@ -115,7 +115,7 @@ router.get('/', async (req, res, next) => {
               '참가여부': results[i].참가여부,
               '교육명': results[i].교육명,
               '교육일': results[i].교육일,
-              'CAS': results[i].CAS,
+              'KAPA': results[i].KAPA,
               'ARC': results[i].ARC
             }
             user.교육.push(ed);
@@ -130,7 +130,7 @@ router.get('/', async (req, res, next) => {
               '참가여부': results[i].참가여부,
               '교육명': results[i].교육명,
               '교육일': results[i].교육일,
-              'CAS': results[i].CAS,
+              'KAPA': results[i].KAPA,
               'ARC': results[i].ARC
             }
             user.교육.push(ed);
@@ -145,7 +145,7 @@ router.get('/', async (req, res, next) => {
               '참가여부': results[i].참가여부,
               '교육명': results[i].교육명,
               '교육일': results[i].교육일,
-              'CAS': results[i].CAS,
+              'KAPA': results[i].KAPA,
               'ARC': results[i].ARC
             }
             user.교육.push(ed);

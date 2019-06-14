@@ -288,7 +288,7 @@ class Main extends Component{
                                                 <TableRow>
                                                     <TableCell className={classes.tableClassesCell} align="center">교육명</TableCell>
                                                     <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
-                                                    <TableCell className={classes.tableClassesCell} align="center">CAS인증</TableCell>
+                                                    <TableCell className={classes.tableClassesCell} align="center">KAPA인증</TableCell>
                                                     <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
                                                     <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
                                                     <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
@@ -299,7 +299,7 @@ class Main extends Component{
                                                     <TableRow key={index}>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.Class.교육명}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.Class.교육일}</TableCell>
-                                                        <TableCell className={classes.tableClassesCell} align="center">{row.CAS}</TableCell>
+                                                        <TableCell className={classes.tableClassesCell} align="center">{row.KAPA}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.ARC}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.역할}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.참가여부}</TableCell>

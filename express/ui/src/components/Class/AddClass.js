@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Fab, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import { Button, /*Fab,*/ Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
+//import { Add } from '@material-ui/icons';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -11,7 +11,7 @@ const styles = theme => ({
         margin: `4% ${theme.spacing(2)}px`
     },
     fab:{
-        margin: `${theme.spacing(1)}`
+        margin: `${theme.spacing(1)}px`
     },
     classListTop: {
         display: 'flex',
@@ -44,7 +44,7 @@ class AddClass extends Component{
             open: false,
             className: '',
             classDate: '',
-            //classCAS: '불인정',
+            //classKAPA: '불인정',
             //classARC: '불인정',
             tooltipOpen: false,
             tooltipMes: '교육명은 필수사항입니다.'
@@ -58,7 +58,7 @@ class AddClass extends Component{
             post: 'Add class',
             className: this.state.className,
             classDate: this.state.classDate,
-            //classCAS: (this.state.classCAS === '인정')? 1:0,
+            //classKAPA: (this.state.classKAPA === '인정')? 1:0,
             //classARC: (this.state.classARC === '인정')? 1:0
         });
         if(token !== null){
@@ -123,7 +123,7 @@ class AddClass extends Component{
         this.setState({
             className: '',
             classDate: '',
-            //classCAS: '불인정',
+            //classKAPA: '불인정',
             //classARC: '불인정',
             tooltipOpen: false,
             tooltipMes: '교육명은 필수사항입니다.'
@@ -134,11 +134,16 @@ class AddClass extends Component{
         const {classes} = this.props;
         return(
             <div>
-                <div className={classes.classListTop}>
-                <Fab color="primary" aria-label="Add" className={classes.fab} size="small" onClick={this.handleFormOpen}>
-                    <Add />
-                </Fab>
-                </div>
+                {/*<div className={classes.classListTop}>
+                    <Fab color="primary" aria-label="Add" className={classes.fab} size="small" onClick={this.handleFormOpen}>
+                        <Add />
+                    </Fab>
+                </div>*/}
+                <Button className={classes.fab} onClick={this.handleFormOpen} color="primary" variant="contained">
+                    <Typography variant="button">
+                        새로운교육
+                    </Typography>
+                </Button>
                 <Dialog open={this.state.open} onClose={this.handleFormClose} onEnter={this.dialogEnter} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">신규교육생성</DialogTitle>
                     <DialogContent>
@@ -146,8 +151,8 @@ class AddClass extends Component{
                             value={this.state.className} onChange={this.handleTextFieldChange('className')} margin="normal" variant="outlined" />
                         <TextField label="수업일" className = {classes.textField} 
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
-                        {/*<TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
-                            value={this.state.classCAS} onChange={this.handleTextFieldChange('classCAS')} margin="normal" variant="outlined">
+                        {/*<TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.classKAPA} onChange={this.handleTextFieldChange('classKAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
                                     {option}

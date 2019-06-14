@@ -44,7 +44,7 @@ class UserDataRow extends Component{
             role: '',
             attendance: '',
             id: 0,
-            CAS: '불인정',
+            KAPA: '불인정',
             ARC: '불인정'
         }
     } 
@@ -54,7 +54,7 @@ class UserDataRow extends Component{
             role: this.props.data['역할']? this.props.data['역할']: '', 
             attendance: this.props.data['참가여부']? this.props.data['참가여부']: '',
             id: this.props.data['출결ID'],
-            CAS: this.props.data['CAS'],
+            KAPA: this.props.data['KAPA'],
             ARC: this.props.data['ARC']
         });
     }
@@ -135,7 +135,7 @@ class UserDataRow extends Component{
             classID: this.props.data['교육ID'],
             role: this.state.role,
             attendance: this.state.attendance,
-            CAS: this.state.CAS,
+            KAPA: this.state.KAPA,
             ARC: this.state.ARC
         });
         if(token !== null){
@@ -191,11 +191,11 @@ class UserDataRow extends Component{
                         }}
                     />
                 </TableCell>
-                {/*<TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['CAS']? '인정': '불인정'}</TableCell>
+                {/*<TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['KAPA']? '인정': '불인정'}</TableCell>
                 <TableCell className={classes.tableClassesCell} align="center">{this.props.data.Class['ARC']? '인정': '불인정'}</TableCell>*/}
                 <TableCell className={classes.tableClassesCell} align="center">
-                    <TextField label="CAS인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
-                            value={this.state.CAS} onChange={this.handleTextFieldChange('CAS')} margin="normal" variant="outlined">
+                    <TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.KAPA} onChange={this.handleTextFieldChange('KAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (
                                 <MenuItem key={option} value={option} className={classes.selectItem}>
                                     {option}

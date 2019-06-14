@@ -10,7 +10,7 @@ router.get('/', async (req, res, next) =>{
     res.send(classes);
     /*db.connect()
     var pool = db.get()
-    var sql = 'SELECT 교육.교육ID, 출결.역할, 출결.참가여부, 교육.교육명, 교육.교육일, 교육.CAS, 교육.ARC, 유저.유저ID, 유저번호, 이름, 소속, 파트, 직종, 이메일, 전화번호, 레벨, 애드민 ' +  
+    var sql = 'SELECT 교육.교육ID, 출결.역할, 출결.참가여부, 교육.교육명, 교육.교육일, 교육.KAPA, 교육.ARC, 유저.유저ID, 유저번호, 이름, 소속, 파트, 직종, 이메일, 전화번호, 레벨, 애드민 ' +  
       'FROM 교육 LEFT JOIN (출결 INNER JOIN 유저 ON 출결.유저ID = 유저.유저ID) ON 교육.교육ID = 출결.교육ID ORDER BY 교육.교육ID'
     pool.query(sql, function(err,results,fields){
         var data = [];
@@ -28,7 +28,7 @@ router.get('/', async (req, res, next) =>{
                         '교육ID': results[i].교육ID,
                         '교육명': results[i].교육명,
                         '교육일': results[i].교육일,
-                        'CAS': results[i].CAS,
+                        'KAPA': results[i].KAPA,
                         'ARC': results[i].ARC
                     };
                     classID = results[i].교육ID
@@ -62,7 +62,7 @@ router.get('/', async (req, res, next) =>{
                         '교육ID': results[i].교육ID,
                         '교육명': results[i].교육명,
                         '교육일': results[i].교육일,
-                        'CAS': results[i].CAS,
+                        'KAPA': results[i].KAPA,
                         'ARC': results[i].ARC
                     };
                     classID = results[i].교육ID
@@ -92,7 +92,7 @@ router.get('/', async (req, res, next) =>{
                         '교육ID': results[i].교육ID,
                         '교육명': results[i].교육명,
                         '교육일': results[i].교육일,
-                        'CAS': results[i].CAS,
+                        'KAPA': results[i].KAPA,
                         'ARC': results[i].ARC
                     };
                     classID = results[i].교육ID
@@ -178,10 +178,10 @@ router.post('/', function(req, res, next){
     }else{
       db.connect();
       var pool = db.get();
-      var sql = "INSERT INTO 교육 (교육명, 교육일, CAS, ARC) VALUES (" +
+      var sql = "INSERT INTO 교육 (교육명, 교육일, KAPA, ARC) VALUES (" +
         "'" + dataIn.className + "'," +
         "'" + dataIn.classDate + "'," +
-        dataIn.classCAS + "," +
+        dataIn.classKAPA + "," +
         dataIn.classARC + ")"
       pool.query(sql, function(err,result,fields){
         if(err){
@@ -217,7 +217,7 @@ router.post('/:classid', function(req, res, next){
       var pool = db.get();
       var sql = "UPDATE 교육 SET 교육명 = '" + dataIn.className + "', " +
         "교육일 = '" + dataIn.classDate + "', " +
-        "CAS = " + dataIn.classCAS + ", " +
+        "KAPA = " + dataIn.classKAPA + ", " +
         "ARC = " + dataIn.classARC + " WHERE 교육ID = " + id
       pool.query(sql, function(err,result,fields){
         if(err){

@@ -5,22 +5,49 @@ var ErrorHandler = require('../scripts/error');
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
 var jwt_decode = require('jwt-decode');
+var UserClass = require('../models/UserClass');
 //var db = require('../scripts/db')
 
 /* GET users listing. */
 router.get('/', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
-  const users = await User.query()
+  var users = await User.query()
     .skipUndefined()
     .eager('UserClass.Class')
+    .orderBy('이름')
     .catch((err) => {
       ErrorHandler(err, res);
+    })
+    .then(users => {
+      for(var i = 0; i < users.length; i++){
+        var classes = users[i].UserClass;
+        if(classes.length <= 1){
+          continue;
+        }
+        var a;
+        var b;
+        var temp;
+        for(var j = 0; j < classes.length; j++){
+          a = classes[j].Class.교육일;
+          for(var k = j + 1; k < classes.length; k++){
+            b = classes[k].Class.교육일;
+            if(a > b){
+              temp = classes[j];
+              classes[j] = classes[k];
+              classes[k] = temp;
+            }
+          }
+        }
+      }
+      res.send(users);
     }); 
-    res.send(users);
+
+    //res.send(users);
 });
 
 router.get('/pure', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
   const users = await User.query()
     .skipUndefined()
+    .orderBy('이름')
     .catch((err) => {
       ErrorHandler(err, res);
     }); 
@@ -60,7 +87,7 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
         전화번호: dataIn.userPhone,
         레벨: dataIn.userLevel,
         애드민: dataIn.userAdmin,
-        로그인ID: dataIn.userPart + dataIn.userNo
+        로그인ID: dataIn.userNo
       })
       .catch((err) => {
         ErrorHandler(err, res);
@@ -70,13 +97,37 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
 
 router.get('/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){
   var id = req.params.userid;
-  const user = await User.query()
+  var user = await User.query()
     .where('유저ID', id)
     .eager('UserClass.Class')
     .catch((err) => {
       ErrorHandler(err, res);
-    });
-    res.send(user);
+    })    
+    .then(users => {
+      for(var i = 0; i < users.length; i++){
+        var classes = users[i].UserClass;
+        if(classes.length <= 1){
+          continue;
+        }
+        var a;
+        var b;
+        var temp;
+        for(var j = 0; j < classes.length; j++){
+          a = classes[j].Class.교육일;
+          for(var k = j + 1; k < classes.length; k++){
+            b = classes[k].Class.교육일;
+            if(a > b){
+              temp = classes[j];
+              classes[j] = classes[k];
+              classes[k] = temp;
+            }
+          }
+        }
+      }
+      res.send(users);
+    }); 
+
+    //res.send(user);
 });
 
 router.post('/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){
@@ -129,7 +180,53 @@ router.delete('/:userid', passport.authenticate("jwt", {session: false}), async 
     .catch((err) => {
       ErrorHandler(err, res);
     });
-    res.send(dataOut);
+
+  //Cascade가 안 먹히니 여기서 수동으로 삭제
+  const user_class = await UserClass.query()
+    .delete()
+    .where('유저ID', id)
+    .catch((err) => {
+      ErrorHandler(err, res);
+    });
+
+  res.send(dataOut);
+});
+
+router.delete('/', passport.authenticate("jwt", {session: false}), async function(req, res, next){
+  //Check admin status
+  var bearer = req.headers.authorization;
+  var token = bearer.replace('Bearer ', '');
+  var decoded = jwt_decode(token);
+  if(decoded.admin !== '관리자'){
+    res.status(401).json(
+      {
+          message: '관리자 권한이 없습니다.'
+      }
+    );
+  
+    return;
+  }
+  var dataIn = req.body;
+  var dataOut = {
+    mes: "Success"
+  }
+  //Mass Delete
+  const user = await User.query()
+    .delete()
+    .whereIn('유저ID', dataIn.ids)
+    .catch((err) => {
+      ErrorHandler(err, res);
+    });
+
+  //Cascade가 안 먹히니 여기서 수동으로 삭제
+  const user_class = await UserClass.query()
+    .delete()
+    .whereIn('유저ID', dataIn.ids)
+    .catch((err) => {
+      ErrorHandler(err, res);
+    });
+
+  res.send(dataOut);
 });
 
 router.post('/preset/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){

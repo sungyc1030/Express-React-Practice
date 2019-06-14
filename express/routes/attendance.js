@@ -4,7 +4,7 @@ var UserClass = require('../models/UserClass');
 var ErrorHandler = require('../scripts/error');
 var jwt_decode = require('jwt-decode');
 var passport = require('passport');
-var db = require('../scripts/db');
+//var db = require('../scripts/db');
 
 router.get('/', function(req, res, next){
     
@@ -35,7 +35,7 @@ router.post('/', passport.authenticate("jwt", {session: false}), async function(
         교육ID: dataIn.classID,
         역할: dataIn.role,
         참가여부: dataIn.attendance,
-        CAS: dataIn.CAS,
+        KAPA: dataIn.KAPA,
         ARC: dataIn.ARC
       })
       .catch((err) => {
@@ -73,7 +73,7 @@ router.post('/:id', passport.authenticate("jwt", {session: false}), async functi
             교육ID: dataIn.classID,
             역할: dataIn.role,
             참가여부: dataIn.attendance,
-            CAS: dataIn.CAS,
+            KAPA: dataIn.KAPA,
             ARC: dataIn.ARC
         })
         .where('출결ID', id)

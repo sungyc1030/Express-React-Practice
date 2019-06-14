@@ -90,7 +90,11 @@ class PersonalInfoChange extends Component{
             .then(res => {
                 if(res.mes === 'Success'){
                     //this.props.updateUser();
-                    window.alert('수정완료!');
+                    this.setState({tooltipOpen: true, tooltipMes: '정보변경에 성공하였습니다. 이 창은 곧 닫힙니다.'});
+                    setTimeout(() => {
+                        //this.setState({tooltipOpen: false})
+                        this.handleFormClose();
+                    }, 1500);
                     this.props.updated();
                 }else{
                     this.setState({tooltipOpen: true, tooltipMes: '정보변경에 실패하였습니다.'});
