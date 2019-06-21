@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardContent, TextField, Button, CardActions, CardHeader, Avatar, Tooltip } from '@material-ui/core';
-import { Settings } from '@material-ui/icons';
-import { teal } from '@material-ui/core/colors'
+import { Settings, Update } from '@material-ui/icons';
+import { teal, deepPurple } from '@material-ui/core/colors'
 import TopBar from '../TopBar';
 
 const styles = theme => ({
@@ -28,6 +28,20 @@ const styles = theme => ({
     },
     printConfigText: {
         width: '20vw'
+    },
+    levelPaper: {
+        width: '100%',
+        marginTop: '2vh'
+    },
+    levelContent: {
+        display: 'flex',
+        textAlign: 'center',
+        justifyContent: 'center',
+    },
+    levelButton:{
+        margin: theme.spacing(1),
+        padding: theme.spacing(2),
+        width: '10vw'
     }
 });
 
@@ -39,7 +53,9 @@ class PrintConfig extends Component{
             tech: '',
             ed: '',
             tooltipOpen: false,
-            tooltipMes: '반영에 실패하였습니다.'
+            tooltipMes: '반영에 실패하였습니다.',
+            tooltipLevelOpen: false,
+            tooltipLevelMes: '반영에 실패하였습니다.'
         }
     } 
 
@@ -99,7 +115,7 @@ class PrintConfig extends Component{
                 setTimeout(() => {
                     this.setState({tooltipOpen: false})
                 }, 1500);
-            })
+            });
     }
 
     queryUpdateConfg = async() => {
@@ -129,6 +145,61 @@ class PrintConfig extends Component{
                     'Content-Type': 'application/json'
                 },
                 body: data
+             });
+        }
+
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+    
+        return body;
+    }
+
+    handleLevelUpdate = () => {
+        this.setState({tooltipLevelOpen: true, tooltipLevelMes: '반영중'});
+
+        this.queryApplyLevelLogic()
+            .then(res => {
+                if(res.mes === 'Success'){
+                    this.setState({tooltipLevelOpen: true, tooltipLevelMes: '반영에 성공하였습니다.'});
+                    setTimeout(() => {
+                        this.setState({tooltipLevelOpen: false})
+                    }, 1500);
+                }else{
+                    this.setState({tooltipLevelOpen: true, tooltipLevelMes: '반영에 실패하였습니다.'});
+                    setTimeout(() => {
+                        this.setState({tooltipLevelOpen: false})
+                    }, 1500);
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState({tooltipLevelOpen: true, tooltipLevelMes: '반영에 실패하였습니다.'});
+                setTimeout(() => {
+                    this.setState({tooltipLevelOpen: false})
+                }, 1500);
+            });
+    }
+
+    queryApplyLevelLogic = async() => {
+        var token = localStorage.getItem('jwt');
+        var response;
+
+        if(token !== null){
+            response = await fetch('/api/level', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+             });
+        }else{
+            response = await fetch('/api/level', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
              });
         }
 
@@ -172,7 +243,25 @@ class PrintConfig extends Component{
                                     </Button>
                                 </Tooltip>
                             </CardActions>
-                        </Card>    
+                        </Card>
+                        <Card className = {classes.levelPaper}>
+                            <CardHeader
+                                avatar = {
+                                    <Avatar style={{backgroundColor: deepPurple[500]}}>
+                                        <Update />
+                                    </Avatar>
+                                }
+                                title="레벨 반영"
+                            />
+                            <CardContent className = {classes.levelContent}>
+                                <Tooltip open={this.state.tooltipLevelOpen} disableFocusListener disableHoverListener disableTouchListener
+                                        title={this.state.tooltipLevelMes} placement="top">
+                                    <Button variant="contained" color="primary" className = {classes.levelButton} onClick={this.handleLevelUpdate}>
+                                        레벨 로직 반영
+                                    </Button>
+                                </Tooltip>
+                            </CardContent>
+                        </Card>
                     </Grid>
                 </Grid>
             </div>

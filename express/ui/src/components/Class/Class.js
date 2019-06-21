@@ -83,8 +83,12 @@ class Class extends Component{
             classUser: [],
             search: false,
             searchName: '',
-            searchDate1: '2000-01-01',
-            searchDate2: year + '-' + month + '-' + day
+            searchDate1: '2016-01-01',
+            searchDate2: year + '-' + month + '-' + day,
+            searchUserName: '',
+            searchUserNo: '',
+            searchUserAffil: '',
+            searchUserJob: ''
         }
 
         this.searchUpdate = false
@@ -147,6 +151,7 @@ class Class extends Component{
                         if(res2.length !== 0){
                             user = res2;
                             this.setState({classUser: user, loaded: true, classes: data});
+                            this.searchClass();
                         }
                     }).catch(err => console.log(err));
                 }
@@ -160,7 +165,8 @@ class Class extends Component{
         if(this.state.search && this.searchUpdate){
             list = this.state.classes.map((data, index) => {
                 var status = <ClassData class={data} key={data['교육ID']} deleteClass={this.changeClass} updateClass={this.changeClass} 
-                    classUser={this.state.classUser} deleteChecks={this.handleChecksForDelete}/>
+                    classUser={this.state.classUser} deleteChecks={this.handleChecksForDelete} searchName={this.state.searchUserName} searchNo={this.state.searchUserNo}
+                    searchJob={this.state.searchUserJob} searchAffil={this.state.searchUserAffil}/>
                 var name = data.교육명;
                 if(name.indexOf(this.state.searchName) === -1){
                     status = null;
@@ -274,6 +280,69 @@ class Class extends Component{
         }   
     }
 
+    handleOutputCSV = () => {
+        let filename = new Date();
+        filename = filename.toString() + ".csv";
+
+        let csv = this.createCSV();
+
+        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;'});
+
+        let link = document.createElement("a");
+        if(link.download !== undefined){
+            let url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    createCSV = () => {
+        let csvData;
+        let universalBOM = "\uFEFF";
+        let header = "교육명, 교육일, 이름, 면허번호, 직종, 참석여부, KAPA인증, ARC인증, 전화번호, 이메일\n";
+        let list = '';
+        for(var i = 0; i < this.state.classes.length; i++){
+            let data = this.state.classes[i];
+            let csvStatus = true;
+
+            if(data.교육명.indexOf(this.state.searchName) === -1){
+                csvStatus = false;
+            }
+            var dateTarget = new Date(data.교육일);
+            var startDate = new Date(this.state.searchDate1);
+            var endDate = new Date(this.state.searchDate2);
+            if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
+                csvStatus = false;
+            }
+
+            if(csvStatus){
+                let className = data.교육명;
+                let classDate = new Date(data.교육일);
+                classDate = [classDate.getFullYear(), ('0' + (classDate.getMonth() + 1)).slice(-2), ('0' + (classDate.getDate())).slice(-2)].join('-');
+                for(var j = 0; j < data.UserClass.length; j++){
+                    let userClass = data.UserClass[j];
+
+                    let userName = userClass.User.이름;
+                    let userNo = userClass.User.유저번호;
+                    let userJob = userClass.User.직종;
+                    let userPart = userClass.참가여부;
+                    let KAPA = userClass.KAPA;
+                    let ARC = userClass.ARC;
+                    let userTel = userClass.User.전화번호;
+                    let userMail = userClass.User.이메일;
+                    list = list + className + ',' + classDate + ',' + userName + ',' + userNo + ',' + userJob + ',' + userPart +
+                        ',' + KAPA + ',' + ARC + ',' + userTel + ',' + userMail + '\n';
+                }
+            }
+        }
+        csvData = universalBOM + header + list;
+        return csvData;
+    }
+
     render(){
         const {classes} = this.props;
 
@@ -281,19 +350,29 @@ class Class extends Component{
         var renderSearch = 
             <div>
             <div className={classes.searchFields}>
-                <TextField label="이름" className = {classes.textField} 
+                <TextField label="Name" className = {classes.textField} 
                     value={this.state.searchName} onChange={this.handleTextFieldChange('searchName')} margin="normal" variant="outlined" />
-                                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                <TextField label="Date of Class" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
                     value={this.state.searchDate1} onChange={this.handleTextFieldChange('searchDate1')} margin="normal" variant="outlined" />
                 <Typography>
                     ~
                 </Typography>
-                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                <TextField label="Date of Class" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
                     value={this.state.searchDate2} onChange={this.handleTextFieldChange('searchDate2')} margin="normal" variant="outlined" />
+            </div> 
+            <div className={classes.searchFields}>
+                <TextField label="User No" className = {classes.textField} 
+                    value={this.state.searchUserNo} onChange={this.handleTextFieldChange('searchUserNo')} margin="normal" variant="outlined" />
+                <TextField label="User Name" className = {classes.textField} 
+                    value={this.state.searchUserName} onChange={this.handleTextFieldChange('searchUserName')} margin="normal" variant="outlined" />
+                <TextField label="User Affiliation" className = {classes.textField} 
+                    value={this.state.searchUserAffil} onChange={this.handleTextFieldChange('searchUserAffil')} margin="normal" variant="outlined" />
+                <TextField label="User Job" className = {classes.textField} 
+                    value={this.state.searchUserJob} onChange={this.handleTextFieldChange('searchUserJob')} margin="normal" variant="outlined" />
             </div> 
             <Divider/>
             <div className={classes.userButtons}>  
-                <Button className={classes.searchButton} color="primary" variant="contained" disabled>
+                <Button className={classes.searchButton} color="primary" variant="contained" onClick={this.handleOutputCSV}>
                     <Typography variant="button">
                         출력
                     </Typography>

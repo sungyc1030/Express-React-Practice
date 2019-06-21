@@ -50,6 +50,11 @@ const admin = [
     '관리자'
 ]
 
+const ibhre = [
+    'Pass',
+    'Fail'
+]
+
 class AddUser extends Component{
     constructor(props){
         super(props);
@@ -65,6 +70,13 @@ class AddUser extends Component{
             userPhone: '',
             userLevel: 'Normal',
             userAdmin: '사용자',
+            userEngName: '',
+            IssuedDate: '',
+            CertificationNumber: '',
+            CCDS: '',
+            CEPS: '',
+            levelChangeDate: '',
+            levelChangeDateEnd: '',
             tooltipOpen: false,
             tooltipMes: '면허번호와 이름은 필수사항입니다.'
         };
@@ -83,7 +95,14 @@ class AddUser extends Component{
             userEmail: this.state.userEmail,
             userPhone: this.state.userPhone,
             userLevel: this.state.userLevel,
-            userAdmin: this.state.userAdmin
+            userAdmin: this.state.userAdmin,
+            userEngName: this.state.userEngName,
+            IssuedDate: this.state.IssuedDate,
+            CertificationNumber: this.state.CertificationNumber,
+            CCDS: this.state.CCDS,
+            CEPS: this.state.CEPS,
+            LevelChangeDate: this.state.levelChangeDate,
+            LevelChangeDateEnd: this.state.levelChangeDateEnd
         });
         if(token !== null){
             response = await fetch('/api/user',{
@@ -155,7 +174,14 @@ class AddUser extends Component{
             userLevel: 'Normal',
             userAdmin: '사용자',
             tooltipOpen: false,
-            tooltipMes: '면허번호와 이름은 필수사항입니다.'
+            tooltipMes: '면허번호와 이름은 필수사항입니다.',
+            userEngName: '',
+            IssuedDate: '',
+            CertificationNumber: '',
+            CCDS: '',
+            CEPS: '',
+            levelChangeDate: '',
+            levelChangeDateEnd: ''
         });
     }
 
@@ -178,6 +204,8 @@ class AddUser extends Component{
                     <DialogContent>
                         <TextField label="이름" className = {classes.textField} 
                             value={this.state.userName} onChange={this.handleTextFieldChange('userName')} margin="normal" variant="outlined" />
+                        <TextField label="영문이름" className = {classes.textField}
+                            value={this.state.userEngName} onChange={this.handleTextFieldChange('userEngName')} margin="normal" variant="outlined" />
                         <TextField label="면허번호" className = {classes.textField} 
                             value={this.state.userNo} onChange={this.handleTextFieldChange('userNo')} margin="normal" variant="outlined" />
                         <TextField label="소속" className = {classes.textField} 
@@ -188,6 +216,10 @@ class AddUser extends Component{
                             value={this.state.userJob} onChange={this.handleTextFieldChange('userJob')} margin="normal" variant="outlined" />
                         <TextField label="이메일" className = {classes.textField} type="email" autoComplete="email"
                             value={this.state.userEmail} onChange={this.handleTextFieldChange('userEmail')} margin="normal" variant="outlined" />
+                        <TextField label="이슈날짜" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
+                            value={this.state.IssuedDate} onChange={this.handleTextFieldChange('IssuedDate')} margin="normal" variant="outlined" />
+                        <TextField label="증명번호" className = {classes.textField}
+                            value={this.state.CertificationNumber} onChange={this.handleTextFieldChange('CertificationNumber')} margin="normal" variant="outlined" />
                         <TextField label="전화번호" className = {classes.textField} 
                             value={this.state.userPhone} onChange={this.handleTextFieldChange('userPhone')} margin="normal" variant="outlined" />
                         <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
@@ -206,6 +238,26 @@ class AddUser extends Component{
                                 </MenuItem>
                             ))}
                         </TextField>
+                        <TextField label="CCDS" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.CCDS} onChange={this.handleTextFieldChange('CCDS')} margin="normal" variant="outlined" >
+                            {ibhre.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField label="CEPS" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.CEPS} onChange={this.handleTextFieldChange('CEPS')} margin="normal" variant="outlined" >
+                            {ibhre.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField label="자격시작일" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
+                            value={this.state.levelChangeDate} onChange={this.handleTextFieldChange('levelChangeDate')} margin="normal" variant="outlined" />
+                        <TextField label="자격만료일" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
+                            value={this.state.levelChangeDateEnd} onChange={this.handleTextFieldChange('levelChangeDateEnd')} margin="normal" variant="outlined" />
                     </DialogContent>
                     <DialogActions>
                         <Tooltip open={this.state.tooltipOpen} disableFocusListener disableHoverListener disableTouchListener

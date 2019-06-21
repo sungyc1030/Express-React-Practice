@@ -70,7 +70,12 @@ const level = [
     'Silver+1',
     'Silver+2',
     'Gold'
-]
+];
+
+const statusIbhre = [
+    'Pass',
+    'Fail'
+];
 
 class User extends Component{
     constructor(props){
@@ -97,6 +102,8 @@ class User extends Component{
             searchDate2: year + '-' + month + '-' + day,
             searchLevel1: 'Normal',
             searchLevel2: 'Gold',
+            searchCCDS: 'Fail',
+            searchCEPS: 'Fail',
             search: false
         }
 
@@ -165,6 +172,7 @@ class User extends Component{
                                 //this.setState({userClass: res});
                                 userclass = res2;
                                 this.setState({users: user, userClass: userclass, loaded: true})
+                                this.searchUser();
                             }
                         }).catch(err => console.log(err));
                 }
@@ -212,7 +220,8 @@ class User extends Component{
                 }else if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
                     status = null;
                 }
-                var startLevelPos, endLevelPos, targetLevelPos
+                var orSearch = 3;
+                var startLevelPos, endLevelPos, targetLevelPos;
                 for(var i = 0; i < level.length; i++){
                     if(level[i] === data.레벨){
                         targetLevelPos = i
@@ -225,6 +234,15 @@ class User extends Component{
                     }
                 }
                 if(targetLevelPos < startLevelPos || targetLevelPos > endLevelPos){
+                    orSearch -= 1;
+                }
+                if(data.CCDS !== this.state.searchCCDS){
+                    orSearch -= 1;
+                }
+                if(data.CEPS !== this.state.searchCEPS){
+                    orSearch -= 1;
+                }
+                if(orSearch === 0){
                     status = null;
                 }
                 return status;
@@ -315,6 +333,90 @@ class User extends Component{
         }   
     }
 
+    handleOutputCSV = () => {
+        let filename = new Date();
+        filename = filename.toString() + ".csv";
+
+        let csv = this.createCSV();
+
+        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;'});
+
+        let link = document.createElement("a");
+        if(link.download !== undefined){
+            let url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    createCSV = () => {
+        let csvData;
+        let universalBOM = "\uFEFF";
+        let header = "이름, 면허번호, 직종, 소속, 전화번호, 이메일, 레벨, 자격취득날짜\n";
+        let list = '';
+        for(var i = 0; i < this.state.users.length; i++){
+            let data = this.state.users[i];
+            let csvStatus = true;
+
+            if(data.이름.indexOf(this.state.searchName) === -1){
+                csvStatus = false;
+            }
+            if(data.소속.indexOf(this.state.searchAffil) === -1){
+                csvStatus = false;
+            }
+            if(data.직종.indexOf(this.state.searchJob) === -1){
+                csvStatus = false;
+            }
+            var dateTarget = new Date(data.IssuedDate);
+            var startDate = new Date(this.state.searchDate1);
+            var endDate = new Date(this.state.searchDate2);
+            if(data.IssuedDate == null){
+                //should be null when the time comes
+            }else if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
+                csvStatus = false;
+            }
+            var orSearch = 3;
+            var startLevelPos, endLevelPos, targetLevelPos;
+            for(var j = 0; j < level.length; j++){
+                if(level[j] === data.레벨){
+                    targetLevelPos = j
+                }
+                if(level[j] === this.state.searchLevel1){
+                    startLevelPos = j
+                }
+                if(level[j] === this.state.searchLevel2){
+                    endLevelPos = j
+                }
+            }
+            if(targetLevelPos < startLevelPos || targetLevelPos > endLevelPos){
+                orSearch -= 1;
+            }
+            if(data.CCDS !== this.state.searchCCDS){
+                orSearch -= 1;
+            }
+            if(data.CEPS !== this.state.searchCEPS){
+                orSearch -= 1;
+            }
+            if(orSearch === 0){
+                csvStatus = false;
+            }
+
+            if(csvStatus){
+                let levelDate = new Date(data.LevelChangeDate);
+                levelDate = [levelDate.getFullYear(), ('0' + (levelDate.getMonth() + 1)).slice(-2), ('0' + (levelDate.getDate())).slice(-2)].join('-');
+                //"이름, 면허번호, 직종, 소속, 전화번호, 이메일, 레벨, 자격취득날짜\n";
+                list = list + data.이름 + ',' + data.유저번호 + ',' + data.직종 + ',' + data.소속 + ',' + data.전화번호 + ',' + data.이메일 +
+                    ',' + data.레벨 + ',' + levelDate + '\n';
+            }
+        }
+        csvData = universalBOM + header + list;
+        return csvData;
+    }
+
     componentDidUpdate = () => {
         
     }
@@ -327,22 +429,22 @@ class User extends Component{
         var renderSearch = 
             <div>
             <div className={classes.searchFields}>
-                <TextField label="이름" className = {classes.textField} 
+                <TextField label="Name" className = {classes.textField} 
                     value={this.state.searchName} onChange={this.handleTextFieldChange('searchName')} margin="normal" variant="outlined" />
-                <TextField label="소속" className = {classes.textField} 
+                <TextField label="Afilliation" className = {classes.textField} 
                     value={this.state.searchAffil} onChange={this.handleTextFieldChange('searchAffil')} margin="normal" variant="outlined" />
-                <TextField label="직종" className = {classes.textField}
+                <TextField label="Job Name" className = {classes.textField}
                     value={this.state.searchJob} onChange={this.handleTextFieldChange('searchJob')} margin="normal" variant="outlined" />
             </div>
             <div className={classes.searchFields}>
-                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                <TextField label="Issued Date" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
                     value={this.state.searchDate1} onChange={this.handleTextFieldChange('searchDate1')} margin="normal" variant="outlined" />
                 <Typography>
                     ~
                 </Typography>
-                <TextField label="이슈날짜" className = {classes.textField} type="date"
+                <TextField label="Issued Date" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
                     value={this.state.searchDate2} onChange={this.handleTextFieldChange('searchDate2')} margin="normal" variant="outlined" />
-                <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                <TextField label="Level" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                     value={this.state.searchLevel1} onChange={this.handleTextFieldChange('searchLevel1')} margin="normal" variant="outlined">
                     {level.map(option => (
                         <MenuItem key={option} value={option} className={classes.selectItem}>
@@ -353,9 +455,25 @@ class User extends Component{
                 <Typography>
                     ~
                 </Typography>
-                <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                <TextField label="Level" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                     value={this.state.searchLevel2} onChange={this.handleTextFieldChange('searchLevel2')} margin="normal" variant="outlined">
                     {level.map(option => (
+                        <MenuItem key={option} value={option} className={classes.selectItem}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField label="CCDS" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                    value={this.state.searchCCDS} onChange={this.handleTextFieldChange('searchCCDS')} margin="normal" variant="outlined">
+                    {statusIbhre.map(option => (
+                        <MenuItem key={option} value={option} className={classes.selectItem}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField label="CEPS" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                    value={this.state.searchCEPS} onChange={this.handleTextFieldChange('searchCEPS')} margin="normal" variant="outlined">
+                    {statusIbhre.map(option => (
                         <MenuItem key={option} value={option} className={classes.selectItem}>
                             {option}
                         </MenuItem>
@@ -364,7 +482,7 @@ class User extends Component{
             </div>  
             <Divider/>
             <div className={classes.userButtons}>  
-                <Button className={classes.searchButton} color="primary" variant="contained" disabled>
+                <Button className={classes.searchButton} color="primary" variant="contained" onClick={this.handleOutputCSV}>
                     <Typography variant="button">
                         출력
                     </Typography>

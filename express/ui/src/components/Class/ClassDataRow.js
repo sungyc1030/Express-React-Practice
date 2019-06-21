@@ -117,8 +117,8 @@ class ClassDataRow extends Component{
         this.queryUpdateClassUser()
             .then(res => {
                 if(res.mes === 'Success'){
-                    this.props.changeClass();
-                    //window.alert('수정완료!');
+                    //this.props.changeClass();
+                    window.alert('수정완료!');
                 }
             }).catch(err => {
                 console.log(err);

@@ -11,10 +11,11 @@ import ed from './img/education.JPG';
 import { grey } from '@material-ui/core/colors'
 import 기술인회서명 from './img/기술인회회장.png'
 import 학회회장서명 from './img/학회회장.png'
+import receipt from './img/영수증.JPG'
 
-const monthNames = ["January", "February", "March", "April", "May", "June",
+/*const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
-];
+];*/
 
 const styles = theme => ({
     tablePrint:{
@@ -136,6 +137,10 @@ class PrintPage extends Component{
         var cIssuedDate = '';
         var cSignature1 = '';
         var cSignature2 = '';
+        var cLevel = '';
+        var cLevelSub = '';
+        var cLevelSubClass;
+        var cLevelClass;
         var eIssuedDate = '';
         var eJobNo = '';
         var eYear = '';
@@ -143,27 +148,75 @@ class PrintPage extends Component{
         var eName = '';
         var eSignature = '';
 
+        var rClassName = '';
+        var rAffil = '';
+        var rName = '';
+        var rPrice = '';
+        var rDate = '';
+
+        var rClassHeader = '';
+        var rAffilClass = 'rAffil1';
+        var rNameClass = 'rName1';
+        var rClassNameClass = 'rClassName1';
+        var rClassNameTextClass = 'rClassNameText1';
+
+        var imgClass;
         var renderHelper = '';
 
         var today = new Date();
         var todayStr = today.getFullYear() + "-" + (today.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}) + "-" + 
             today.getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
-        var todayStrEng = monthNames[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+        //var todayStrEng = monthNames[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
 
-        if(this.props.orientation === 'Horizontal'){
+        if(this.props.receipt){
+            printOriMain = overlay.printVertical;
+            printOriSub = overlay.printSubVertical;
+            imgSrc = receipt;
+            imgClass = 'imgReceipt';
+            rClassHeader = '교육명 : ';
+            rClassName = this.props.receiptClass.교육명;
+            if(rClassName.length > 10){
+                rAffilClass = 'rAffil2';
+                rNameClass = 'rName2';
+                rClassNameClass = 'rClassName2';
+                rClassNameTextClass = 'rClassNameText2';
+            }else{
+                rAffilClass = 'rAffil1';
+                rNameClass = 'rName1';
+                rClassNameClass = 'rClassName1';
+                rClassNameTextClass = 'rClassNameText1';
+            }
+            rAffil = '소 속 : ' + this.props.affil;
+            rName = '성 명 : ' + this.props.name;
+            let priceFormatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'KRW'
+              });
+            rPrice = priceFormatter.format(this.props.receiptClass.교육비);
+            rDate = this.props.receiptClass.교육일;
+
+        }else if(this.props.orientation === 'Horizontal'){
             printOriMain = overlay.printHorizontal;
             printOriSub = overlay.printSubHorizontal;
+            imgClass = 'img';
             if(this.props.level === 'Silver' || this.props.level === 'Silver+1' || this.props.level === 'Silver+2'){
                 //levelClass = overlay.silver
                 imgSrc = silver;
-                alt = "Silver"
+                alt = "Silver";
+                cLevel = 'Silver';
+                cLevelClass = 'cSilver';
+                cLevelSubClass = 'cLevelSubSilver'
             }else if(this.props.level === 'Gold'){
                 //levelClass = overlay.gold
                 imgSrc = gold;
                 alt = "Gold";
+                cLevel = 'Gold';
+                cLevelClass = 'cGold';
+                cLevelSubClass = 'cLevelSubGold'
             }
-            cCertifiedDate = todayStrEng;
-            cDocumentNo = today.getFullYear() + '001';
+            cLevelSub = 'Level';
+            cCertifiedDate = "Issued :  " + this.props.issue; //todayStrEng;
+            cDocumentNo = "Certificate # :  " + this.props.certification; //today.getFullYear() + '001';
             cName = this.props.engName;
             cIssuedDate = '출력일 : ' + todayStr;
             cSignature1 = <div className = {classes.signature}>
@@ -178,6 +231,7 @@ class PrintPage extends Component{
             printOriMain = overlay.printVertical;
             printOriSub = overlay.printSubVertical;
             imgSrc = ed;
+            imgClass = 'img';
             alt = "Ed";
             eIssuedDate = '출력일 : ' + todayStr;
             eJobNo = this.props.job + "  " + this.props.userNo;
@@ -243,7 +297,7 @@ class PrintPage extends Component{
             <Page className={overlay.overlay} pose={this.props.show? 'visible' : 'hidden' }>
                 <div className={printOriMain}>
                     <div className = {printOriSub}>
-                        <img className={overlay.img} src={imgSrc} alt={alt} onClick={(e) => {console.log(e.clientX, e.clientY)}}/>
+                        <img className={overlay[imgClass]} src={imgSrc} alt={alt} onClick={(e) => {console.log(e.clientX, e.clientY)}}/>
                     </div>
                 </div>
                 <div className={overlayText.variableText}>
@@ -264,6 +318,12 @@ class PrintPage extends Component{
                     </div>
                     <div className={overlayText.cSignature2}>
                         {cSignature2}
+                    </div>
+                    <div className={overlayText[cLevelClass]}>
+                        {cLevel}
+                    </div>
+                    <div className={overlayText[cLevelSubClass]}>
+                        {cLevelSub}
                     </div>
                     <div className={overlayText.eIssuedDate}>
                         {eIssuedDate}
@@ -287,6 +347,24 @@ class PrintPage extends Component{
                     </div>
                     <div className={overlayText.eSignature}>
                         {eSignature}
+                    </div>
+                    <div className={overlayText[rClassNameClass]}>
+                        {rClassHeader}
+                    </div>
+                    <div className={overlayText[rClassNameTextClass]}>
+                        {rClassName}
+                    </div>
+                    <div className={overlayText[rAffilClass]}>
+                        {rAffil}
+                    </div>
+                    <div className={overlayText[rNameClass]}>
+                        {rName}
+                    </div>
+                    <div className={overlayText.rPrice}>
+                        {rPrice}
+                    </div>
+                    <div className={overlayText.rDate}>
+                        {rDate}
                     </div>
                 </div>
                 <div className={overlay.btnDiv}>

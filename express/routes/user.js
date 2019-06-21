@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router({mergeParams: true});
 var User = require('../models/User');
+var Certification = require('../models/Certification');
 var ErrorHandler = require('../scripts/error');
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
@@ -26,13 +27,13 @@ router.get('/', passport.authenticate("jwt", {session: false}), async (req, res,
         var a;
         var b;
         var temp;
-        for(var j = 0; j < classes.length; j++){
-          a = classes[j].Class.교육일;
-          for(var k = j + 1; k < classes.length; k++){
-            b = classes[k].Class.교육일;
-            if(a > b){
-              temp = classes[j];
-              classes[j] = classes[k];
+        for(var j = classes.length - 1; j >= 0; j--){
+          for(var k = 1; k <= j; k++){
+            a = new Date(classes[k-1].Class.교육일);
+            b = new Date(classes[k].Class.교육일);
+            if(a.getTime() > b.getTime()){
+              temp = classes[k-1];
+              classes[k-1] = classes[k];
               classes[k] = temp;
             }
           }
@@ -75,6 +76,44 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
     }
     const hashCost = 10;
     const passwordHash = await bcrypt.hash(dataIn.userNo, hashCost);
+
+    //Level logic dates
+    let newIssueDate;
+    let newCertificationNo;
+
+    let levelChangeDate = null;
+    let levelChangeEndDate = null;
+    let today = new Date();
+    if(dataIn.userLevel === 'Silver+2'){
+      levelChangeDate = new Date(today.getFullYear(), 0, 1);
+      levelChangeEndDate = new Date(2200, 11, 31);
+    }else if(dataIn.userLevel.indexOf('Silver') !== -1){
+      levelChangeDate = new Date(today.getFullYear(), 0, 1);
+      levelChangeEndDate = new Date(today.getFullYear(), 11, 31);
+    }else if(dataIn.userLevel == 'Gold'){
+      levelChangeDate = new Date(today.getFullYear(), 0, 1);
+      levelChangeEndDate = new Date(levelChangeDate.getFullYear() + 5, 11, 31);
+    }else if(dataIn.userLevel == 'Normal'){
+      levelChangeDate = null;
+      levelChangeEndDate = null;
+    }
+
+    if(dataIn.LevelChangeDate !== '' && dataIn.userLevel != 'Normal'){
+      levelChangeDate = new Date(dataIn.LevelChangeDate);
+    }
+    
+    if(dataIn.LevelChangeDateEnd !== ''&& dataIn.userLevel != 'Normal'){
+      levelChangeEndDate = new Date(dataIn.LevelChangeDateEnd);
+    }
+
+    if(dataIn.userLevel === 'Normal'){
+      newIssueDate = null;
+      newCertificationNo = null;
+    }else{
+      newIssueDate = dataIn.IssuedDate;
+      newCertificationNo = dataIn.CertificationNumber;
+    }
+    
     const user = await User.query()
       .insert({
         유저번호: dataIn.userNo,
@@ -87,7 +126,14 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
         전화번호: dataIn.userPhone,
         레벨: dataIn.userLevel,
         애드민: dataIn.userAdmin,
-        로그인ID: dataIn.userNo
+        로그인ID: dataIn.userNo,
+        영문이름: dataIn.userEngName,
+        LevelChangeDate: levelChangeDate,
+        LevelChangeDateEnd: levelChangeEndDate,
+        IssuedDate: newIssueDate,
+        CertificationNumber: newCertificationNo,
+        CEPS: dataIn.CEPS,
+        CCDS: dataIn.CCDS,
       })
       .catch((err) => {
         ErrorHandler(err, res);
@@ -112,18 +158,21 @@ router.get('/:userid', passport.authenticate("jwt", {session: false}), async fun
         var a;
         var b;
         var temp;
-        for(var j = 0; j < classes.length; j++){
-          a = classes[j].Class.교육일;
-          for(var k = j + 1; k < classes.length; k++){
-            b = classes[k].Class.교육일;
-            if(a > b){
-              temp = classes[j];
-              classes[j] = classes[k];
+        for(var j = classes.length - 1; j >= 0; j--){
+          for(var k = 1; k <= j; k++){
+            a = new Date(classes[k-1].Class.교육일);
+            b = new Date(classes[k].Class.교육일);
+            if(a.getTime() > b.getTime()){
+              temp = classes[k-1];
+              classes[k-1] = classes[k];
               classes[k] = temp;
             }
           }
         }
       }
+      /*for(var i = 0; i < users.length; i++){
+        console.log(users[i].UserClass);
+      }*/
       res.send(users);
     }); 
 
@@ -136,6 +185,97 @@ router.post('/:userid', passport.authenticate("jwt", {session: false}), async fu
   var dataOut = {
     mes: "Success"
   }
+
+  //Level logic dates
+  let levelChangeDate = null;
+  let levelChangeEndDate = null;
+  let today = new Date();
+
+  let newIssueDate;
+  let newCertificationNo;
+
+  if(dataIn.userLevel === 'Silver+2'){
+    levelChangeDate = new Date(today.getFullYear(), 0, 1);
+    levelChangeEndDate = new Date(2200, 11, 31);
+  }else if(dataIn.userLevel.indexOf('Silver') !== -1){
+    levelChangeDate = new Date(today.getFullYear(), 0, 1);
+    levelChangeEndDate = new Date(today.getFullYear(), 11, 31);
+  }else if(dataIn.userLevel == 'Gold'){
+    levelChangeDate = new Date(today.getFullYear(), 0, 1);
+    levelChangeEndDate = new Date(levelChangeDate.getFullYear() + 5, 11, 31);
+  }else if(dataIn.userLevel == 'Normal'){
+    levelChangeDate = null;
+    levelChangeEndDate = null;
+  }
+
+  //Level logic comparison
+  const level = await User.query()
+    .where('유저ID', id)
+    .then(u => {
+      if(u.레벨 == dataIn.userLevel){
+        //전 레벨과 동일하다
+        //자격에 대해서 업데이트를 할 필요는 없다
+        levelChangeDate = u.LevelChangeDate;
+        levelChangeEndDate = u.LevelChangeDateEnd;
+      }
+
+      if(dataIn.LevelChangeDate !== '' && dataIn.userLevel != 'Normal'){
+        levelChangeDate = new Date(dataIn.LevelChangeDate);
+      }
+      
+      if(dataIn.LevelChangeDateEnd !== ''&& dataIn.userLevel != 'Normal'){
+        levelChangeEndDate = new Date(dataIn.LevelChangeDateEnd);
+      }
+    }).catch((err) => {
+      ErrorHandler(err, res);
+      console.log(err);
+    });
+
+  let counter = 0;
+  
+  const cert = await Certification.query()
+    .findOne({id : 1})
+    .then(c => {
+      if(dataIn.userLevel === 'Silver'){
+        newIssueDate = (levelChangeDate.getFullYear() - 1) + '-' + (levelChangeDate.getMonth() + 1) + '-' + levelChangeDate.getDate();
+        newCertificationNo = 'KCAS' + ('0000' + c.실버카운터).slice(-5) + 'S';
+        counter = c.실버카운터;
+      }else if(dataIn.userLevel === 'Gold'){
+        newIssueDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+        newCertificationNo = 'KCAS' + ('0000' + c.골드카운터).slice(-5) + 'G';
+        counter = c.골드카운터;
+      }else if(dataIn.userLevel === 'Normal'){
+        newIssueDate = null;
+        newCertificationNo = null;
+      }else{
+        newIssueDate = dataIn.IssuedDate;
+        newCertificationNo = dataIn.CertificationNumber;
+      }
+    })
+    .catch((err) => {
+      ErrorHandler(err, res);
+      console.log(err);
+    });
+
+  if(counter !== 0){
+    if(dataIn.userLevel === 'Silver'){
+      const cert2 = await Certification.query()
+        .patch({
+          실버카운터: counter + 1
+        }).where({
+          id: 1
+        });
+    }else if(dataIn.userLevel === 'Gold'){
+      const cert2 = await Certification.query()
+        .patch({
+          골드카운터: counter + 1
+        }).where({
+          id: 1
+        });
+    }
+  }
+
+
   const user = await User.query()
     .patch({
       유저번호: dataIn.userNo,
@@ -147,14 +287,21 @@ router.post('/:userid', passport.authenticate("jwt", {session: false}), async fu
       전화번호: dataIn.userPhone,
       레벨: dataIn.userLevel,
       애드민: dataIn.userAdmin,
-      영문이름: dataIn.userEngName
+      영문이름: dataIn.userEngName,
+      LevelChangeDate: levelChangeDate,
+      LevelChangeDateEnd: levelChangeEndDate,
+      IssuedDate: newIssueDate,
+      CertificationNumber: newCertificationNo,
+      CEPS: dataIn.CEPS,
+      CCDS: dataIn.CCDS,
     })
     .where('유저ID', id)
     .catch((err) => {
       ErrorHandler(err, res);
       console.log(err);
+    }).then(() =>{
+      res.send(dataOut);
     });
-    res.send(dataOut);
 });
 
 router.delete('/:userid', passport.authenticate("jwt", {session: false}), async function(req, res, next){

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanelActions } from '@material-ui/core';
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core';
 import { TextField, Typography, MenuItem, Button, Divider, Tooltip, Checkbox } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -43,10 +43,13 @@ const styles = theme => ({
         flexBasis: '24%'
     },
     panelSub1:{
-        flexBasis: '22%'
+        flexBasis: '18%'
     },
     panelSub2:{
-        flexBasis: '19%'
+        flexBasis: '15%'
+    },
+    panelSub3:{
+        flexBasis: '10%'
     },
     deleteUser:{
         justifyContent: 'center'
@@ -80,6 +83,11 @@ const styles = theme => ({
     },
     header: {
         alignItems: 'center'
+    },
+    editButtons: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        flexBasis: '100%'
     }
 });
 
@@ -94,6 +102,11 @@ const level = [
 const admin = [
     '사용자',
     '관리자'
+]
+
+const status = [
+    'Pass',
+    'Fail'
 ]
 
 class UserData extends Component{
@@ -117,7 +130,13 @@ class UserData extends Component{
             tooltipOpenUpdate: false,
             tooltipPassOpen: false,
             passwordResetMessage: '패스워드 리셋에 실패하였습니다.',
-            checked: false
+            checked: false,
+            IssuedDate: '',
+            CertificationNumber: '',
+            CCDS: '',
+            CEPS: '',
+            levelChangeDate: '',
+            levelChangeDateEnd: ''
         }
     } 
 
@@ -128,6 +147,21 @@ class UserData extends Component{
     };
 
     componentDidMount(){
+        var levelChangeDate;
+        var levelChangeDateEnd;
+        if(this.props.user.LevelChangeDate == null){
+            levelChangeDate = '';
+        }else{
+            levelChangeDate = new Date(this.props.user.LevelChangeDate);
+            levelChangeDate = [levelChangeDate.getFullYear(), ('0' + (levelChangeDate.getMonth() + 1)).slice(-2), ('0' + (levelChangeDate.getDate())).slice(-2)].join('-');
+        }
+        if(this.props.user.LevelChangeDateEnd == null){
+            levelChangeDateEnd = '';
+        }else{
+            levelChangeDateEnd = new Date(this.props.user.LevelChangeDateEnd);
+            levelChangeDateEnd = [levelChangeDateEnd.getFullYear(), ('0' + (levelChangeDateEnd.getMonth() + 1)).slice(-2), ('0' + (levelChangeDateEnd.getDate())).slice(-2)].join('-');
+        }
+
         this.setState({
             userName: this.props.user['이름'],
             userEngName: this.props.user['영문이름']? this.props.user['영문이름']:'',
@@ -141,6 +175,12 @@ class UserData extends Component{
             userAdmin: this.props.user['애드민'],
             userID: this.props.user['유저ID'],
             allClasses: this.props.user['UserClass'],
+            IssuedDate: this.props.user['IssuedDate'],
+            CertificationNumber: this.props.user['CertificationNumber'],
+            CCDS: this.props.user['CCDS'] ? this.props.user['CCDS']:'Fail',
+            CEPS: this.props.user['CEPS'] ? this.props.user['CEPS']:'Fail',
+            levelChangeDate: levelChangeDate,
+            levelChangeDateEnd: levelChangeDateEnd
         });
     }
 
@@ -234,7 +274,13 @@ class UserData extends Component{
             userPhone: this.state.userPhone,
             userLevel: this.state.userLevel,
             userAdmin: this.state.userAdmin,
-            userEngName: this.state.userEngName
+            userEngName: this.state.userEngName,
+            IssuedDate: this.state.IssuedDate,
+            CertificationNumber: this.state.CertificationNumber,
+            CCDS: this.state.CCDS,
+            CEPS: this.state.CEPS,
+            LevelChangeDate: this.state.levelChangeDate,
+            LevelChangeDateEnd: this.state.levelChangeDateEnd
         }); 
         var token = localStorage.getItem('jwt');
         var response;
@@ -385,20 +431,23 @@ class UserData extends Component{
                                 }}
                             />
                         </div>
-                        <Typography className={classes.panelHeader}>
+                        <Typography className={classes.panelHeader} classes={{button:classes.headerTypo}} variant="button" >
                             {this.state.userNo + ' : ' + this.state.userName}
                         </Typography>
-                        <Typography className={classes.panelSub1}>
+                        <Typography className={classes.panelSub1} classes={{button:classes.headerTypo}} variant="button" >
                             {'소속:   ' + this.state.userAffil}
                         </Typography>
-                        <Typography className={classes.panelSub2}>
+                        <Typography className={classes.panelSub2} classes={{button:classes.headerTypo}} variant="button" >
                             {'직종:   ' + this.state.userJob}
+                        </Typography>
+                        <Typography className={classes.panelSub3} classes={{button:classes.headerTypo}} variant="button" >
+                            {this.state.userLevel}
                         </Typography>
                         <Tooltip open={this.state.tooltipPassOpen} disableFocusListener disableHoverListener disableTouchListener
                             title={this.state.passwordResetMessage} placement="top">
                             <Button className={classes.passwordReset} onClick={this.passwordReset}>
                                 <SettingsBackupRestore/>
-                                <Typography variant="button">
+                                <Typography variant="button" classes={{button:classes.headerTypo}}>
                                     비밀번호초기화
                                 </Typography>
                             </Button>
@@ -407,7 +456,7 @@ class UserData extends Component{
                             title="삭제에 실패하였습니다." placement="top">
                             <Button className={classes.deleteUser} onClick={this.deleteSelectedUser}>
                                 <DeleteForever/>
-                                <Typography variant="button">
+                                <Typography variant="button" classes={{button:classes.headerTypo}}>
                                     삭제
                                 </Typography>
                             </Button>
@@ -430,6 +479,10 @@ class UserData extends Component{
                             value={this.state.userEmail? this.state.userEmail: ''} onChange={this.handleTextFieldChange('userEmail')} margin="normal" variant="outlined" />
                         <TextField label="전화번호" className = {classes.textField} 
                             value={this.state.userPhone? this.state.userPhone: ''} onChange={this.handleTextFieldChange('userPhone')} margin="normal" variant="outlined" />
+                        <TextField label="이슈날짜" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
+                            value={this.state.IssuedDate? this.state.IssuedDate: ''} onChange={this.handleTextFieldChange('IssuedDate')} margin="normal" variant="outlined" />
+                        <TextField label="증명번호" className = {classes.textField} 
+                            value={this.state.CertificationNumber? this.state.CertificationNumber: ''} onChange={this.handleTextFieldChange('CertificationNumber')} margin="normal" variant="outlined" />
                         <TextField label="레벨" select className = {classes.textFieldSelectLevel} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.userLevel} onChange={this.handleTextFieldChange('userLevel')} margin="normal" variant="outlined">
                             {level.map(option => (
@@ -446,16 +499,39 @@ class UserData extends Component{
                                 </MenuItem>
                             ))}
                         </TextField>
+                        <TextField label="CCDS" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.CCDS} onChange={this.handleTextFieldChange('CCDS')} margin="normal" variant="outlined" >
+                            {status.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField label="CEPS" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                            value={this.state.CEPS} onChange={this.handleTextFieldChange('CEPS')} margin="normal" variant="outlined" >
+                            {status.map(option => (
+                                <MenuItem key={option} value={option} className={classes.selectItem}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField label="자격시작일" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
+                            value={this.state.levelChangeDate} onChange={this.handleTextFieldChange('levelChangeDate')}  margin="normal" variant="outlined" />
+                        <TextField label="자격만료일" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
+                            value={this.state.levelChangeDateEnd} onChange={this.handleTextFieldChange('levelChangeDateEnd')} margin="normal" variant="outlined" />
+                        <Divider className = {classes.divider} />
+                        <div className = {classes.editButtons}>
+                            <Tooltip open={this.state.tooltipOpenUpdate} disableFocusListener disableHoverListener disableTouchListener
+                                title="수정에 실패하였습니다." placement="left">
+                                <Button className={classes.buttonMargin} size="small" variant="outlined" onClick={this.updateSelectedUser}>유저정보수정</Button>
+                            </Tooltip>
+                        </div>
                         <Divider className = {classes.divider} />
                         {renderHelper}
+                        <div className = {classes.editButtons}>
+                            <AddUserClass data={this.props.user} userClass={this.props.userClass} updateUser={this.props.updateUser}/>
+                        </div>
                     </ExpansionPanelDetails>
-                    <ExpansionPanelActions>
-                        <Tooltip open={this.state.tooltipOpenUpdate} disableFocusListener disableHoverListener disableTouchListener
-                            title="수정에 실패하였습니다." placement="left">
-                            <Button className={classes.buttonMargin} size="small" variant="outlined" onClick={this.updateSelectedUser}>유저정보수정</Button>
-                        </Tooltip>
-                        <AddUserClass data={this.props.user} userClass={this.props.userClass} updateUser={this.props.updateUser}/>
-                    </ExpansionPanelActions>
                 </ExpansionPanel>
             </div>
         );

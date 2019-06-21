@@ -8,6 +8,7 @@ import jwt_decode from 'jwt-decode';
 import { blueGrey, indigo, amber } from '@material-ui/core/colors'
 import PrintClasses from  './PrintClasses';
 import PrintCertificate from './PrintCertificate';
+import PrintReceipt from './PrintReceipt';
 import PersonalInfoChange from './PersonalInfoChange'
 import PrintPage from './PrintPage'
 import 인증서발급기준 from './img/인증서발급기준.JPG'
@@ -73,9 +74,24 @@ const styles = theme => ({
     tableClassesCell:{
         padding: `${theme.spacing(1)}px`
     },
+    tableClassesCellReceipt:{
+        padding: `${theme.spacing(1)}px`,
+        width: '15%'
+    },
+    tableClassesCellHeader:{
+        padding: `${theme.spacing(1)}px`,
+        color: 'black',
+        //fontSize: '0.9rem',
+        fontWeight: 'bold',
+    },
     popover: {
         pointerEvents: 'none',
     },
+    headerTypo: {
+        fontWeight: 'bold',
+        fontSize: ''
+        //fontSize: '1.1rem'
+    }
 });
 
 class Main extends Component{
@@ -91,7 +107,9 @@ class Main extends Component{
             startDate: "",
             endDate: "",
             printWhich: 1, //1 is year, 2 is time range,
-            anchorEl: null
+            anchorEl: null,
+            receipt: false,
+            receiptClass: null
         }
     }
 
@@ -130,15 +148,26 @@ class Main extends Component{
             }).catch(err => console.log(err));
     }
 
-    showPrintForm = (ori, year = 0, startDate = "", endDate = "") => {
-        if(year === 0){
+    showPrintForm = (ori, year = 0, startDate = "", endDate = "", receipt = false, receiptID) => {
+        console.log(receipt);
+        if(receipt){
+            let receiptClass;
+            for(var i = 0; i < this.state.userClass.length; i++){
+                let row = this.state.userClass[i];
+                if(row.Class.교육ID === receiptID){
+                    receiptClass = row.Class
+                }
+            }
+            this.setState({printShow: true, printOrientation: ori, receiptClass: receiptClass, receipt: true});
+        }else if(year === 0){
             if(startDate === "" || endDate === ""){
-                this.setState({printShow: true, printOrientation: ori});
+                this.setState({printShow: true, printOrientation: ori, receipt: false});
             }else{
-                this.setState({printShow: true, printOrientation: ori, startDate: startDate, endDate: endDate, printWhich: 2});
+                this.setState({printShow: true, printOrientation: ori, startDate: startDate, endDate: endDate, printWhich: 2, receipt: false});
             }
         }else{
-            this.setState({printShow: true, printOrientation: ori, classYear: year, printWhich: 1});
+            console.log("here");
+            this.setState({printShow: true, printOrientation: ori, classYear: year, printWhich: 1, receipt: false});
         }
     }
 
@@ -179,7 +208,19 @@ class Main extends Component{
         if(this.state.user.LevelChangeDateEnd == null){
             levelDateEnd = "N/A"
         }else{
-            levelDateEnd = this.state.user.LevelChangeDateEnd 
+            levelDateEnd = new Date(this.state.user.LevelChangeDateEnd)
+            levelDateEnd = [levelDateEnd.getFullYear(), ('0' + (levelDateEnd.getMonth() + 1)).slice(-2), ('0' + (levelDateEnd.getDate())).slice(-2)].join('-');
+        }
+
+        var ibhre;
+        if(this.state.user.CCDS === 'Pass' && this.state.user.CEPS === 'Pass'){
+            ibhre = 'CCDS, CEPS'
+        }else if(this.state.user.CCDS === 'Pass'){
+            ibhre = 'CCDS'
+        }else if(this.state.user.CEPS === 'Pass'){
+            ibhre = 'CEPS'
+        }else{
+            ibhre = '없음'
         }
 
         return(
@@ -196,6 +237,7 @@ class Main extends Component{
                                         </Avatar>
                                     }
                                     title={this.state.user.유저번호 + " " + this.state.user.이름 + " " + this.state.user.영문이름}
+                                    classes={{title: classes.headerTypo}}
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent style = {{height: '70%'}}>
@@ -240,11 +282,14 @@ class Main extends Component{
                                     </Grid>
                                     <Divider className={classes.divider}/>
                                     <Grid container className={classes.gridRow}>
-                                        <Grid item container xs={6} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
+                                        <Grid item container xs={4} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
                                             <Typography className={classes.userTypo}>{"TEL : " + this.state.user.전화번호}</Typography>
                                         </Grid>
-                                        <Grid item container xs={6} className={classes.gridItem}>
+                                        <Grid item container xs={4} className={classes.gridItem} style={{borderRight: '1px solid rgba(0,0,0,0.12)'}}>
                                             <Typography className={classes.userTypo}>{"Email : " + this.state.user.이메일}</Typography>
+                                        </Grid>
+                                        <Grid item container xs={4} className={classes.gridItem}>
+                                            <Typography className={classes.userTypo}>{"IBHRE인증 : " + ibhre}</Typography>    
                                         </Grid>
                                     </Grid>
                                 </CardContent>
@@ -259,6 +304,7 @@ class Main extends Component{
                                         </Avatar>
                                     }
                                     title="설정 및 인쇄"
+                                    classes={{title: classes.headerTypo}}
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent className={classes.cardBtn}>
@@ -279,6 +325,7 @@ class Main extends Component{
                                         </Avatar>
                                     }
                                     title="교육리스트"
+                                    classes={{title: classes.headerTypo}}
                                 />
                                 <Divider className={classes.divider}/>
                                 <CardContent style={{height: '80%'}}>
@@ -286,12 +333,13 @@ class Main extends Component{
                                         <Table>
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell className={classes.tableClassesCell} align="center">교육명</TableCell>
-                                                    <TableCell className={classes.tableClassesCell} align="center">교육일</TableCell>
-                                                    <TableCell className={classes.tableClassesCell} align="center">KAPA인증</TableCell>
-                                                    <TableCell className={classes.tableClassesCell} align="center">ARC인증</TableCell>
-                                                    <TableCell className={classes.tableClassesCell} align="center">역할</TableCell>
-                                                    <TableCell className={classes.tableClassesCell} align="center">참가여부</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">교육명</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">교육일</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">KAPA인증</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">ARC인증</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">역할</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">참가여부</TableCell>
+                                                    <TableCell className={classes.tableClassesCellHeader} align="center">영수증</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -303,6 +351,9 @@ class Main extends Component{
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.ARC}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.역할}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.참가여부}</TableCell>
+                                                        <TableCell className={classes.tableClassesCellReceipt} align="center">
+                                                            <PrintReceipt show={this.showPrintForm} printID={row.Class.교육ID}/>
+                                                        </TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
@@ -315,7 +366,9 @@ class Main extends Component{
                 </Grid>
                 <PrintPage show={this.state.printShow} hide={this.hidePrintForm} orientation={this.state.printOrientation} engName={this.state.user.영문이름}
                     level={this.state.user.레벨} userClass={this.state.userClass} name={this.state.user.이름} job={this.state.user.직종} userNo={this.state.user.유저번호}
-                    affil={this.state.user.소속} classYear={this.state.classYear} startDate={this.state.startDate} endDate={this.state.endDate} which={this.state.printWhich}/>
+                    affil={this.state.user.소속} classYear={this.state.classYear} startDate={this.state.startDate} endDate={this.state.endDate} which={this.state.printWhich}
+                    issue={this.state.user.IssuedDate} certification={this.state.user.CertificationNumber} receipt={this.state.receipt} receiptClass={this.state.receiptClass}
+                    />
             </div>
         );
     }

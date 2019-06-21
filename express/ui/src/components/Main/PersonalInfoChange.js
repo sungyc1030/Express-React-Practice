@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Dialog, DialogTitle, DialogActions, DialogContent, TextField, Tooltip } from '@material-ui/core';
+import { Button, Dialog, DialogTitle, DialogActions, DialogContent, TextField, Tooltip, MenuItem } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import { HowToReg } from '@material-ui/icons';
 import PasswordChange from './PasswordChange'
@@ -32,8 +32,18 @@ const styles = theme => ({
     },
     infoGridContainer: {
         height: '80%'
-    }
+    },
+    textFieldSelect: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        color: theme.color
+    },
 });
+
+const status = [
+    'Pass',
+    'Fail'
+]
 
 class PersonalInfoChange extends Component{
     constructor(props){
@@ -51,6 +61,8 @@ class PersonalInfoChange extends Component{
             userEmail: '',
             userPhone: '',
             userID: '',
+            CCDS: 'Fail',
+            CEPS: 'Fail'
         }
     }
     
@@ -63,7 +75,9 @@ class PersonalInfoChange extends Component{
             userJob: this.props.user['직종'] ? this.props.user['직종']:'',
             userEmail: this.props.user['이메일'] ? this.props.user['이메일']:'',
             userPhone: this.props.user['전화번호'] ? this.props.user['전화번호']:'',
-            userID: this.props.user['유저ID']
+            userID: this.props.user['유저ID'],
+            CCDS: this.props.user['CCDS'] ? this.props.user['CCDS']:'Fail',
+            CEPS: this.props.user['CEPS'] ? this.props.user['CEPS']:'Fail'
         });
     }
 
@@ -123,7 +137,13 @@ class PersonalInfoChange extends Component{
             userPhone: this.state.userPhone,
             userLevel: this.props.user['레벨'],
             userAdmin: this.props.user['애드민'],
-            userEngName: this.state.userEngName
+            userEngName: this.state.userEngName,
+            IssuedDate: this.props.user['IssuedDate'],
+            CertificationNumber: this.props.user['CertificationNumber'],
+            CCDS: this.state.CCDS,
+            CEPS: this.state.CEPS,
+            LevelChangeDate: '',
+            LevelChangeDateEnd: ''
         }); 
         var token = localStorage.getItem('jwt');
         var response;
@@ -176,10 +196,26 @@ class PersonalInfoChange extends Component{
                                 <TextField label="부서"
                                     value={this.state.userPart? this.state.userPart: ''} onChange={this.handleTextFieldChange('userPart')} margin="normal">
                                 </TextField>
-                            </Grid>
-                            <Grid item xs={6} className={classes.infoGrid}>
                                 <TextField label="직종"
                                     value={this.state.userJob? this.state.userJob: ''} onChange={this.handleTextFieldChange('userJob')} margin="normal">
+                                </TextField>
+                            </Grid>
+                            <Grid item xs={6} className={classes.infoGrid}>
+                                <TextField label="CCDS" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                                    value={this.state.CCDS} onChange={this.handleTextFieldChange('CCDS')} margin="normal" variant="outlined" >
+                                    {status.map(option => (
+                                        <MenuItem key={option} value={option} className={classes.selectItem}>
+                                            {option}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                <TextField label="CEPS" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
+                                    value={this.state.CEPS} onChange={this.handleTextFieldChange('CEPS')} margin="normal" variant="outlined" >
+                                    {status.map(option => (
+                                        <MenuItem key={option} value={option} className={classes.selectItem}>
+                                            {option}
+                                        </MenuItem>
+                                    ))}
                                 </TextField>
                                 <TextField label="이메일"
                                     value={this.state.userEmail? this.state.userEmail: ''} onChange={this.handleTextFieldChange('userEmail')} margin="normal">

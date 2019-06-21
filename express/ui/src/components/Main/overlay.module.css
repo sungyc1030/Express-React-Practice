@@ -58,6 +58,10 @@
     object-fit: contain;
 }
 
+.imgReceipt{
+    object-fit: contain;
+}
+
 @media print {
     .overlay {
         width: 100%;

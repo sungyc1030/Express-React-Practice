@@ -74,6 +74,7 @@ router.post('/', passport.authenticate("jwt", {session: false}), async function(
       .insert({
         교육명: dataIn.className,
         교육일: dataIn.classDate,
+        교육비: dataIn.classFee,
         //KAPA: dataIn.classKAPA,
         //ARC: dataIn.classARC
       })
@@ -110,6 +111,7 @@ router.post('/:classid', passport.authenticate("jwt", {session: false}), async f
       .patch({
         교육명: dataIn.className,
         교육일: dataIn.classDate,
+        교육비: dataIn.classFee,
         //KAPA: dataIn.classKAPA,
         //ARC: dataIn.classARC
       })

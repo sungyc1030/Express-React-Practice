@@ -11,7 +11,7 @@ var UserClass = require('../models/UserClass');
 
 router.get('/', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
     //Check admin status
-    var bearer = req.headers.authorization;
+    /*var bearer = req.headers.authorization;
     var token = bearer.replace('Bearer ', '');
     var decoded = jwt_decode(token);
     if(decoded.admin !== '관리자'){
@@ -22,7 +22,7 @@ router.get('/', passport.authenticate("jwt", {session: false}), async (req, res,
       );
 
       return;
-    }
+    }*/
 
     const config = await Config.query()
       .skipUndefined()
@@ -180,7 +180,7 @@ router.processCSV = async(dataArr, res) => {
         교육ID: edId,
         역할: rowdata.역할,
         참가여부: rowdata.교육참석,
-        KAPA: (rowdata.KAPA === '참석' ? '인정':'불인정'),
+        KAPA: (rowdata.KAPA인증 === '참석' ? '인정':'불인정'),
         ARC: (rowdata.ARC인증 === '참석' ? '인정':'불인정')
       })
       .catch((err) => {

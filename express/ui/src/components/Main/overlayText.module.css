@@ -8,17 +8,23 @@
 }
 
 .cCertifiedDate{
-    left: 202px;
+    left: 135px;
     top: 194px;
     position: absolute;
     font-style: italic;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
 }
 
 .cDocumentNo{
-    left: 250px;
+    left: 135px;
     top: 217px;
     position: absolute;
     font-style: italic;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
 }
 
 .cName{
@@ -29,7 +35,8 @@
     display: flex;
     top: 300px;
     position: absolute;
-    font-size: 54px;
+    font-size: 60px;
+    font-weight: bold;
     font-style: italic;
     /*font-family: CursivCustom;*/
     font-family: Monotype Corsiva Regular
@@ -54,6 +61,48 @@
     top: 500px;
     position: absolute;
     font-size: 60px;
+}
+
+.cSilver{
+    left: 900px;
+    top: 210px;
+    position: absolute;
+    font-style: italic;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
+    color: rgb(191,191,191);
+}
+
+.cGold{
+    left: 900px;
+    top: 210px;
+    position: absolute;
+    font-style: italic;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
+    color: rgb(213,194,56);
+}
+
+.cLevelSubGold{
+    left: 942px;
+    top: 210px;
+    position: absolute;
+    font-style: italic;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.cLevelSubSilver{
+    left: 948px;
+    top: 210px;
+    position: absolute;
+    font-style: italic;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
 }
 
 .eIssuedDate{
@@ -109,4 +158,96 @@
     top: 878px;
     position: absolute;
     font-size: 32px;
+}
+
+.rClassName1{
+    left: 292px;
+    top: 84px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rClassName2{
+    left: 292px;
+    top: 76px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rClassNameText1{
+    left: 344px;
+    top: 84px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+    max-width: 140px;
+}
+
+.rClassNameText2{
+    left: 344px;
+    top: 76px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+    max-width: 120px;
+}
+
+.rAffil1{
+    left: 292px;
+    top: 104px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rAffil2{
+    left: 292px;
+    top: 112px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rName1{
+    left: 292px;
+    top: 124px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rName2{
+    left: 292px;
+    top: 132px;
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rPrice{
+    left: 240px;
+    top: 155px;
+    position: absolute;
+    font-size: 1.3rem;
+    font-weight: bold;
+    font-family: inherit;
+}
+
+.rDate{
+    left: 204px;
+    top: 276px;
+    position: absolute;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: inherit;
 }

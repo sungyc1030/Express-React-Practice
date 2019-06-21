@@ -44,6 +44,7 @@ class AddClass extends Component{
             open: false,
             className: '',
             classDate: '',
+            classFee: 0,
             //classKAPA: '불인정',
             //classARC: '불인정',
             tooltipOpen: false,
@@ -58,6 +59,7 @@ class AddClass extends Component{
             post: 'Add class',
             className: this.state.className,
             classDate: this.state.classDate,
+            classFee: this.state.classFee,
             //classKAPA: (this.state.classKAPA === '인정')? 1:0,
             //classARC: (this.state.classARC === '인정')? 1:0
         });
@@ -123,6 +125,7 @@ class AddClass extends Component{
         this.setState({
             className: '',
             classDate: '',
+            classFee: 0,
             //classKAPA: '불인정',
             //classARC: '불인정',
             tooltipOpen: false,
@@ -149,8 +152,10 @@ class AddClass extends Component{
                     <DialogContent>
                         <TextField label="이름" className = {classes.textField} 
                             value={this.state.className} onChange={this.handleTextFieldChange('className')} margin="normal" variant="outlined" />
-                        <TextField label="수업일" className = {classes.textField} 
+                        <TextField label="교육일" className = {classes.textField} 
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
+                        <TextField label="교육비" className = {classes.textField} 
+                            value={this.state.classFee} onChange={this.handleTextFieldChange('classFee')} margin="normal" variant="outlined" />
                         {/*<TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.classKAPA} onChange={this.handleTextFieldChange('classKAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (
