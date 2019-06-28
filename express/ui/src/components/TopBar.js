@@ -35,7 +35,7 @@ class TopBar extends Component{
                     <Toolbar>
                         {this.props.admin === "관리자" && <AdminDrawer />}
                         <Typography variant="h6" color="inherit" className={classes.grow}>
-                            부정맥전문기술인회
+                            부정맥전문기술인회 (Korea Arrhythmia Professionals Association)
                         </Typography>
                         <Button color="inherit" onClick={this.handleLogout}>Logout</Button>
                     </Toolbar>

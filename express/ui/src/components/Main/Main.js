@@ -149,7 +149,6 @@ class Main extends Component{
     }
 
     showPrintForm = (ori, year = 0, startDate = "", endDate = "", receipt = false, receiptID) => {
-        console.log(receipt);
         if(receipt){
             let receiptClass;
             for(var i = 0; i < this.state.userClass.length; i++){
@@ -347,8 +346,8 @@ class Main extends Component{
                                                     <TableRow key={index}>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.Class.교육명}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.Class.교육일}</TableCell>
-                                                        <TableCell className={classes.tableClassesCell} align="center">{row.KAPA}</TableCell>
-                                                        <TableCell className={classes.tableClassesCell} align="center">{row.ARC}</TableCell>
+                                                        <TableCell className={classes.tableClassesCell} align="center">{row.KAPA==='인정'? '인정':''}</TableCell>
+                                                        <TableCell className={classes.tableClassesCell} align="center">{row.ARC==='인정'?'인정':''}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.역할}</TableCell>
                                                         <TableCell className={classes.tableClassesCell} align="center">{row.참가여부}</TableCell>
                                                         <TableCell className={classes.tableClassesCellReceipt} align="center">

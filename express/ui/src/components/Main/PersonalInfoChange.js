@@ -42,7 +42,8 @@ const styles = theme => ({
 
 const status = [
     'Pass',
-    'Fail'
+    'Fail',
+    'None'
 ]
 
 class PersonalInfoChange extends Component{
@@ -61,8 +62,8 @@ class PersonalInfoChange extends Component{
             userEmail: '',
             userPhone: '',
             userID: '',
-            CCDS: 'Fail',
-            CEPS: 'Fail'
+            CCDS: 'None',
+            CEPS: 'None'
         }
     }
     
@@ -76,8 +77,8 @@ class PersonalInfoChange extends Component{
             userEmail: this.props.user['이메일'] ? this.props.user['이메일']:'',
             userPhone: this.props.user['전화번호'] ? this.props.user['전화번호']:'',
             userID: this.props.user['유저ID'],
-            CCDS: this.props.user['CCDS'] ? this.props.user['CCDS']:'Fail',
-            CEPS: this.props.user['CEPS'] ? this.props.user['CEPS']:'Fail'
+            CCDS: this.props.user['CCDS'] ? this.props.user['CCDS']:'None',
+            CEPS: this.props.user['CEPS'] ? this.props.user['CEPS']:'None'
         });
     }
 

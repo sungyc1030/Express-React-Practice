@@ -106,7 +106,8 @@ const admin = [
 
 const status = [
     'Pass',
-    'Fail'
+    'Fail',
+    'None'
 ]
 
 class UserData extends Component{
@@ -237,6 +238,90 @@ class UserData extends Component{
         return body;
     }
 
+    getUpdatedInformation = () => {
+        this.queryGetUpdatedInformation()
+            .then(res => {
+                if(res.length === 1){
+                    window.alert('수정완료!');
+                    var levelChangeDate;
+                    var levelChangeDateEnd;
+                    if(res[0].LevelChangeDate == null){
+                        levelChangeDate = '';
+                    }else{
+                        levelChangeDate = new Date(res[0].LevelChangeDate);
+                        levelChangeDate = [levelChangeDate.getFullYear(), ('0' + (levelChangeDate.getMonth() + 1)).slice(-2), ('0' + (levelChangeDate.getDate())).slice(-2)].join('-');
+                    }
+                    if(res[0].LevelChangeDateEnd == null){
+                        levelChangeDateEnd = '';
+                    }else{
+                        levelChangeDateEnd = new Date(res[0].LevelChangeDateEnd);
+                        levelChangeDateEnd = [levelChangeDateEnd.getFullYear(), ('0' + (levelChangeDateEnd.getMonth() + 1)).slice(-2), ('0' + (levelChangeDateEnd.getDate())).slice(-2)].join('-');
+                    }
+            
+                    this.setState({
+                        userName: res[0].이름,
+                        userEngName: res[0].영문이름? res[0].영문이름:'',
+                        userNo: Number(res[0]['유저번호']),
+                        userAffil: res[0]['소속'] ? res[0]['소속']:'',
+                        userPart: res[0]['부서'] ? res[0]['부서']:'',
+                        userJob: res[0]['직종'] ? res[0]['직종']:'',
+                        userEmail: res[0]['이메일'] ? res[0]['이메일']:'',
+                        userPhone: res[0]['전화번호'] ? res[0]['전화번호']:'',
+                        userLevel: res[0]['레벨'],
+                        userAdmin: res[0]['애드민'],
+                        userID: res[0]['유저ID'],
+                        allClasses: res[0]['UserClass'],
+                        IssuedDate: res[0]['IssuedDate'],
+                        CertificationNumber: res[0]['CertificationNumber'],
+                        CCDS: res[0]['CCDS'] ? res[0]['CCDS']:'Fail',
+                        CEPS: res[0]['CEPS'] ? res[0]['CEPS']:'Fail',
+                        levelChangeDate: levelChangeDate,
+                        levelChangeDateEnd: levelChangeDateEnd
+                    });
+                }else{
+                    this.setState({tooltipOpenUpdate: true});
+                    setTimeout(() => {
+                        this.setState({tooltipOpenUpdate: false})
+                    }, 1500);
+                }
+            }).catch(err => {
+                console.log(err);
+                this.setState({tooltipOpenUpdate: true});
+                setTimeout(() => {
+                    this.setState({tooltipOpenUpdate: false})
+                }, 1500);
+            })
+    }
+
+    queryGetUpdatedInformation = async() => {
+        var id = this.state.userID;
+        var token = localStorage.getItem('jwt');
+        var response;
+        if(token !== null){
+            response = await fetch('/api/user/' + id, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+        }else{
+            response = await fetch('/api/user/' + id, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+        
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+    
+        return body;
+    }
+
     updateSelectedUser = e => {
         e.preventDefault();
         e.stopPropagation();
@@ -246,7 +331,7 @@ class UserData extends Component{
             .then(res => {
                 if(res.mes === 'Success'){
                     //this.props.updateUser();
-                    window.alert('수정완료!');
+                    this.getUpdatedInformation();
                 }else{
                     this.setState({tooltipOpenUpdate: true});
                     setTimeout(() => {
@@ -521,6 +606,10 @@ class UserData extends Component{
                             value={this.state.levelChangeDateEnd} onChange={this.handleTextFieldChange('levelChangeDateEnd')} margin="normal" variant="outlined" />
                         <Divider className = {classes.divider} />
                         <div className = {classes.editButtons}>
+                            <Button onClick={() => {this.props.print(this.state.userEngName, this.state.userLevel, this.state.IssuedDate, this.state.CertificationNumber);}} 
+                                size="small" variant="outlined" disabled={this.state.userLevel === 'Normal'}>
+                                인증서 출력
+                            </Button>
                             <Tooltip open={this.state.tooltipOpenUpdate} disableFocusListener disableHoverListener disableTouchListener
                                 title="수정에 실패하였습니다." placement="left">
                                 <Button className={classes.buttonMargin} size="small" variant="outlined" onClick={this.updateSelectedUser}>유저정보수정</Button>

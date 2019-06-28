@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core';
 import { TextField, Typography, Button, Divider, Tooltip, Checkbox } from '@material-ui/core';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow, InputAdornment } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { DeleteForever } from '@material-ui/icons';
 import ClassDataRow from './ClassDataRow';
@@ -74,7 +74,18 @@ const styles = theme => ({
     editButtons: {
         display: 'flex',
         flexDirection: 'row-reverse',
-        flexBasis: '100%'
+        flexBasis: '100%',
+        alignItems: 'center'
+    },
+    editButtonsTypo1: {
+        marginLeft : '0vw',
+        marginRight : '5vw',
+        fontSize: '0.8rem'
+    },
+    editButtonsTypo2: {
+        marginLeft : '0vw',
+        marginRight : '5vw',
+        fontSize: '0.8rem'
     }
 });
 
@@ -93,24 +104,58 @@ class ClassData extends Component{
             tooltipOpenUpdate: false,
             checked: false,
             classFee: 0,
+            certified: 0,
+            notCertified: 0
         }
     } 
 
     handleTextFieldChange = name => event => {
+        let value;
+        if(name === 'classFee'){
+            value = this.priceToNumber(event.target.value)
+        }else{
+            value = event.target.value;
+        }
         this.setState({
-            [name]: event.target.value
+            [name]: value
         });
     };
 
     componentDidMount(){
+        let mode = '';
+        let allusers = this.props.class['UserClass'];
+        let cert = 0;
+        let nocert = 0;
+        for(var i = 0; i < allusers.length; i++){
+            let oneuser = allusers[i];
+            if(mode === ''){
+                if(oneuser.KAPA === '인정'){
+                    mode = 'KAPA';
+                    cert += 1;
+                }else if(oneuser.ARC === '인정'){
+                    mode = 'ARC';
+                    cert += 1;
+                }else{
+                    nocert += 1;
+                }
+            }else{
+                if(oneuser[mode] === '인정'){
+                    cert += 1;
+                }else{
+                    nocert += 1;
+                }
+            }
+        }
         this.setState({
             className: this.props.class['교육명'],
             classDate: this.props.class['교육일'],
             //classKAPA: this.props.class['KAPA'] ? '인정':'불인정',
             //classARC: this.props.class['ARC'] ? '인정':'불인정',
-            allUsers: this.props.class['UserClass'],
+            allUsers: allusers,
             classID: this.props.class['교육ID'],
             classFee: this.props.class['교육비'],
+            certified: cert,
+            notCertified: nocert
         });
     }
 
@@ -307,6 +352,22 @@ class ClassData extends Component{
         return result;
     }
 
+    numberToPrice = (string) => {
+        let price;
+
+        price = Number(string).toFixed(0).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+        return price;
+    }
+
+    priceToNumber = (price) => {
+        let string;
+
+        string = price.replace(',','');
+
+        return string;
+    }
+
     render(){
         const {classes} = this.props;
 
@@ -377,7 +438,11 @@ class ClassData extends Component{
                         <TextField label="교육일" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
                         <TextField label="교육비" className = {classes.textField}
-                            value={this.state.classFee} onChange={this.handleTextFieldChange('classFee')} margin="normal" variant="outlined" />
+                            value={this.numberToPrice(this.state.classFee)} onChange={this.handleTextFieldChange('classFee')} margin="normal" variant="outlined" 
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">₩</InputAdornment>,
+                            }}
+                        />
                         {/*<TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.classKAPA} onChange={this.handleTextFieldChange('classKAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (
@@ -400,6 +465,12 @@ class ClassData extends Component{
                                 title="수정에 실패하였습니다." placement="top">
                                 <Button size="small" variant="outlined" onClick={this.updateSelectedClass}>교육정보수정</Button>
                             </Tooltip>
+                            <Typography className={classes.editButtonsTypo1}>
+                                {'불인정 : ' + this.state.notCertified}
+                            </Typography>
+                            <Typography className={classes.editButtonsTypo2}>
+                                {'인정 : ' + this.state.certified}
+                            </Typography>
                         </div>
                         <Divider className = {classes.divider} />
                         {renderHelper}

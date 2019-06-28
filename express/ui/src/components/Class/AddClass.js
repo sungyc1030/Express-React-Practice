@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Button, /*Fab,*/ Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@material-ui/core';
-import { Tooltip, Typography } from '@material-ui/core';
+import { Tooltip, Typography, InputAdornment } from '@material-ui/core';
 //import { Add } from '@material-ui/icons';
 
 const styles = theme => ({
@@ -155,7 +155,11 @@ class AddClass extends Component{
                         <TextField label="교육일" className = {classes.textField} 
                             value={this.state.classDate} onChange={this.handleTextFieldChange('classDate')} margin="normal" variant="outlined" />
                         <TextField label="교육비" className = {classes.textField} 
-                            value={this.state.classFee} onChange={this.handleTextFieldChange('classFee')} margin="normal" variant="outlined" />
+                            value={this.state.classFee} onChange={this.handleTextFieldChange('classFee')} margin="normal" variant="outlined" 
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">₩</InputAdornment>,
+                            }}
+                            />
                         {/*<TextField label="KAPA인증" select className = {classes.textFieldSelect} SelectProps={{MenuProps: {className: classes.textFieldSelect}}}
                             value={this.state.classKAPA} onChange={this.handleTextFieldChange('classKAPA')} margin="normal" variant="outlined">
                             {yesno.map(option => (

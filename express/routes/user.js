@@ -109,9 +109,57 @@ router.post('/', passport.authenticate("jwt", {session: false}), async (req, res
     if(dataIn.userLevel === 'Normal'){
       newIssueDate = null;
       newCertificationNo = null;
-    }else{
+    }else if(dataIn.userLevel.indexOf('Silver') !== -1 || dataIn.userLeevl === 'Gold'){
+      let counter = 0;
+
+      const cert = await Certification.query()
+        .findOne({id : 1})
+        .then(c => {
+          if(dataIn.userLevel.indexOf('Silver') !== -1){
+            newIssueDate = (levelChangeDate.getFullYear() - 1) + '-' + 12 + '-' + 31;
+            newCertificationNo = 'KCAS' + ('0000' + c.실버카운터).slice(-5) + 'S';
+            counter = c.실버카운터;
+          }else if(dataIn.userLevel === 'Gold'){
+            newIssueDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+            newCertificationNo = 'KCAS' + ('0000' + c.골드카운터).slice(-5) + 'G';
+            counter = c.골드카운터;
+          }else if(dataIn.userLevel === 'Normal'){
+            newIssueDate = null;
+            newCertificationNo = null;
+          }
+          console.log(newCertificationNo);
+        })
+        .catch((err) => {
+          ErrorHandler(err, res);
+          console.log(err);
+        });
+
+      if(counter !== 0){
+        if(dataIn.userLevel === 'Silver'){
+          const cert2 = await Certification.query()
+            .patch({
+              실버카운터: counter + 1
+            }).where({
+              id: 1
+            });
+        }else if(dataIn.userLevel === 'Gold'){
+          const cert2 = await Certification.query()
+            .patch({
+              골드카운터: counter + 1
+            }).where({
+              id: 1
+            });
+        }
+      }
+    }
+
+    if(dataIn.IssuedDate !== '' && dataIn.userLevel != 'Normal'){
       newIssueDate = dataIn.IssuedDate;
+    }
+    
+    if(dataIn.CertificationNumber !== '' && dataIn.userLevel != 'Normal'){
       newCertificationNo = dataIn.CertificationNumber;
+      console.log(newCertificationNo);
     }
     
     const user = await User.query()
@@ -208,15 +256,23 @@ router.post('/:userid', passport.authenticate("jwt", {session: false}), async fu
     levelChangeEndDate = null;
   }
 
+  let levelChanged = false;
+
   //Level logic comparison
   const level = await User.query()
     .where('유저ID', id)
     .then(u => {
-      if(u.레벨 == dataIn.userLevel){
+      if(u[0].레벨 == dataIn.userLevel){
         //전 레벨과 동일하다
         //자격에 대해서 업데이트를 할 필요는 없다
         levelChangeDate = u.LevelChangeDate;
         levelChangeEndDate = u.LevelChangeDateEnd;
+      }else if(dataIn.userLevel === 'Gold' || dataIn.userLevel === 'Normal'){
+        levelChanged = true;
+      }else if(dataIn.userLevel.indexOf('Silver') !== -1 && u[0].레벨.indexOf('Silver') === -1){
+        levelChanged = true;
+      }else if(dataIn.userLevel.indexOf('Silver') === -1 && u[0].레벨.indexOf('Silver') !== -1){
+        levelChanged = true;
       }
 
       if(dataIn.LevelChangeDate !== '' && dataIn.userLevel != 'Normal'){
@@ -233,48 +289,49 @@ router.post('/:userid', passport.authenticate("jwt", {session: false}), async fu
 
   let counter = 0;
   
-  const cert = await Certification.query()
-    .findOne({id : 1})
-    .then(c => {
+  if(levelChanged){
+    const cert = await Certification.query()
+      .findOne({id : 1})
+      .then(c => {
+        if(dataIn.userLevel === 'Silver'){
+          newIssueDate = (levelChangeDate.getFullYear() - 1) + '-' + 12 + '-' + 31;
+          newCertificationNo = 'KCAS' + ('0000' + c.실버카운터).slice(-5) + 'S';
+          counter = c.실버카운터;
+        }else if(dataIn.userLevel === 'Gold'){
+          newIssueDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+          newCertificationNo = 'KCAS' + ('0000' + c.골드카운터).slice(-5) + 'G';
+          counter = c.골드카운터;
+        }else if(dataIn.userLevel === 'Normal'){
+          newIssueDate = null;
+          newCertificationNo = null;
+        }
+      })
+      .catch((err) => {
+        ErrorHandler(err, res);
+        console.log(err);
+      });
+
+    if(counter !== 0){
       if(dataIn.userLevel === 'Silver'){
-        newIssueDate = (levelChangeDate.getFullYear() - 1) + '-' + (levelChangeDate.getMonth() + 1) + '-' + levelChangeDate.getDate();
-        newCertificationNo = 'KCAS' + ('0000' + c.실버카운터).slice(-5) + 'S';
-        counter = c.실버카운터;
+        const cert2 = await Certification.query()
+          .patch({
+            실버카운터: counter + 1
+          }).where({
+            id: 1
+          });
       }else if(dataIn.userLevel === 'Gold'){
-        newIssueDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-        newCertificationNo = 'KCAS' + ('0000' + c.골드카운터).slice(-5) + 'G';
-        counter = c.골드카운터;
-      }else if(dataIn.userLevel === 'Normal'){
-        newIssueDate = null;
-        newCertificationNo = null;
-      }else{
-        newIssueDate = dataIn.IssuedDate;
-        newCertificationNo = dataIn.CertificationNumber;
+        const cert2 = await Certification.query()
+          .patch({
+            골드카운터: counter + 1
+          }).where({
+            id: 1
+          });
       }
-    })
-    .catch((err) => {
-      ErrorHandler(err, res);
-      console.log(err);
-    });
-
-  if(counter !== 0){
-    if(dataIn.userLevel === 'Silver'){
-      const cert2 = await Certification.query()
-        .patch({
-          실버카운터: counter + 1
-        }).where({
-          id: 1
-        });
-    }else if(dataIn.userLevel === 'Gold'){
-      const cert2 = await Certification.query()
-        .patch({
-          골드카운터: counter + 1
-        }).where({
-          id: 1
-        });
     }
+  }else{
+    newIssueDate = dataIn.IssuedDate;
+    newCertificationNo = dataIn.CertificationNumber;
   }
-
 
   const user = await User.query()
     .patch({

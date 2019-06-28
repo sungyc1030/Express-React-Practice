@@ -28,6 +28,12 @@ const styles = theme => ({
     signatureImg:{
         maxWidth: '100%',
         maxHeight: '100%'
+    },
+    firstCell:{
+        width: '50%'
+    },
+    lastCell:{
+        width: '20%'
     }
 });
 
@@ -158,7 +164,7 @@ class PrintPage extends Component{
         var rAffilClass = 'rAffil1';
         var rNameClass = 'rName1';
         var rClassNameClass = 'rClassName1';
-        var rClassNameTextClass = 'rClassNameText1';
+        //var rClassNameTextClass = 'rClassNameText1';
 
         var imgClass;
         var renderHelper = '';
@@ -175,17 +181,17 @@ class PrintPage extends Component{
             imgClass = 'imgReceipt';
             rClassHeader = '교육명 : ';
             rClassName = this.props.receiptClass.교육명;
-            if(rClassName.length > 10){
+            /*if(rClassName.length > 10){
                 rAffilClass = 'rAffil2';
                 rNameClass = 'rName2';
                 rClassNameClass = 'rClassName2';
                 rClassNameTextClass = 'rClassNameText2';
-            }else{
+            }else{*/
                 rAffilClass = 'rAffil1';
                 rNameClass = 'rName1';
                 rClassNameClass = 'rClassName1';
-                rClassNameTextClass = 'rClassNameText1';
-            }
+                //rClassNameTextClass = 'rClassNameText1';
+            //}
             rAffil = '소 속 : ' + this.props.affil;
             rName = '성 명 : ' + this.props.name;
             let priceFormatter = new Intl.NumberFormat('en-US', {
@@ -249,9 +255,9 @@ class PrintPage extends Component{
                     <Table className={classes.tablePrint}>
                         <TableHead>
                             <TableRow>
-                                <CustomTableCell align="center">교 육 명</CustomTableCell>
+                                <CustomTableCell align="center" className={classes.firstCell}>교 육 명</CustomTableCell>
                                 <CustomTableCell align="center">교 육 일</CustomTableCell>
-                                <CustomTableCell align="center">역 할</CustomTableCell>
+                                <CustomTableCell align="center" className={classes.lastCell}>역 할</CustomTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -348,11 +354,14 @@ class PrintPage extends Component{
                     <div className={overlayText.eSignature}>
                         {eSignature}
                     </div>
-                    <div className={overlayText[rClassNameClass]}>
+                    {/*<div className={overlayText[rClassNameClass]}>
                         {rClassHeader}
                     </div>
                     <div className={overlayText[rClassNameTextClass]}>
                         {rClassName}
+                    </div>*/}
+                    <div className = {overlayText[rClassNameClass]}>
+                        {rClassHeader + ' ' + rClassName}
                     </div>
                     <div className={overlayText[rAffilClass]}>
                         {rAffil}

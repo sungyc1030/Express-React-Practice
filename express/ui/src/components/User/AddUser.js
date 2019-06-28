@@ -52,7 +52,8 @@ const admin = [
 
 const ibhre = [
     'Pass',
-    'Fail'
+    'Fail',
+    'None'
 ]
 
 class AddUser extends Component{

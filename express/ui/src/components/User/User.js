@@ -7,6 +7,7 @@ import { lime } from '@material-ui/core/colors'
 import UserData from './UserData';
 import AddUser from './AddUser'
 import TopBar from '../TopBar';
+import UserCertificate from './UserCertificate';
 
 const styles = theme => ({
     root: {flexGrow: 1},
@@ -61,6 +62,16 @@ const styles = theme => ({
     },
     searchButton:{
         margin: `${theme.spacing(1)}px`
+    },
+    FirstItem:{
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
+    LastItem: {
+        marginTop: 'auto',
+        fontSize: '0.8rem',
+        marginRight: '1vw',
+        marginLeft: 'auto'
     }
 });
 
@@ -74,7 +85,7 @@ const level = [
 
 const statusIbhre = [
     'Pass',
-    'Fail'
+    'None'
 ];
 
 class User extends Component{
@@ -84,7 +95,7 @@ class User extends Component{
         var d = new Date(Date.now());
         var month = '' + (d.getMonth() + 1);
         var day = '' + (d.getDate());
-        var year = d.getFullYear();
+        var year = d.getFullYear() + 1;
 
         if (month.length < 2) month = '0' + month;
         if (day.length < 2) day = '0' + day;
@@ -102,15 +113,18 @@ class User extends Component{
             searchDate2: year + '-' + month + '-' + day,
             searchLevel1: 'Normal',
             searchLevel2: 'Gold',
-            searchCCDS: 'Fail',
-            searchCEPS: 'Fail',
-            search: false
+            searchCCDS: 'None',
+            searchCEPS: 'None',
+            search: false,
+            userCount: 0,
+            //printShow: false
         }
 
         this.start = 0
         this.end = 0
         this.searchUpdate = false
         this.toBeDeleted = new Set();
+        this.cert = React.createRef();
     }
 
     getData = async() => {
@@ -157,9 +171,10 @@ class User extends Component{
 
     componentDidMount(){
         this.setState({loaded: false});
-        let user;
-        let userclass;
-        this.getData()
+        //let user;
+        //let userclass;
+        this.searchUser();
+        /*this.getData()
             .then(res1 => {
                 if(res1.length === 0){
                     this.setState({empty:true, loaded: true});
@@ -176,7 +191,7 @@ class User extends Component{
                             }
                         }).catch(err => console.log(err));
                 }
-            }).catch(err => console.log(err));
+            }).catch(err => console.log(err));*/
     }
 
     changeUser = () => {
@@ -194,14 +209,26 @@ class User extends Component{
             }).catch(err => console.log(err));
     }
 
+    printUserCertificate = (userEngName, userLevel, userIssueDate, UserCertificateNo) => {
+        //this.setState({printShow: true});
+        //this.printShow = true;
+        this.cert.current.showCertificate(userEngName, userLevel, userIssueDate, UserCertificateNo);
+    }
+
+    closeUserCertificate = () => {
+        //this.setState({printShow: false});
+        //this.printShow = false;
+        this.cert.current.hideCertificate();
+    }
+
     createList = () => {
-        const {classes} = this.props;
+        //const {classes} = this.props;
 
         var list;
         if(this.state.search && this.searchUpdate){
             list = this.state.users.map((data, index) => {
                 var status = <UserData user={data} key={data['유저ID']} deleteUser={this.changeUser} updateUser={this.changeUser} userClass={this.state.userClass}
-                                deleteChecks={this.handleChecksForDelete} />;
+                                deleteChecks={this.handleChecksForDelete} print={this.printUserCertificate}/>;
                 var name = data.이름;
                 if(name.indexOf(this.state.searchName) === -1){
                     status = null;
@@ -220,7 +247,7 @@ class User extends Component{
                 }else if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
                     status = null;
                 }
-                var orSearch = 3;
+                //var orSearch = 2;
                 var startLevelPos, endLevelPos, targetLevelPos;
                 for(var i = 0; i < level.length; i++){
                     if(level[i] === data.레벨){
@@ -234,24 +261,31 @@ class User extends Component{
                     }
                 }
                 if(targetLevelPos < startLevelPos || targetLevelPos > endLevelPos){
-                    orSearch -= 1;
-                }
-                if(data.CCDS !== this.state.searchCCDS){
-                    orSearch -= 1;
-                }
-                if(data.CEPS !== this.state.searchCEPS){
-                    orSearch -= 1;
-                }
-                if(orSearch === 0){
                     status = null;
                 }
+                if(this.state.searchCCDS === 'Pass'){
+                    if(data.CCDS !== this.state.searchCCDS){
+                        //orSearch -= 1;
+                        status = null;
+                    }
+                }
+                if(this.state.searchCEPS === 'Pass'){
+                    if(data.CEPS !== this.state.searchCEPS){
+                        //orSearch -= 1;
+                        status = null;
+                    }
+                }
+                /*if(orSearch === 0){
+                    status = null;
+                }*/
                 return status;
             });
             this.searchUpdate = false;
         }else if(this.state.search){
-            list = <div className = {classes.progressDiv}>
+            /*list = <div className = {classes.progressDiv}>
                     <CircularProgress className = {classes.progress}/>
-                </div>
+                </div>*/
+            list = null;
         }
         if(Array.isArray(list)){
             var arrayStatus = false;
@@ -281,8 +315,90 @@ class User extends Component{
     };
 
     searchUser = () => {
-        this.searchUpdate = true;
-        this.setState({search: true});
+        //In case of update, load in data again
+        let user;
+        let userclass;
+        this.setState({search:false});
+        this.getData()
+            .then(res1 => {
+                if(res1.length === 0){
+                    this.setState({empty:true, loaded: true, printShow: false});
+                    console.log(this.userCount)
+                }else{
+                    //this.setState({users: res});
+                    user = res1;
+                    this.getClassData()
+                        .then(res2 => {
+                            if(res2.length !== 0){
+                                //this.setState({userClass: res});
+                                userclass = res2;
+                                this.searchUpdate = true;
+                                let userCount = this.getUserCount(user);
+                                this.setState({users: user, userClass: userclass, loaded: true, search: true, userCount: userCount, printShow: false});
+                            }
+                        }).catch(err => console.log(err));
+                }
+            }).catch(err => console.log(err));
+    }
+
+    getUserCount = (users) => {
+        let count = 0;
+        for(var i = 0; i < users.length; i++){
+            let data = users[i];
+            let status = '';
+            if(data.이름.indexOf(this.state.searchName) === -1){
+                status = null;
+            }
+            if(data.소속.indexOf(this.state.searchAffil) === -1){
+                status = null;
+            }
+            if(data.직종.indexOf(this.state.searchJob) === -1){
+                status = null;
+            }
+            var dateTarget = new Date(data.IssuedDate);
+            var startDate = new Date(this.state.searchDate1);
+            var endDate = new Date(this.state.searchDate2);
+            if(data.IssuedDate == null){
+                //should be null when the time comes
+            }else if(dateTarget.getTime() > endDate.getTime() || dateTarget.getTime() < startDate.getTime()){
+                status = null;
+            }
+            //var orSearch = 2;
+            var startLevelPos, endLevelPos, targetLevelPos;
+            for(var j = 0; j < level.length; j++){
+                if(level[j] === data.레벨){
+                    targetLevelPos = j
+                }
+                if(level[j] === this.state.searchLevel1){
+                    startLevelPos = j
+                }
+                if(level[j] === this.state.searchLevel2){
+                    endLevelPos = j
+                }
+            }
+            if(targetLevelPos < startLevelPos || targetLevelPos > endLevelPos){
+                status = null;
+            }
+            if(this.state.searchCCDS === 'Pass'){
+                if(data.CCDS !== this.state.searchCCDS){
+                    //orSearch -= 1;
+                    status = null;
+                }
+            }
+            if(this.state.searchCEPS === 'Pass'){
+                if(data.CEPS !== this.state.searchCEPS){
+                    //orSearch -= 1;
+                    status = null;
+                }
+            }
+            /*if(orSearch === 0){
+                status = null;
+            }*/
+            if(status !== null){
+                count += 1;
+            }
+        }
+        return count;
     }
 
     handleMassDelete = () => {
@@ -437,6 +553,8 @@ class User extends Component{
                     value={this.state.searchJob} onChange={this.handleTextFieldChange('searchJob')} margin="normal" variant="outlined" />
             </div>
             <div className={classes.searchFields}>
+                <div className = {classes.FirstItem}>
+                </div>
                 <TextField label="Issued Date" className = {classes.textField} type="date" InputLabelProps={{ shrink: true }}
                     value={this.state.searchDate1} onChange={this.handleTextFieldChange('searchDate1')} margin="normal" variant="outlined" />
                 <Typography>
@@ -479,6 +597,9 @@ class User extends Component{
                         </MenuItem>
                     ))}
                 </TextField>
+                <Typography className={classes.LastItem}>
+                    {'Total Users : ' + this.state.userCount}
+                </Typography>
             </div>  
             <Divider/>
             <div className={classes.userButtons}>  
@@ -548,6 +669,7 @@ class User extends Component{
                         </Card> 
                     </Grid>
                 </Grid>
+                <UserCertificate ref={this.cert} show={this.printShow} close={this.closeUserCertificate}/>
             </div>
         );
     }

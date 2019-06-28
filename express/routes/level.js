@@ -7,6 +7,7 @@ var jwt_decode = require('jwt-decode');
 var User = require('../models/User');
 var Ed = require('../models/Class');
 var UserClass = require('../models/UserClass');
+var Certification = require('../models/Certification');
 
 router.post('/', passport.authenticate("jwt", {session: false}), async (req, res, next) => {
     //Check admin status
@@ -96,6 +97,7 @@ router.processLevel = async() => {
                 //골드 갱신값과 비교
                 if(status.KAPA >= 5 && status.ARC >= 3){
                     //갱신
+                    //갱신되었을때 증명서번호와 이슈 날짜는 바뀌지 않는다?
                     let updateDate = new Date();
                     let endDate = new Date(today.getFullYear() + 5, today.getMonth(), today.getDate());
                     let finalLevel = 'Gold';
@@ -119,7 +121,9 @@ router.processLevel = async() => {
                         .patch({
                             레벨: finalLevel,
                             LevelChangeDate: null,
-                            LevelChangeDateEnd: null
+                            LevelChangeDateEnd: null,
+                            IssuedDate: null,
+                            CertificationNumber: null
                         })    
                         .where('유저ID', id)
                         .catch((err) => {
@@ -135,7 +139,7 @@ router.processLevel = async() => {
         }else if(level.indexOf('Silver') !== -1){
             //Silver - 3년을 확인하는것이 아니라 silver가 끝나는 날 부터 지금까지 확인한다.
             let status = {
-                KAPA: [], //1년전 (Silver), 2년전 (Silver+1), 3년전 (Silver+2)
+                KAPA: [],
                 ARC: []
             }
             let levelDateEnd = users[i].LevelChangeDateEnd;
@@ -152,17 +156,20 @@ router.processLevel = async() => {
             }/*else if(level == 'Silver+2'){
                 finalLevelStatus = 3;
             }*/
-            let updateDate = new Date(thisYear + '-' + 1 + '-' + 1); //올해 1월1일로
+            //let updateDate = new Date(thisYear + '-' + 1 + '-' + 1); //올해 1월1일로
+            let updateDate = new Date((thisYear+1) + '-' + 1 + '-' + 1); //내년 1월1일로
             updateDate = [updateDate.getFullYear(), ('0' + (updateDate.getMonth() + 1)).slice(-2), ('0' + (updateDate.getDate())).slice(-2)].join('-');
-            let endDate = new Date(thisYear + '-' + 12 + '-' + 31); //올해 마지막일로
+            //let endDate = new Date(thisYear + '-' + 12 + '-' + 31); //올해 마지막일로
+            let endDate = new Date((thisYear+1) + '-' + 12 + '-' + 31); //내년 마지막일로
             endDate = [endDate.getFullYear(), ('0' + (endDate.getMonth() + 1)).slice(-2), ('0' + (endDate.getDate())).slice(-2)].join('-');
 
             //해당하는 년도 계산
             let endYear = levelDateEnd.getFullYear();
-            let loopVar = thisYear - endYear - 1; //올해는 포함하지 않기 때문에 -1
+            //let loopVar = thisYear - endYear - 1; //올해는 포함하지 않음 따라서 -1
+            let loopVar = thisYear - endYear; //올해 포함으로 바뀜
 
-            //status에 년도 결과 대입
-            for(var j = 0; j < loopVar; j++){
+            //status에 년도 결과 대입 (솔직히 필요없는 코드)
+            for(var j = 0; j < loopVar + 1; j++){
                 status.KAPA.push(false);
                 status.ARC.push(false);
             }
@@ -173,32 +180,72 @@ router.processLevel = async() => {
                 if(current.KAPA == '인정' && (current.참가여부 == '참석' || current.참가여부 == '참가')){
                     let classDate = new Date(current.Class.교육일);
                     let classYear = classDate.getFullYear();
-                    let yearSub = thisYear - classYear - 1;
+                    //let yearSub = thisYear - classYear - 1;
+                    let yearSub = thisYear - classYear;
+                    if(thisYear - classYear < 0){
+                        continue;
+                    }
                     if(yearSub <= loopVar){
                         status.KAPA[yearSub] = true
                     }
                 }else if(current.ARC == '인정' && (current.참가여부 == '참석' || current.참가여부 == '참가')){
                     let classDate = new Date(current.Class.교육일);
                     let classYear = classDate.getFullYear();
-                    let yearSub = thisYear - classYear - 1;
+                    //let yearSub = thisYear - classYear - 1;
+                    let yearSub = thisYear - classYear;
+                    if(thisYear - classYear < 0){
+                        continue;
+                    }
                     if(yearSub <= loopVar){
                         status.ARC[yearSub] = true
                     }
                 }
             }
             
-            //계산된 결과에 따라 레벨 도출
-            for(var j = loopVar - 1; j >= 0; j--){
+            //계산된 결과에 따라 레벨 도출 및 Normal이 되었었는지 확인
+            let wasNormal = false;
+            for(var j = loopVar; j >= 0; j--){
                 if(status.KAPA[j] && status.ARC[j]){
                     finalLevelStatus = finalLevelStatus + 1;
                 }else{
                     finalLevelStatus = 0;
+                    wasNormal = true;
                 }
+            }
+
+            let dateForIssuedDate = new Date(updateDate);
+            let newIssuedDate = [dateForIssuedDate.getFullYear() - 1, 12, 31].join('-');
+            let newCertificationNo = users[i].CertificationNumber;
+
+            if(users[i].이름 == '테스트1'){
+                console.log(status, finalLevelStatus);
+            }
+
+            //Normal이 되었을 경우 새로운 Cert을 가져와야 한다
+            if(wasNormal && finalLevelStatus !== 0){
+                let counter = 0;
+                const cert = await Certification.query()
+                    .findOne({id : 1})
+                    .then(c => {
+                        newCertificationNo = 'KCAS' + ('0000' + c.실버카운터).slice(-5) + 'S';
+                        counter = c.실버카운터;
+                    })
+                    .catch((err) => {
+                        ErrorHandler(err, res);
+                        console.log(err);
+                    });
+                const cert2 = await Certification.query()
+                    .patch({
+                      실버카운터: counter + 1
+                    }).where({
+                      id: 1
+                    });
+                //console.log(id, users[i].이름 ,newCertificationNo);
             }
 
             if(finalLevelStatus === 3){
                 finalLevel = 'Silver+2'
-                endDate = new Date(2200,11,31);
+                endDate = new Date(2200,11,31); 
             }else if(finalLevelStatus === 2){
                 finalLevel = 'Silver+1'
             }else if(finalLevelStatus === 1){
@@ -207,16 +254,22 @@ router.processLevel = async() => {
                 finalLevel = 'Normal'
                 updateDate = null;
                 endDate = null;
+                newIssuedDate = null;
+                newCertificationNo = null;
             }
+
+            //console.log(id, users[i].이름 ,newCertificationNo, finalLevel, 'Line number: ' + 252);
             
-            console.log(id, status, finalLevel);
+            //console.log(id, status, finalLevel);
             
             //각 계산된 결과를 저장
             const patchUser = await User.query()
                 .patch({
                     레벨: finalLevel,
                     LevelChangeDate: updateDate,
-                    LevelChangeDateEnd: endDate
+                    LevelChangeDateEnd: endDate,
+                    CertificationNumber: newCertificationNo,
+                    IssuedDate: newIssuedDate
                 })    
                 .where('유저ID', id)
                 .catch((err) => {
@@ -230,9 +283,11 @@ router.processLevel = async() => {
                 ARC: [false,false,false]
             }
             let finalLevel = 'Normal';
-            let updateDate = new Date(thisYear + '-' + 1 + '-' + 1); //올해 1월1일로
+            //let updateDate = new Date(thisYear + '-' + 1 + '-' + 1); //올해 1월1일로
+            let updateDate = new Date((thisYear+1) + '-' + 1 + '-' + 1); //내년 1월1일로
             updateDate = [updateDate.getFullYear(), ('0' + (updateDate.getMonth() + 1)).slice(-2), ('0' + (updateDate.getDate())).slice(-2)].join('-');
-            let endDate = new Date(thisYear + '-' + 12 + '-' + 31); //올해 마지막일로
+            //let endDate = new Date(thisYear + '-' + 12 + '-' + 31); //올해 마지막일로
+            let endDate = new Date((thisYear+1) + '-' + 12 + '-' + 31); //내년 마지막일로
             endDate = [endDate.getFullYear(), ('0' + (endDate.getMonth() + 1)).slice(-2), ('0' + (endDate.getDate())).slice(-2)].join('-');
 
             //3년전까지의 교육 기록들만 계산
@@ -241,19 +296,35 @@ router.processLevel = async() => {
                 if(current.KAPA == '인정' && (current.참가여부 == '참석' || current.참가여부 == '참가')){
                     let classDate = new Date(current.Class.교육일);
                     let classYear = classDate.getFullYear();
-                    if(thisYear - classYear <= 3){
-                        let yearSub = thisYear - classYear - 1;
-                        status.KAPA[yearSub] = true
+                    if(thisYear - classYear < 3){
+                        //let yearSub = thisYear - classYear - 1;
+                        let yearSub = thisYear - classYear;
+                        //if(thisYear - classYear <= 0){
+                        if(thisYear - classYear < 0){
+                            continue;
+                        }else{
+                            status.KAPA[yearSub] = true
+                        }
                     }
                 }else if(current.ARC == '인정' && (current.참가여부 == '참석' || current.참가여부 == '참가')){
                     let classDate = new Date(current.Class.교육일);
                     let classYear = classDate.getFullYear();
-                    if(thisYear - classYear <= 3){
-                        let yearSub = thisYear - classYear - 1;
-                        status.ARC[yearSub] = true
+                    if(thisYear - classYear < 3){
+                        //let yearSub = thisYear - classYear - 1;
+                        let yearSub = thisYear - classYear;
+                        //if(thisYear - classYear <= 0){
+                        if(thisYear - classYear < 0){
+                            continue;
+                        }else{
+                            status.ARC[yearSub] = true
+                        }
                     }
                 }
             }
+
+            let dateForIssuedDate = new Date(updateDate);
+            let newIssuedDate = [dateForIssuedDate.getFullYear() - 1, 12, 31].join('-');;
+            let newCertificationNo = users[i].CertificationNumber;
 
             //계산된 결과에 따라 레벨 도출
             if(status.KAPA[0] && status.ARC[0]){
@@ -265,21 +336,47 @@ router.processLevel = async() => {
                         endDate = new Date(2200,11,31);
                     }
                 }
+                let counter = 0;
+                const cert = await Certification.query()
+                    .findOne({id : 1})
+                    .then(c => {
+                        newCertificationNo = 'KCAS' + ('0000' + c.실버카운터).slice(-5) + 'S';
+                        counter = c.실버카운터;
+                    })
+                    .catch((err) => {
+                        ErrorHandler(err, res);
+                        console.log(err);
+                    });
+                const cert2 = await Certification.query()
+                    .patch({
+                      실버카운터: counter + 1
+                    }).where({
+                      id: 1
+                    });
+                //console.log(newCertificationNo);
             }
 
             if(finalLevel == 'Normal'){
                 updateDate = null;
                 endDate = null;
+                newIssuedDate = null;
+                newCertificationNo = null;
             }
 
+            //console.log(newCertificationNo);
+
             //console.log(id, status, finalLevel);
+
+            //console.log(id, users[i].이름 ,newCertificationNo, finalLevel, 'Line number: ' + 355);
 
             //각 계산된 결과를 저장
             const patchUser = await User.query()
                 .patch({
                     레벨: finalLevel,
                     LevelChangeDate: updateDate,
-                    LevelChangeDateEnd: endDate
+                    LevelChangeDateEnd: endDate,
+                    IssuedDate: newIssuedDate,
+                    CertificationNumber: newCertificationNo
                 })    
                 .where('유저ID', id)
                 .catch((err) => {

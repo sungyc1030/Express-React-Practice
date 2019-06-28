@@ -361,7 +361,7 @@ class Class extends Component{
                     value={this.state.searchDate2} onChange={this.handleTextFieldChange('searchDate2')} margin="normal" variant="outlined" />
             </div> 
             <div className={classes.searchFields}>
-                <TextField label="User No" className = {classes.textField} 
+                <TextField label="License No" className = {classes.textField} 
                     value={this.state.searchUserNo} onChange={this.handleTextFieldChange('searchUserNo')} margin="normal" variant="outlined" />
                 <TextField label="User Name" className = {classes.textField} 
                     value={this.state.searchUserName} onChange={this.handleTextFieldChange('searchUserName')} margin="normal" variant="outlined" />

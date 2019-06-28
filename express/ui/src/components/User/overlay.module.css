@@ -1,0 +1,85 @@
+.overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    overflow: auto;
+    z-index: 2;
+}
+
+.printHorizontal {
+    border: 1px solid black;
+    width: 297mm;
+    height: 210mm;
+}
+
+.printSubHorizontal {
+    border: 1px solid black;
+    margin: 3mm;
+    height: 204mm;
+}
+
+.printVertical {
+    border: 1px solid black;
+    width: 210mm;
+    height: 297mm;
+}
+
+.printSubVertical {
+    border: 1px solid black;
+    margin: 3mm;
+    height: 291mm;
+}
+
+.btnDiv{
+    background-color: white;
+    z-index: 1040;
+}
+
+.gold{
+    background-image: url(./img/goldLevel.JPG);
+    background-size: contain;
+}
+
+.silver{
+    background-image: url(./img/silverLevel.JPG);
+    background-size: contain;
+}
+
+.img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.imgReceipt{
+    object-fit: contain;
+}
+
+@media print {
+    .overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .btnDiv{
+        display:none;
+    }
+
+    .printHorizontal
+    .printSubHorizontal{
+        border: none;
+    }
+
+    .printVertical
+    .printSubVertical{
+        border: none;
+    }
+}
